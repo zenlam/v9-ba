@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+    <record id="account_excel_report_balance_view" model="ir.ui.view">
+        <field name="name">Trial Balance</field>
+        <field name="model">account.balance.report</field>
+        <field name="inherit_id" ref="account.account_common_report_view"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//button[@name='check_report']" position="after">
+                    <button name="check_report_excel" string="Print Excel" type="object" class="oe_highlight" invisible="not context.get('is_excel_report')"/>
+                </xpath>
+           </data>
+        </field>
+    </record>
+    
+    <record id="action_account_balance_excel_report" model="ir.actions.act_window">
+        <field name="name">Trial Balance</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.balance.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account_excel_report_balance_view"/>
+        <field name="target">new</field>
+        <field name="context">{'is_excel_report': True}</field>
+    </record>
+
+    <menuitem id="menu_general_Balance_excel_report"
+        name="Trial Balance"
+        parent="menu_finance_excel_reports"
+        action="action_account_balance_excel_report" sequence="7"/>
+        
+    </data>
+</odoo>

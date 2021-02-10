@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Third Party: Multi company rule -->
+        <record id="third_party_multi_company_rule" model="ir.rule">
+            <field name="name">third_party_multi_company_rule</field>
+            <field name="model_id" ref="model_third_party"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <!-- Third Party Member: Multi company rule -->
+        <record id="third_party_member_multi_company_rule" model="ir.rule">
+            <field name="name">third_party_member_multi_company_rule</field>
+            <field name="model_id" ref="model_third_party_member"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="br_point_of_sale_freeze_screen_assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/br_point_of_sale_freeze_screen/static/src/js/popups.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale_freeze_screen/static/src/js/br_screen.js"></script>
+            </xpath>
+            <xpath expr="//link[@id='pos-stylesheet']" position="after">
+                <link rel="stylesheet" href="/br_point_of_sale_freeze_screen/static/src/css/br_screen.css"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>

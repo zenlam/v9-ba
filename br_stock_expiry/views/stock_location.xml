@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_location_form_view" model="ir.ui.view">
+            <field name="name">Stock Location Form View Inherit</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='putaway_strategy_id']" position="after">
+                    <field name="manage_expirydate"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

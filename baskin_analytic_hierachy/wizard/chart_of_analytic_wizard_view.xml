@@ -1,0 +1,68 @@
+<openerp>
+    <data>
+        <record id="view_analytic_chart_form_wizard" model="ir.ui.view">
+            <field name="name">analytic.chart.wizard.form</field>
+            <field name="model">analytic.chart.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Chart of Analytic">
+                    <group col="4">
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <group col="2">
+                        <field name="target_move"/>
+                    </group>
+                    <footer>
+                        <button name="analytic_chart_open_window" string="Open Charts" type="object"/>
+                        or
+                        <button special="cancel" string="Cancel" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_analytic_chart_wizard" model="ir.actions.act_window">
+            <field name="name">Chart of Analytic</field>
+            <field name="res_model">analytic.chart.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_analytic_chart_form_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="chart_of_analytic" parent="cot_hierarchy.account_finance_menu_root" action="action_analytic_chart_wizard" name="Chart of Analytic" sequence="32" groups="analytic.group_analytic_accounting"/>
+
+        <record id="account.account_analytic_def_account" model="ir.ui.menu">
+            <field name="parent_id" ref="account.menu_finance_entries"/>
+            <field name="sequence">25</field>
+        </record>
+
+        <record id="account.menu_action_analytic_account_tree2" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="analytic_hierarchy.analytic_hierarchy" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+        <record id="account.menu_action_analytic_lines_tree" model="ir.ui.menu">
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="br_view_account_analytic_line_filter" model="ir.ui.view">
+            <field name="name">account.analytic.line.select.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <separator/>
+                    <filter name="this_last_month" string="This &amp; Last Month" domain="[('date','&lt;',(context_today()+relativedelta(months=1)).strftime('%Y-%m-01')),('date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="analytic.account_analytic_line_action_entries" model="ir.actions.act_window">
+            <field name="context">{'search_default_this_last_month':1}</field>
+        </record>
+    </data>
+</openerp>

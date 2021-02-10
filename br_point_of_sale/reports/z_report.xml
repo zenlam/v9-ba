@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <!--#############################Z Report Form #############################-->
+        <record model="ir.ui.view" id="z_report_form_view">
+            <field name="name">Z Report Form</field>
+            <field name="model">z.report</field>
+            <field name="arch" type="xml">
+                <form string="Z Report Form">
+                    <group>
+                        <group>
+                            <field name="date" required="1"/>
+                            <field name="outlet_id" required="1" context="{'active_model': 'br_multi_outlet.outlet'}"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <footer>
+                        <button name="action_print" type="object" string="Print" class="btn btn-primary" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="z_report_act">
+            <field name="name">Z Report</field>
+            <field name="res_model">z.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem parent="point_of_sale.menu_point_rep" id="z_report_menu" action="z_report_act" sequence="200"/>
+
+         <!--############################# Report Template #############################-->
+
+        <record id="z_report_format" model="report.paperformat">
+            <field name="name">Z Report Format</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">375</field>
+            <field name="page_width">79</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">5</field>
+            <field name="dpi">200</field>
+        </record>
+
+        <report
+            id="action_z_report"
+            string="Z Report"
+            model="z.report"
+            report_type="qweb-pdf"
+            name="z_report"
+            file="z_report"
+            paperformat="br_point_of_sale.z_report_format"/>
+    </data>
+</openerp>

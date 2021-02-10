@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+
+        <record id="group_allowed_post_pos_order" model="res.groups">
+            <field name="name">Allow to POST POS Order</field>
+            <field name="category_id" ref="base.module_category_point_of_sale"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,129 @@
+<openerp>
+	<data>
+		<!-- Pending Internal Transfers warehouse-->
+		<record id="action_pending_inter_transfer_warehouse" model="ir.actions.act_window">
+            <field name="name">Warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('dest_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            	('picking_type_code','=','internal')]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_dest_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_inter_transfer_warehouse" 
+			name="Warehouse" sequence="10" 
+			action="action_pending_inter_transfer_warehouse"
+			parent="menu_pending_internal_transfer"/>
+			
+			
+		<!-- Pending Internal Transfers Production-->
+		<record id="action_pending_inter_transfer_production" model="ir.actions.act_window">
+            <field name="name">Warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('dest_location_is_production','=',True),('picking_type_code','=','internal')]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_dest_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_inter_transfer_production" 
+			name="Production" sequence="20" 
+			action="action_pending_inter_transfer_production"
+			parent="menu_pending_internal_transfer"/>
+		
+		<!-- Pending Internal Transfers Outlet-->
+		<record id="action_pending_inter_transfer_outlet" model="ir.actions.act_window">
+            <field name="name">Outlet</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('dest_location_is_outlet','=',True),('picking_type_code','=','internal')]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_src_location_area_manager':1,
+            		'search_default_group_dest_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_inter_transfer_outlet" 
+			name="Outlet" sequence="30" 
+			action="action_pending_inter_transfer_outlet"
+			parent="menu_pending_internal_transfer"/>
+
+		
+		<!-- Pending Internal Transfers Other Location-->
+		<record id="action_pending_inter_transfer_other_location" model="ir.actions.act_window">
+            <field name="name">Other Location</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[
+            	('dest_location_maping_name','not in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            	('dest_location_is_outlet','=',False),
+            	('dest_location_is_production','=',False),
+            	('picking_type_code','=','internal')
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_dest_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_inter_transfer_other_location" 
+			name="Other Location" sequence="30" 
+			action="action_pending_inter_transfer_other_location"
+			parent="menu_pending_internal_transfer"/>
+						
+	</data>
+</openerp>

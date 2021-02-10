@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="pos_order_refuse_refund">
+            <field name="name">pos.order.refund.process.form</field>
+            <field name="model">pos.order.refund.process</field>
+            <field name="arch" type="xml">
+                <form string="Refuse Cancel Request">
+                    <span>Are you sure want to refuse ?</span>
+                    <footer>
+                        <button name="action_refuse" type="object" string="Refuse" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="pos_order_approve_refund">
+            <field name="name">pos.order.refund.process.form</field>
+            <field name="model">pos.order.refund.process</field>
+            <field name="arch" type="xml">
+                <form string="Approve Cancel Request">
+                    <span>Are you sure want to approve ?</span>
+                    <footer>
+                        <button name="action_approve" type="object" string="Approve" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_refuse_refund"
+            multi="True"
+            key2="client_action_multi" name="Refuse Cancel Request"
+            res_model="pos.order.refund.process" src_model="pos.order"
+            view_mode="form" target="new" view_type="form" view_id="pos_order_refuse_refund"
+            groups="br_pos_refund.group_approve_receipt_cancellation_manager"
+        />
+
+        <act_window id="action_approve_refund"
+            multi="True"
+            key2="client_action_multi" name="Approve Cancel Request"
+            res_model="pos.order.refund.process" src_model="pos.order"
+            view_mode="form" target="new" view_type="form" view_id="pos_order_approve_refund"
+            groups="br_pos_refund.group_approve_receipt_cancellation_manager"
+            />
+    </data>
+</openerp>

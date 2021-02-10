@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extend Receipt Template -->
+    <t t-extend="PosTicket">
+        <t t-jquery="table[style='margin-top: 10px']" t-operation="append">
+            <tr t-if="order.member_name">
+                <td>Member</td>
+                <td>: <t t-esc="order.member_name"/> </td>
+            </tr>
+            <tr t-if="!order.member_name and order.member_code">
+                <td>Member</td>
+                <td>: <t t-esc="order.member_code"/> </td>
+            </tr>
+        </t>
+
+    </t>
+
+</templates>

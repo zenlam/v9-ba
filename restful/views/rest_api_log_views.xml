@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- REST API Log Tree View -->
+        <record id="rest_api_log_tree_view" model="ir.ui.view">
+            <field name="name">rest.api.log.tree.view</field>
+            <field name="model">rest.api.log</field>
+            <field name="arch" type="xml">
+                <tree edit='false' create='false' delete='false'>
+                    <field name="request_direction"/>
+                    <field name="request_method"/>
+                    <field name="request_time"/>
+                    <field name="request_uid"/>
+                    <field name="request_url"/>
+                    <field name="request_headers" invisible="1"/>
+                    <field name="request_params" invisible="1"/>
+                    <field name="request_response" invisible="1"/>
+                    <field name="request_status"/>
+                    <field name="request_result"/>
+                    <field name="current_retry"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- REST API Log Form View -->
+        <record id="rest_api_log_form_view" model="ir.ui.view">
+            <field name="name">rest.api.log.form.view</field>
+            <field name="model">rest.api.log</field>
+            <field name="arch" type="xml">
+                <form string="REST API Log" create="false" delete="false"
+                      edit="false">
+                    <header>
+                        <button name="run" class="oe_highlight" string="Run"
+                                type="object"
+                                attrs="{'invisible':[('request_direction','!=','outgoing')]}"/>
+                    </header>
+                    <sheet>
+                        <group string="API Caller Info">
+                            <field name="request_uid"/>
+                            <field name="request_time"/>
+                        </group>
+                        <group string="API Request Info">
+                            <field name="request_direction"/>
+                            <field name="request_method"/>
+                            <field name="request_url"/>
+                            <field name="request_headers"/>
+                            <field name="request_params"/>
+                            <field name="request_arguments"/>
+                        </group>
+                        <group string="API Response Info">
+                            <field name="request_status"/>
+                            <field name="request_response"/>
+                            <field name="current_retry"/>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <!-- REST API Log Search View -->
+        <record id="rest_api_log_search_view" model="ir.ui.view">
+            <field name="name">rest.api.log.search.view</field>
+            <field name="model">rest.api.log</field>
+            <field name="arch" type="xml">
+                <search string="REST API Log">
+                    <field name="request_uid" string="User"/>
+                    <separator/>
+                    <filter name="outgoing" string="Outgoing"
+                            domain="[('request_direction','=','outgoing')]"/>
+                    <filter name="incoming" string="Incoming"
+                            domain="[('request_direction','=','incoming')]"/>
+                    <separator/>
+                    <filter name="get" string="GET"
+                            domain="[('request_method','=','GET')]"/>
+                    <filter name="post" string="POST"
+                            domain="[('request_method','=','POST')]"/>
+                    <filter name="put" string="PUT"
+                            domain="[('request_method','=','PUT')]"/>
+                    <separator/>
+                    <filter name="today" string="Today"
+                            domain="[('request_time','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59))), ('request_time','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="User" name="by_user" domain="[]"
+                                context="{'group_by':'request_uid'}"/>
+                        <filter string="Endpoint" name="by_endpoint" domain="[]"
+                                context="{'group_by':'request_url'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- REST API Log Window Action -->
+        <record id="rest_api_log_action" model="ir.actions.act_window">
+            <field name="name">REST API Log</field>
+            <field name="res_model">rest.api.log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="rest_api_log_tree_view"/>
+            <field name="context">{'search_default_today':1}</field>
+        </record>
+
+        <!-- REST API Log Menuitem -->
+        <menuitem id="rest_api_log_menu" name="REST API Log"
+                  action="rest_api_log_action" parent="base.menu_custom"
+                  sequence="40"/>
+
+    </data>
+</odoo>

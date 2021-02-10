@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Third Party: Fugumobile -->
+        <record id="third_party_fugumobile" model="third.party">
+            <field name="name">Fugumobile</field>
+            <field name="code">Fugu</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="is_baskin" eval="False"/>
+            <field name="has_api" eval="True"/>
+            <field name="create_code_api" eval="True"/>
+            <field name="create_member_api" eval="True"/>
+            <field name="is_mobile_apps" eval="True"/>
+            <field name="sync_promotion_data" eval="True"/>
+            <field name="sync_outlet_data" eval="True"/>
+            <field name="sync_menu_data" eval="False"/>
+            <field name="sync_member_data" eval="True"/>
+            <field name="sync_order_data" eval="True"/>
+            <field name="promotion_sync_endpoint">/pos/coupontype</field>
+            <field name="outlet_sync_endpoint">/pos/store</field>
+            <field name="order_sync_endpoint">/pos/transaction</field>
+            <field name="order_cancel_sync_endpoint">/pos/canceltransaction</field>
+            <field name="coupon_code_update_endpoint">/pos/couponcode</field>
+            <field name="member_code_prefix">31BRM</field>
+        </record>
+
+    </data>
+</openerp>

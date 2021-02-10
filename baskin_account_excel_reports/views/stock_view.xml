@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_location_form_inherit_excel" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+        		<xpath expr="//field[@name='location_id']" position="after">
+                    <label for="warehouse_id" class="oe_edit_only"/>
+                    <h1><field name="warehouse_id"/></h1>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

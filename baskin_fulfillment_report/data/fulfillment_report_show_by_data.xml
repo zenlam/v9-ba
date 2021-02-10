@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--Fulfillment Report Show By-->
+        <record id="fulfillment_show_product" model="fulfillment.report.show.by">
+            <field name="name">By Product</field>
+            <field name="code">by_product</field>
+            <field name="type">all</field>
+        </record>
+
+        <record id="fulfillment_show_transaction" model="fulfillment.report.show.by">
+            <field name="name">By Transaction</field>
+            <field name="code">by_transc</field>
+            <field name="type">internal</field>
+        </record>
+
+        <record id="fulfillment_show_po" model="fulfillment.report.show.by">
+            <field name="name">By PO</field>
+            <field name="code">by_po</field>
+            <field name="type">supplier</field>
+        </record>
+
+        <record id="fulfillment_show_so" model="fulfillment.report.show.by">
+            <field name="name">By SO</field>
+            <field name="code">by_so</field>
+            <field name="type">external</field>
+        </record>
+
+    </data>
+</openerp>

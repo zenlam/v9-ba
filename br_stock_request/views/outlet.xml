@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <menuitem id="br_inventory_outlet_route_menu"
+                  name="Route"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="4" action="br_multi_outlet.br_outlet_route_action"
+                  groups="stock.group_stock_manager"/>
+    </data>
+</openerp>

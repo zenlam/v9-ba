@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- Inherit company to set cronjob user -->
+        <record id="view_company_cronjob_user_inherit_form" model="ir.ui.view">
+            <field name="name">res.company.cronjob.form.inherit</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="model">res.company</field>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='website']" position="after">
+                    <field name="cronjob_user" groups="base.group_no_one"/>
+                </xpath>
+            </field>
+        </record>
+
+	</data>
+</openerp>

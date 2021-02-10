@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_br_menu_name_recipe_user,access_br_menu_name_recipe,model_br_menu_name_recipe,point_of_sale.group_pos_user,1,0,0,0
+access_br_menu_name_recipe_man,access_br_menu_name_recipe,model_br_menu_name_recipe,point_of_sale.group_pos_manager,1,1,1,1
+
+access_br_product_group_rule_user,access_br_product_group_rule,model_br_product_group_rule,point_of_sale.group_pos_user,1,0,0,0
+access_br_product_group_rule_man,access_br_product_group_rule,model_br_product_group_rule,point_of_sale.group_pos_manager,1,1,1,1
+access_br_menu_category_group_rule_man,access_br_menu_category_rule,model_br_menu_category,point_of_sale.group_pos_manager,1,1,1,1

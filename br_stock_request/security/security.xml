@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="base.stock_picking_validation_group" model="res.groups">
+            <field name="name">Outlet Ordering Transfer Validation</field>
+            <field name="category_id" ref="base.module_category_warehouse_management"/>
+        </record>
+
+        <record id="base.stock_picking_cancellation_group" model="res.groups">
+            <field name="name">Allow to Cancel Picking</field>
+            <field name="category_id" ref="base.module_category_warehouse_management"/>
+        </record>
+
+        <record id="stock_picking_raise_dispute_group" model="res.groups">
+            <field name="name">Allow to Raise Dispute After 24 hours</field>
+            <field name="category_id" ref="base.module_category_warehouse_management"/>
+        </record>
+
+        <record id="access_br_stock_request_transfer_log" model="ir.model.access">
+            <field name="name">access_br_stock_request_transfer_log</field>
+            <field name="model_id" ref="model_br_stock_request_transfer_cron_log"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_br_stock_request_transfer_log_line" model="ir.model.access">
+            <field name="name">access_br_stock_request_transfer_log_line</field>
+            <field name="model_id" ref="model_br_stock_request_transfer_cron_log_line"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="access_br_stock_request_form" model="ir.model.access">
+            <field name="name">access_br_stock_request_form</field>
+            <field name="model_id" ref="model_br_stock_request_form"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_br_stock_request_form_line" model="ir.model.access">
+            <field name="name">access_br_stock_request_form_line</field>
+            <field name="model_id" ref="model_br_stock_request_form_line"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_br_stock_request_transfer" model="ir.model.access">
+            <field name="name">access_br_stock_request_transfer</field>
+            <field name="model_id" ref="model_br_stock_request_transfer"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_br_stock_request_transfer_line" model="ir.model.access">
+            <field name="name">access_br_stock_request_transfer_line</field>
+            <field name="model_id" ref="model_br_stock_request_transfer_line"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_br_outlet_route_pos_manager" model="ir.model.access">
+            <field name="name">access_br_outlet_route_pos_manager</field>
+            <field name="model_id" ref="br_multi_outlet.model_br_outlet_route"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</openerp>

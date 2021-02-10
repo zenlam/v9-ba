@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="hss_product_pos_category_form_view">
+            <field name="name">pos.category.form</field>
+            <field name="model">pos.category</field>
+            <field name="inherit_id" ref="point_of_sale.product_pos_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sequence']" position="after">
+                    <field name="x_color" placeholder="Ex: white, #fff..."/>
+                    <field name="x_background" placeholder="Ex: red, blue, #222..."/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hss_view_pos_config_form">
+            <field name="name">pos.config.form.view</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="pos_discount.view_pos_config_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='discount_pc']" position="after">
+                    <field name="discount_promotion_bundle_id" domain="[('id', 'not in', (discount_promotion_product_id, discount_product_id))]"/>
+                    <field name="discount_promotion_product_id" domain="[('id', 'not in', (discount_promotion_bundle_id, discount_product_id))]"/>
+                </xpath>
+                <xpath expr="//field[@name='discount_product_id']" position="attributes">
+                    <attribute name="string">Bill Discount</attribute>
+                    <attribute name="domain">[('id', 'not in', (discount_promotion_product_id, discount_product_id))]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tip_product_id']" position="attributes">
+                    <attribute name="string">Voucher Extra Income</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Promotion category-->
+        <record id="br_promotion_category_form" model="ir.ui.view">
+            <field name="name">br.promotion.category.form</field>
+            <field name="model">br.promotion.category</field>
+            <field name="arch" type="xml">
+                <form string="Promotion Category">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="parent_id"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="br_promotion_category_tree" model="ir.ui.view">
+            <field name="name">br.promotion.category.tree</field>
+            <field name="model">br.promotion.category</field>
+            <field name="arch" type="xml">
+                <tree string="Promotion Category">
+                    <field name="complete_name"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="br_action_promotion_category">
+            <field name="name">Promotion Category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.promotion.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Promotion Category.
+                </p>
+            </field>
+        </record>
+
+        <!-- category group -->
+
+        <record id="br_bundle_promotion_form" model="ir.ui.view">
+            <field name="name">br.bundle.promotion.form</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="arch" type="xml">
+                <form string="Bundle Promotion">
+                    <sheet>
+                        <field name="image" widget="image" class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label class="oe_edit_only" for="real_name"/>
+                            <h1>
+                                <field name="real_name" default_focus="1" placeholder="31 Day 31% Off" style="width:60%"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="promotion_category_id" string="Discount Category"
+                                       domain="[('active', '=', True)]"/>
+                                <field name="type_promotion" string="Discount Type"/>
+                                <field name="is_non_sale_trans"/>
+                                <field name="is_voucher"/>
+                                <field name="is_smart_detection"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="active"/>
+                                <field name="code" readonly="1"/>
+
+                                <field name="fiscal_position_ids"/>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" required="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Bill Discount" attrs="{'invisible':[('type_promotion', '!=', 1)]}">
+                                <group col="2">
+                                    <field name="discount_type" style="width:150px"/>
+                                    <field name="discount_amount"/>
+                                    <field name="is_apply"/>
+                                    <field name="minimum_spending"/>
+                                </group>
+                            </page>
+                            <page string="Bundle Discount" attrs="{'invisible' : [('type_promotion', '!=', 3)]}">
+                                <field name="bundle_promotion_ids">
+                                    <tree string="Product" editable="bottom">
+                                        <field name="product_id"
+                                               widget="many2many_tags"
+                                               domain="[('available_in_pos','=',True), ('is_menu', '=', True)]"
+                                               context="{'available_in_pos' : True, 'is_menu' : True, 'load_menu_name': True, 'form_view_ref' : 'br_product.br_product_menu_form_view'}"/>
+                                        <field name="pos_category_id" widget="many2many_tags" options="{'no_edit': True, 'no_create': True}"/>
+                                        <field name="min_quantity" string="Min Quantity"/>
+                                        <field name="min_spending" string="Min Spending"/>
+                                        <field name="discount"/>
+                                        <field name="discount_amount"/>
+                                        <field name="bundle_item"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Product Discount" attrs="{'invisible' : [('type_promotion', '!=', 2)]}">
+                                <field name="product_promotion_ids">
+                                    <tree string="Product" editable="bottom">
+                                        <field name="product_id"
+                                               widget="many2many_tags"
+                                               domain="[('available_in_pos','=',True), ('is_menu', '=', True)]"
+                                               context="{'available_in_pos' : True, 'is_menu' : True, 'load_menu_name': True, 'form_view_ref' : 'br_product.br_product_menu_form_view'}"/>
+                                        <field name="pos_category_id" widget="many2many_tags"
+                                               options="{'no_edit': True, 'no_create': True}"
+                                               string="Pos Category"/>
+                                        <field name="min_quantity" string="Min Quantity"/>
+                                        <field name="min_spending" string="Min Spending"/>
+                                        <field name="discount"/>
+                                        <field name="discount_amount"/>
+                                        <field name="bundle_item" invisible="1" default="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Time">
+                                <group col="2">
+                                    <field name="recurring" string="Recurring" style="width:150px"/>
+                                </group>
+                                <div type="float:left" attrs="{'invisible' : [('recurring', '!=', 1)]}">
+                                    <field name="is_monday"/>
+                                    <label string="Monday" style="margin-right:25px"/>
+                                    <field name="is_tuesday"/>
+                                    <label string="Tuesday" style="margin-right:25px"/>
+                                    <field name="is_wednesday"/>
+                                    <label string="Wednesday" style="margin-right:25px"/>
+                                    <field name="is_thursday"/>
+                                    <label string="Thursday" style="margin-right:25px"/>
+                                    <field name="is_friday"/>
+                                    <label string="Friday" style="margin-right:25px"/>
+                                    <field name="is_saturday"/>
+                                    <label string="Saturday" style="margin-right:25px"/>
+                                    <field name="is_sunday"/>
+                                    <label string="Sunday" style="margin-right:25px"/>
+                                </div>
+                                <field name="bundle_promotion_time_week_ids"
+                                       attrs="{'invisible' : [('recurring', '!=', 1)]}">
+                                    <tree string="Time" editable="bottom">
+                                        <field name="start_hour" widget="float_time"/>
+                                        <field name="end_hour" widget="float_time"/>
+                                    </tree>
+                                </field>
+                                <field name="bundle_promotion_time_month_ids"
+                                       attrs="{'invisible' : [('recurring', '!=', 2)]}">
+                                    <tree string="Time" editable="bottom">
+                                        <field name="day_of_month"/>
+                                        <field name="start_hour" widget="float_time"/>
+                                        <field name="end_hour" widget="float_time"/>
+                                    </tree>
+                                </field>
+                                <field name="bundle_promotion_time_year_ids"
+                                       attrs="{'invisible' : [('recurring', '!=', 3)]}">
+                                    <tree string="Time" editable="bottom">
+                                        <field name="date"/>
+                                        <field name="start_hour" widget="float_time"/>
+                                        <field name="end_hour" widget="float_time"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Outlet">
+                                <group>
+                                    <group>
+                                        <field name="quota_type"/>
+                                        <field name="quota" attrs="{'invisible': [('quota_type', '=', False)], 'required': [('quota_type', '!=', False)]}"/>
+                                        <field name="used_quota"
+                                               attrs="{'invisible': [('quota_type', '!=', 'global')]}" readonly="True"/>
+                                    </group>
+                                    <group>
+                                        <field name="is_all_outlet"/>
+                                        <field name="outlet_quota_reset"/>
+                                    </group>
+                                </group>
+                                <group col="4">
+                                    <button name="select_outlets" string="Select Outlets" help="Select Outlets"
+                                            type="object"/>
+                                </group>
+
+                                <field name="outlet_quota_lines" attrs="{'invisible': [('is_all_outlet', '=', True), ('quota_type', '=', 'global')]}" nolable="True">
+                                    <tree editable="bottom">
+                                        <field name="outlet_id"/>
+                                        <field name="used_quota" readonly="True"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="User" attrs="{'invisible' : [('is_voucher', '=', True)]}">
+                                <group>
+                                    <group>
+                                        <field name="user_quota_type"/>
+                                        <field name="user_quota" attrs="{'invisible': [('user_quota_type', '=', False)], 'required': [('user_quota_type', '!=', False)]}"/>
+                                    </group>
+                                    <group>
+                                       <field name="user_group_ids" widget="many2many_tags"/>
+                                        <field name="user_quota_reset"/>
+                                    </group>
+                                </group>
+                                <field name="user_quota_lines" attrs="{'invisible': [('user_group_ids', '=', True)]}" nolable="True">
+                                    <tree editable="bottom">
+                                        <field name="user_id"/>
+                                        <field name="used_quota" readonly="True"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Code" attrs="{'invisible' : [('is_voucher', '=', False)]}" groups="br_discount.group_voucher_user">
+                                <group col="4">
+                                    <button name="create_voucher"
+                                            string="Create Code"
+                                            help="Create Voucher"
+                                            icon="fa-plus"
+                                            type="object"
+                                            groups="br_discount.group_voucher_manager"/>
+                                    <button name="voucher_enddate"
+                                            string="Modify Code"
+                                            help="Modify EndDate Voucher"
+                                            icon="fa-edit"
+                                            type="object"
+                                            attrs="{'invisible' : [('active', '=', False)]}"
+                                            groups="br_discount.group_voucher_modify_delete"/>
+                                    <button name="export_voucher"
+                                            string="Export Code"
+                                            help="Export All Voucher"
+                                            icon="fa-file"
+                                            type="object"/>
+                                    <button name="action_view_voucher"
+                                            string="List Code"
+                                            icon="fa-building-o"
+                                            type="object"
+                                            help="List view of vouchers"/>
+                                </group>
+                            </page>
+                            <page string="Instruction">
+                                <field name="instruction" placeholder="Instruction" nolabel="1"/>
+                            </page>
+                        </notebook>
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="br_bundle_promotion_tree" model="ir.ui.view">
+            <field name="name">br.bundle.promotion.tree</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="arch" type="xml">
+                <tree string="Bundle Promotion">
+                    <field name="code"/>
+                    <field name="real_name" string="Discount Name"/>
+                    <field name="name"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="active"/>
+                    <field name="is_voucher"/>
+                    <field name="is_hq_voucher"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="br_bundle_promotion">
+            <field name="name">Discount</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.bundle.promotion</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Bunder Promotion.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="br_pos_form_view">
+            <field name="name">pos.order</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="after">
+                    <field name="promotion_ids" widget="many2many_tags"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="before">-->
+                    <!--<field name="master_id" string="Number"/>-->
+                    <!--<field name="menu_name_id"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+
+        <!-- ============== Show menu Discount ============================================ -->
+        <menuitem id="menu_config_discount"
+                  name="Discount"
+                  parent="point_of_sale.menu_point_root"
+                  action=""
+                  sequence="30"
+        />
+        <menuitem
+                parent="br_product.br_menu_config_menu_names"
+                action="br_action_promotion_category"
+                id="menu_promotion_category"
+                name="Discount Category"
+                sequence="4"
+        />
+        <menuitem
+                parent="menu_config_discount"
+                action="br_bundle_promotion"
+                id="item_bundle_promotion"
+                name="Discount"
+                sequence="1"
+        />
+
+        <!-- ==============Create scheduler to update status of voucher when expired============================================ -->
+        <record model="ir.cron" id="br_scheduler_update_status_voucher">
+            <field name='name'>BR voucher</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+            <field name="model">br.config.voucher</field>
+            <field name="function">br_scheduler_update_status_voucher</field>
+            <field name="args">()</field>
+        </record>
+
+         <!-- ==============Create scheduler to update status of voucher when expired============== -->
+         <record id="br_tmp_select_outlets_form" model="ir.ui.view">
+            <field name="name">br.tmp.select.outlets.form</field>
+            <field name="model">br.tmp.select.outlets</field>
+            <field name="arch" type="xml">
+                <form string="Outlet">
+                    <sheet>
+
+                        <notebook>
+                            <page string="Outlets">
+                                <field name="outlet_ids" options="{'no_create': True}">
+                                        <tree string="Outlets">
+                                            <field name="name"/>
+                                        </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <div>
+                            <button name="popup_select_outlet" class="oe_highlight oe_leftfit" string="Confirm" help="Select Outlet"
+                                                type="object"/>
+                        </div>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--THem rule multi company vao promotion-->
+        <record id="br_promotion_rule" model="ir.rule">
+            <field name="name">Br Promotion multi-company</field>
+            <field name="model_id" ref="model_br_bundle_promotion"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="br_config_voucher_tree" model="ir.ui.view">
+            <field name="name">br.config.voucher.tree</field>
+            <field name="model">br.config.voucher</field>
+            <field name="arch" type="xml">
+                <tree string="Voucher" create="false" decoration-danger="status=='expired'" decoration-muted="status=='redeemed'">
+                    <field name="promotion_id" string='Discount Name' readonly="1"/>
+                    <field name="voucher_code" readonly="1"/>
+                    <field name="voucher_validation_code" readonly="1" groups="br_discount.group_voucher_view_validation"/>
+                    <field name="partner_id" readonly="1"/>
+                    <field name="start_date" readonly="1"/>
+                    <field name="end_date"/>
+                    <field name="date_red" readonly="1"/>
+                    <field name="status" readonly="1"/>
+                    <field name="order_id" readonly="1"/>
+                    <field name="outlet_id" readonly="1"/>
+                    <field name="approval_no" readonly="1"/>
+                    <field name="remarks" readonly="1"/>
+                    <field name="create_date" string="Create Date" readonly="1"/>
+                    <field name="create_uid" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_voucher" model="ir.actions.act_window">
+            <field name="name">Vouchers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.config.voucher</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="br_config_voucher_tree"/>
+            <field name="domain">[('promotion_id', '=', active_id)]</field>
+        </record>
+     
+        <record id="br_bundle_promotion_form_inherit" model="ir.ui.view">
+            <field name="name">Br Promotion Inherit</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="inherit_id" ref="br_discount.br_bundle_promotion_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='create_voucher']/.." position="after">
+                    <group col="6" colspan="6">
+                        <field name="is_hq_voucher"/>
+                    </group>
+                    <group col="6" colspan="6">
+                        <field name="payment_method" domain="[('journal_user', '=', True)]" attrs="{'invisible': [('is_hq_voucher', '=', False)], 'required': [('is_hq_voucher', '=', True)]}"/>
+                        <field name="analytic_account_id" attrs="{'invisible': [('is_hq_voucher', '=', False)]}"/>
+                    </group>
+                    <group col="6" colspan="6">
+                        <field name="credit_account_id" attrs="{'invisible': [('is_hq_voucher', '=', False)], 'required': [('analytic_account_id', '!=', False)]}"/>
+                        <field name="debit_account_id" attrs="{'invisible': [('is_hq_voucher', '=', False)], 'required': [('analytic_account_id', '!=', False)]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='discount_type']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('is_hq_voucher', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

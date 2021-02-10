@@ -1,0 +1,119 @@
+<odoo>
+    <data>
+    
+<!--    <record id="account_excel_report_general_ledger_view" model="ir.ui.view">-->
+<!--        <field name="name">General Ledger</field>-->
+<!--        <field name="model">account.report.general.ledger</field>-->
+<!--        <field name="inherit_id" ref="account.account_report_general_ledger_view"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <data>-->
+<!--            	<xpath expr="//field[@name='target_move']/.." position="before">-->
+<!--					<div style="color:red;">-->
+<!--						REMINDER: Excel Report will be printed based on consolidated journal item table selected. -->
+<!--					</div>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='journal_ids']/.." position="after">-->
+<!--					<group>-->
+<!--	                	<field name="table_id" options='{"no_open": True, "no_create":True}'/>-->
+<!--					</group>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//button[@name='check_report']" position="after">-->
+<!--                    <button name="check_general_ledger_report_excel" string="Print Excel" type="object" class="oe_highlight"/>-->
+<!--                </xpath>-->
+<!--           </data>-->
+<!--        </field>-->
+<!--    </record>-->
+        
+    <record id="account.menu_general_ledger" model="ir.ui.menu">
+    	<field name="action" ref="account.action_account_general_ledger_menu"/>
+    </record>
+
+    <record id="account_report_general_ledger_excel_view" model="ir.ui.view">
+        <field name="name">General Ledger Excel</field>
+        <field name="model">account.report.general.ledger</field>
+        <field name="arch" type="xml">
+            <form string="Report Options">
+                <field name="company_id" invisible="1"/>
+                <div style="color:red;">
+                    REMINDER: Excel Report will be printed based on consolidated journal item table selected.
+                </div>
+                <group col="4">
+<!--                    <field name="target_move" widget="radio"/>-->
+<!--                    <field name="sortby" widget="radio"/>-->
+                    <field name="display_account" widget="radio"/>
+                    <field name="initial_balance"/>
+                    <newline/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+                <group col="3">
+                    <field name="journal_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                </group>
+                <group>
+                    <field name="table_id" options='{"no_open": True, "no_create":True}' required="1"/>
+                </group>
+                <footer>
+                    <button name="check_general_ledger_report_excel" string="Print Excel" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_general_ledger_excel_menu" model="ir.actions.act_window">
+        <field name="name">General Ledger</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.report.general.ledger</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="account_report_general_ledger_excel_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="menu_general_ledger_excel"
+        name="General Ledger"
+        parent="menu_finance_excel_reports"
+        action="action_account_general_ledger_excel_menu"
+        groups="account.group_account_manager,account.group_account_user"
+        sequence="1"
+       />
+    
+    <record id="view_form_referesh_consolidation_wizard" model="ir.ui.view">
+        <field name="name">Referesh Consolidation</field>
+        <field name="model">refresh.consolidation.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+        		<group>
+        			<group>
+        				<button type="object" name="wizard_refresh_gl_consolidation_table" string="Referesh GL Consolidation"/>
+        			</group>
+        			<group>
+        			</group>	
+        		</group>
+        		<footer>
+                    <button string="Cancel" class="oe_highlight" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_referesh_consolidation_wizard" model="ir.actions.act_window">
+        <field name="name">Refresh Consolidation</field>
+        <field name="res_model">refresh.consolidation.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_form_referesh_consolidation_wizard"/>
+        <field name="target">new</field>
+        <field name="context" eval="{}"/>
+    </record>
+    
+    <menuitem id="menu_refresh_consolidation" name="Consolidation" parent="account.menu_finance_reports"/>
+    
+    <menuitem id="menu_refresh_consolidate_wizard" name="Refresh Consolidation" 
+    	action="action_referesh_consolidation_wizard" parent="menu_refresh_consolidation" sequence="5"/>
+    
+   	</data>
+</odoo>

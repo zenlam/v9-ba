@@ -1,0 +1,201 @@
+<openerp>
+    <data>
+        <!-- Wizard view for establish connection using SSH key -->
+        <record id="key_connection_config_form_view" model="ir.ui.view">
+            <field name="name">key.authentication.configuration.form</field>
+            <field name="model">key.authentication.configuration</field>
+            <field name="arch" type="xml">
+                <form string="SSH Key Configuration">
+                    <group>
+                        <field name="dest_ip_address" required="1"/>
+                        <field name="dest_port_no" required="1"/>
+                        <field name="dest_username" required="1"/>
+                        <field name="dest_pass" password="True" required="1"/>
+                    </group>
+                    <footer>
+                        <button string="Connect" name="action_establish_connection" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_key_connection" model="ir.actions.act_window">
+            <field name="name">SSH Key Configuration</field>
+            <field name="res_model">key.authentication.configuration</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="key_connection_config_form_view"/>
+           <field name="target">new</field>
+        </record>
+
+        <!-- Tree view for showing the restoration configuration -->
+        <record id="restoration_config_tree_view" model="ir.ui.view">
+            <field name="name">restoration.config.tree</field>
+            <field name="model">restoration.config</field>
+            <field name="arch" type="xml">
+                <tree string="Database Restoration Configuration">
+                    <field name="name" string="Training Server Name"/>
+                    <field name="dest_ip_address" string="Training Server IP"/>
+                    <field name="dest_port_no" string="SSH Port Number"/>
+                    <field name="default_dump_file_name" string="Dump File Name"/>
+                    <field name="dest_dump_path"/>
+                    <field name="db_name_prefix"/>
+                    <field name="active"/>
+                    <field name="state" string="Connection Status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for showing the restoration configuration -->
+        <record id="restoration_config_form_view" model="ir.ui.view">
+            <field name="name">restoration.config.form</field>
+            <field name="model">restoration.config</field>
+            <field name="arch" type="xml">
+                <form string="Database Restoration Configuration">
+                    <header>
+                        <button name="%(action_key_connection)d" type="action" string="Establish Connection" class="oe_highlight"
+                        attrs="{'invisible': [('state', 'in', ('draft', 'connected'))]}"/>
+                        <button name="check_connection" type="object" string="Check Connection" confirm="Check if the server public key authentication exists?"/>
+                        <button name="normal_restoration" type="object" string="Run" confirm="This will run the database restoration. Proceed?"
+                                attrs="{'invisible': [('state', 'in', ('draft', 'not_connected'))]}"/>
+                        <button name="redo_restoration" type="object" string="Redo"
+                                confirm="This will drop the latest database and perform the restoration again. Only run this if the previous database restoration failed. Proceed?"
+                                attrs="{'invisible': [('state', 'in', ('draft', 'not_connected'))]}" invisible="1"/>
+                        <field name="state" widget="statusbar" statusbar_visible="not_connected,connected"
+                               statusbar_colors='{"not_connected":"blue","connected":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="name" string="Training Server Name" required="1"/>
+                            <field name="active"/>
+                            <field name="log_directory" required="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Destination Server Configuration (SSH)">
+                                <group col="4">
+                                    <field name="dest_ip_address" string="Training Server IP" required="1"/>
+                                    <field name="dest_port_no" string="SSH Port Number" required="1"/>
+                                    <field name="dest_username" string="Training Server Login Username" required="1"/>
+                                    <field name="su_password" string="Training Server Superuser Password" password="True" required="1"/>
+                                </group>
+                            </page>
+                            <page string="Database Configuration">
+                                <group>
+                                    <field name="dest_db_user" string="Training Database Owner" required="1"/>
+                                    <field name="source_dump_path" required="1"/>
+                                    <field name="default_dump_file_name" required="1"/>
+                                    <field name="dest_dump_path" required="1"/>
+                                    <field name="db_name_prefix"/>
+                                    <field name="remove_old"/>
+                                    <field name="remove_dump"/>
+                                    <field name="latest_db"/>
+                                    <field name="sql_query"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action to open restoration configuration tree view -->
+        <record id="restoration_config_act" model="ir.actions.act_window">
+            <field name="name">Restoration Configuration</field>
+            <field name="res_model">restoration.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="restoration_config_tree_view"/>
+        </record>
+
+        <record id="restoration_config_tree_act" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="restoration_config_tree_view"/>
+            <field name="act_window_id" ref="restoration_config_act"/>
+        </record>
+
+        <record id="restoration_config_form_act" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="restoration_config_form_view"/>
+            <field name="act_window_id" ref="restoration_config_act"/>
+        </record>
+
+        <!-- Cron Job to Restore Database-->
+        <record id="auto_restore_database" model="ir.cron">
+            <field name="name">Auto Restore Database on Remote Server</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=1) - timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="doall" eval="False"/>
+            <field name="model" eval="'restoration.config'"/>
+            <field name="function" eval="'auto_restore'"/>
+            <field eval="'()'" name="args"/>
+        </record>
+
+        <!-- Tree view for showing the restoration log -->
+        <record id="restoration_log_tree_view" model="ir.ui.view">
+            <field name="name">restoration.log.tree</field>
+            <field name="model">restoration.log</field>
+            <field name="arch" type="xml">
+                <tree string="Database Restoration Log" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="filename"/>
+                    <field name="date_restore"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for showing the restoration log -->
+        <record id="restoration_log_form_view" model="ir.ui.view">
+            <field name="name">restoration.log.form</field>
+            <field name="model">restoration.log</field>
+            <field name="arch" type="xml">
+                <form string="Database Restoration Log" create="false" edit="false">
+                    <group col="4">
+                        <field name="name"/>
+                        <field name="filename"/>
+                        <field name="file" filename="filename"/>
+                        <field name="date_restore"/>
+                        <field name="state"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action to open restoration log tree view -->
+        <record id="restoration_log_act" model="ir.actions.act_window">
+            <field name="name">Restoration Log</field>
+            <field name="res_model">restoration.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="restoration_log_tree_view"/>
+        </record>
+
+        <record id="restoration_log_tree_act" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="restoration_log_tree_view"/>
+            <field name="act_window_id" ref="restoration_log_act"/>
+        </record>
+
+        <record id="restoration_log_form_act" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="restoration_log_form_view"/>
+            <field name="act_window_id" ref="restoration_log_act"/>
+        </record>
+
+        <!-- Menuitems to show db_automated_restoration -->
+        <menuitem id="menu_db_automated_restoration" name="Automated Database Restoration" parent="base.menu_custom"/>
+        <menuitem id="menu_restoration_config_act" action="restoration_config_act" parent="menu_db_automated_restoration" groups="base.group_user"/>
+        <menuitem id="menu_restoration_log_act" sequence="15" action="restoration_log_act" parent="menu_db_automated_restoration" groups="base.group_user"/>
+
+    </data>
+</openerp>

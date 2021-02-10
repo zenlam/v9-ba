@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_view_sale_config_settings_form_pos">
+            <field name="">Point of sale config</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="sale.view_company_inherit_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='sale_grp']/.." position="before">
+                    <group name="point_of_sale_gr" string="Point of sale">
+                        <group>
+                            <field name="rounding_product_id" required="True"/>
+                        </group>
+                        <group></group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

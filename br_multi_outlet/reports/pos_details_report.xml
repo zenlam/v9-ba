@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="pos_details_report_inherit">
+            <field name="name">POS Details</field>
+            <field name="model">pos.details</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_details"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_ids']" position="replace">
+                    <group>
+                        <field name="user_ids" widget="many2many_tags" string="Users" on_change="onchange_user_ids(user_ids)"/>
+                        <field name="outlet_ids" string="Outlets" widget="many2many_tags"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <template id="br_report_detailsofsales" inherit_id="point_of_sale.report_detailsofsales">
+            <xpath expr="//div[@class='row mt32']/div[2]" position="after">
+                <div class="col-xs-3">
+                    <strong>Outlets</strong>:<br/>
+                    <span t-esc="get_outlet_names(data['form']['outlet_ids']) or 'All'"/>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</openerp>

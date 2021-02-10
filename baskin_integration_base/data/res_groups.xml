@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Group to view technical setting of third party -->
+        <record id="group_third_party_technical_setting" model="res.groups">
+            <field name="name">Third Party</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+
+    </data>
+</openerp>

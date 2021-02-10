@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_account_id_purchase_form_inherit" model="ir.ui.view">
+            <field name="name">br.view.account.purchase.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="account_id" readonly='1'/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form/sheet//field[@name='account_analytic_id']" position="before">
+                    <field name="account_id" readonly='1'/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+		    <field name="context">{'search_default_todo':1, 'readonly_by_pass': ['account_id']}</field>
+		</record>
+		<record id="purchase.purchase_form_action" model="ir.actions.act_window">
+			<field name="context">{'search_default_todo':1, 'show_purchase': True, 'readonly_by_pass': ['account_id']}</field>
+		</record>
+
+    </data>
+</openerp>

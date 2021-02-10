@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_category_property_form_view_inherit_v1" model="ir.ui.view">
+            <field name="name">br_view_category_property_form_view_inherit_v1</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock_account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_stock_journal']" position="after">
+                    <field name="property_stock_account_loss_categ_id" attrs="{'invisible': [('is_stockable_consumable', '=', False)], 'required': [('is_stockable_consumable', '=', True)]}"/>
+                    <field name="property_stock_account_excess_categ_id" attrs="{'invisible': [('is_stockable_consumable', '=', False)], 'required': [('is_stockable_consumable', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

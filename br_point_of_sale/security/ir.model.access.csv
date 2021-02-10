@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_br_pos_order_line_master,access_br_pos_order_line_master,model_br_pos_order_line_master,point_of_sale.group_pos_user,1,1,1,1
+access_hanel_pos_terminal,access_hanel_pos_terminal,model_hanel_pos_terminal,point_of_sale.group_pos_user,1,0,0,0
+access_hanel_pos_manager_terminal,access_hanel_pos_manager_terminal,model_hanel_pos_terminal,point_of_sale.group_pos_manager,1,1,1,1
+access_z_report,access_z_report,model_z_report,point_of_sale.group_pos_user,1,0,1,0
+access_e_wallet_platform_user,access_e_wallet_platform_user,model_e_wallet_platform,point_of_sale.group_pos_user,1,1,0,0
+access_e_wallet_platform_manager,access_e_wallet_platform_manager,model_e_wallet_platform,point_of_sale.group_pos_manager,1,1,1,1

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="stock_inventory_movement_form" model="ir.ui.view">
+            <field name="name">inventory.movement.report.form</field>
+            <field name="model">inventory.movement.report</field>
+            <field name="arch" type="xml">
+                <form string="Inventory Movement">
+                    <group>
+	                	<group>
+	                		<field name="location_type"/>
+	                		<field name="movement_type"/>
+	                    	<field name="report_breakdown"/>
+	                        <field name="start_date" required="1"/>
+	                        <field name="end_date" attrs="{'invisible':[('report_breakdown','=','by_location')],
+	                        							   'required':[('report_breakdown','=','by_period')]}"/>
+
+
+							<label for="hq_wh" string="Filter" attrs="{'invisible':['|',('location_type','=','specific'),('location_type','=',False)]}"/>
+							<div name="hq_wh__outlet_wh" attrs="{'invisible':['|',('location_type','=','specific'),('location_type','=',False)]}">
+
+								<field name="hq_wh" />
+								HQ Warehouses
+
+								<div class="oe_inline"  style="display: inline;" >
+									<field name="outlet_wh" />
+								</div>
+								Outlet Warehouses
+							</div>
+
+
+
+	                        <field name="warehouse_ids" widget="many2many_tags"
+	                        	attrs="{'required':[('location_type','=','fixed')],
+	                        			'invisible':['|',('location_type','=','specific'),('location_type','=',False)]}"/>
+	                        <field name="location_ids" widget="many2many_tags"
+	                        	attrs="{'required':[('location_type','=','fixed')],
+	                        			'invisible':['|','|',('warehouse_ids','=',[]),('location_type','=','specific'),('location_type','=',False)]}"/>
+
+							<label for="from_hq_wh" string="From WH Filter" attrs="{'invisible':['|','|',('movement_type','=',False),('location_type','=','fixed'),('location_type','=',False)]}"/>
+							<div name="from_hq_wh_from_outlet_wh" attrs="{'invisible':['|','|',('movement_type','=',False),('location_type','=','fixed'),('location_type','=',False)]}">
+
+								<field name="from_hq_wh" />
+								HQ Warehouses
+
+								<div class="oe_inline"  style="display: inline;" >
+									<field name="from_outlet_wh" />
+								</div>
+								Outlet Warehouses
+							</div>
+							<!-- bellow four are all source for in and out both -->
+            				<field name="out_source_warehouse_id"  
+	                        	attrs="{'required':[('movement_type','=','outgoing'),('location_type','=','specific')],
+	                        			'invisible':['|','|',('movement_type','=','incoming'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+	                        <field name="out_source_location_ids" widget="many2many_tags" 
+	                        	attrs="{'required':[('movement_type','=','outgoing'),('location_type','=','specific')],
+	                        			'invisible':['|','|','|',('out_source_warehouse_id','=',False),('movement_type','=','incoming'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+
+
+
+	                        <field name="in_source_warehouse_ids" widget="many2many_tags" 
+	                        	attrs="{'required':[('movement_type','=','incoming'),('location_type','=','specific')],
+	                        			'invisible':['|','|',('movement_type','=','outgoing'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+	                        <field name="in_source_location_ids" widget="many2many_tags" 
+	                        	attrs="{'required':[('movement_type','=','incoming'),('location_type','=','specific')],
+	                        			'invisible':['|','|','|',('in_source_warehouse_ids','=',[]),('movement_type','=','outgoing'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+
+
+							<label for="to_hq_wh" string="To WH Filter" attrs="{'invisible':['|','|',('movement_type','=',False),('location_type','=','fixed'),('location_type','=',False)]}"/>
+							<div name="to_hq_wh_to_outlet_wh" attrs="{'invisible':['|','|',('movement_type','=',False),('location_type','=','fixed'),('location_type','=',False)]}">
+
+								<field name="to_hq_wh" />
+								HQ Warehouses
+
+								<div class="oe_inline"  style="display: inline;" >
+									<field name="to_outlet_wh" />
+								</div>
+								Outlet Warehouses
+							</div>
+							<!-- bellow four are all destination for in and out both -->
+							<field name="in_destination_warehouse_id"
+	                        	attrs="{'required':[('movement_type','=','incoming'),('location_type','=','specific')],
+	                        			'invisible':['|','|',('movement_type','=','outgoing'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+	                        <field name="in_destination_location_ids" widget="many2many_tags" 
+	                        	attrs="{'required':[('movement_type','=','incoming'),('location_type','=','specific')],
+	                        			'invisible':['|','|','|',('in_destination_warehouse_id','=',False),('movement_type','=','outgoing'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+
+							<field name="out_destination_warehouse_ids" widget="many2many_tags"
+	                        	attrs="{'required':[('movement_type','=','outgoing'),('location_type','=','specific')],
+	                        			'invisible':['|','|',('movement_type','=','incoming'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+	                        <field name="out_destination_location_ids" widget="many2many_tags"
+	                        	attrs="{'required':[('movement_type','=','outgoing'),('location_type','=','specific')],
+	                        			'invisible':['|','|','|',('out_destination_warehouse_ids','=',[]),('movement_type','=','incoming'),('movement_type','=',False),('location_type','=','fixed')]}"/>
+	                        
+            				<field name="period" attrs="{'invisible':[('report_breakdown','=','by_location')],
+                    								     'required':[('report_breakdown','=','by_period')]}"/>
+                        	<field name="uom_type"/>
+	                    </group>
+	                	<group>
+							<label for="type_stockable" string="Product Type" />
+							<div name="to_hq_wh_to_outlet_wh" >
+
+								<field name="type_stockable" />
+								Stockable
+								<br/>
+
+								<field name="type_consumable" />
+								Consumable
+								<br/>
+
+								<field name="type_service" />
+								Service
+							</div>
+	                        <field name="product_categ_ids" widget="many2many_tags"/>
+	                        <field name="product_ids" widget="many2many_tags"/>
+							<field name="display_expiry_date" attrs="{'invisible':[('group_product_categ','=','yes')]}"/>
+                        	<field name="group_product_categ"/>
+							<field name="base_on_date"/>
+	                    </group>
+                    </group>
+                    <footer>
+                        <button string="Print" name="action_print" type="object" icon="gtk-ok"/>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_stock_inventory_movement" model="ir.actions.act_window">
+            <field name="name">Stock Inventory movement</field>
+            <field name="res_model">inventory.movement.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_inventory_movement_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 
+            id="stock_inventory_movement_menu"
+            name="Inventory Movement Report" 
+            action="action_stock_inventory_movement"
+            parent="stock.menu_warehouse_report"/>
+
+        <report id="stock_inventory_movement_report_xls"
+                model="inventory.movement.report"
+                string="Inventory Movement Report"
+                report_type="xlsx"
+                name="inventory_movement_report.stock_inventory_movement_report"
+                file="inventory_movement_report.stock_inventory_movement_report"
+                attachment_use="False" />
+    </data>
+</openerp>
+

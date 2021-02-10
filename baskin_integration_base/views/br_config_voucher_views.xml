@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Discount List Code: Voucher Tree View Inherit -->
+        <record id="baskin_voucher_tree_view_inherit" model="ir.ui.view">
+            <field name="name">Baskin Voucher Tree Inherit</field>
+            <field name="model">br.config.voucher</field>
+            <field name="inherit_id" ref="br_discount.br_config_voucher_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_uid']" position="after">
+                    <field name="member_code" readonly="1"/>
+                    <field name="batch_number" readonly="1"/>
+                    <field name="shared_voucher" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

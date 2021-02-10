@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_purchase_requisition_form" model="ir.ui.view">
+            <field name="name">br.view.purchase.requisition.form.inherit</field>
+            <field name="model">purchase.requisition</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_uom_id']" position="attributes">
+                    <attribute name="context">{'product_id':product_id}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='purchase_ids']/tree/button[@name='button_approve']" position="attributes">
+                    <attribute name="groups">purchase.group_purchase_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_purchase_form_inherit" model="ir.ui.view">
+            <field name="name">br.view.purchase.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+                    <attribute name="context">{'product_id':product_id, 'supplier_id': parent.partner_id}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form/sheet/group/group/div/field[@name='product_uom']" position="attributes">
+                    <attribute name="context">{'product_id':product_id, 'supplier_id': parent.partner_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

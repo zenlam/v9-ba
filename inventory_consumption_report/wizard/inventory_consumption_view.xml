@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="inventory_consumption_form" model="ir.ui.view">
+            <field name="name">inventory.consumption.report.form</field>
+            <field name="model">inventory.consumption.report</field>
+            <field name="arch" type="xml">
+                <form string="Inventory Consumption Report">
+                    <group>
+	                	<group>
+	                    	<field name="report_breakdown"/>
+	                        <field name="start_date" required="1"/>
+	                        <field name="end_date" attrs="{'invisible':[('report_breakdown','=','by_location')],
+	                        							   'required':[('report_breakdown','=','by_period')]}"/>
+                        	<field name="transaction_type_ids" widget="many2many_tags"/>
+	                        <field name="warehouse_ids" widget="many2many_tags" required="1"/>
+	                        <field name="location_ids" widget="many2many_tags"/>
+	                    	<field name="period" attrs="{'invisible':[('report_breakdown','=','by_location')],
+                    								     'required':[('report_breakdown','=','by_period')]}"/>
+                        	<field name="uom_type"/>
+	                    </group>
+	                	<group>
+	                        <field name="product_categ_ids" widget="many2many_tags"/>
+	                        <field name="product_ids" widget="many2many_tags"/>
+							<field name="display_expiry_date" attrs="{'invisible':[('group_product_categ','=','yes')]}"/>
+                        	<field name="group_product_categ"/>
+	                    </group>
+                    </group>
+                    <footer>
+                        <button string="Print" name="action_print" type="object" icon="gtk-ok"/>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_inventory_consumption" model="ir.actions.act_window">
+            <field name="name">Inventory Consumption</field>
+            <field name="res_model">inventory.consumption.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="inventory_consumption_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 
+            id="inventory_consumption_menu"
+            name="Inventory Consumption Report" 
+            action="action_inventory_consumption"
+            parent="stock.menu_warehouse_report"/>
+
+        <report id="inventory_consumpltion_report_xls"
+                model="inventory.consumption.report"
+                string="Inventory Consumption Report"
+                report_type="xlsx"
+                name="inventory_consumption_report.inventory_consumption_report"
+                file="inventory_consumption_report.inventory_consumption_report"
+                attachment_use="False" />
+    </data>
+</openerp>
+

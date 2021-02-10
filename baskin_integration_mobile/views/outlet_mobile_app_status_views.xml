@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Outlet Mobile App Status Tree View -->
+        <record id="outlet_mobile_app_status_tree_view" model="ir.ui.view">
+            <field name="name">outlet.mobile.app.status.tree.view</field>
+            <field name="model">outlet.mobile.app.status</field>
+            <field name="arch" type="xml">
+                <tree string="Outlet Status" editable="bottom">
+                    <field name="name"/>
+                    <field name="visible_in_apps"/>
+                    <field name="allow_receive_order"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Outlet Mobile App Status Window Action -->
+        <record id="outlet_mobile_app_status_action" model="ir.actions.act_window">
+            <field name="name">Outlet Status</field>
+            <field name="res_model">outlet.mobile.app.status</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="outlet_mobile_app_status_tree_view"/>
+        </record>
+
+        <!-- Outlet Mobile App Status Menuitem -->
+        <menuitem id="outlet_mobile_app_status_menu" name="Outlet Status"
+                  parent="br_multi_outlet.br_menu_config_outlets"
+                  action="outlet_mobile_app_status_action"
+                  sequence="20"/>
+
+    </data>
+</openerp>

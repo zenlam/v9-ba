@@ -1,0 +1,6 @@
+import stock_backorder_confirmation
+import stock_mass_transfer
+import stock_mass_edit
+import stock_transfer_dispute
+import stock_immediate_transfer
+import transfer_cancel_confirmation

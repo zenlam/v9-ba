@@ -1,0 +1,14 @@
+<openerp>
+    <data>
+        <record id="br_view_picking_type_form_is_dispute" model="ir.ui.view">
+            <field name="name">Picking Type Form Inherit is dispute</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.view_picking_type_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='barcode_nomenclature_id']" position="after">
+                    <field name="is_dispute"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

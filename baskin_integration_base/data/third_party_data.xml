@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Third Party: Baskin-Robbins -->
+        <record id="third_party_baskin_robbins" model="third.party">
+            <field name="name">Baskin-Robbins</field>
+            <field name="code">BR</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="is_baskin" eval="True"/>
+        </record>
+
+    </data>
+</openerp>

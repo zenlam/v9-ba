@@ -1,0 +1,703 @@
+<openerp>
+	<data>
+		   
+		<menuitem id="menu_warehouse_processing" 
+			name="Warehouse Processing" sequence="20" 
+			parent="menu_logistics_ops_check"/>
+		
+		<menuitem id="menu_delivery_today_past" 
+			name="Delivery today &amp; past" sequence="10" 
+			parent="menu_warehouse_processing"/>
+		
+		
+		<record id="action_delivery_today_past_WIG" model="ir.actions.act_window">
+            <field name="name">WIG</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','iglo'),
+            			    	  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['batu_caves','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>		
+				
+		<menuitem id="menu_delivery_today_past_WIG" 
+			name="WIG" sequence="10"
+			action="action_delivery_today_past_WIG"
+			parent="menu_delivery_today_past"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_today_past_WBC" model="ir.actions.act_window">
+            <field name="name">WBC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','batu_caves'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_delivery_today_past_WBC" 
+			name="WBC" sequence="20" 
+			action="action_delivery_today_past_WBC"
+			parent="menu_delivery_today_past"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_today_past_WHS" model="ir.actions.act_window">
+            <field name="name">WHS</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','harus_saujana'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_today_past_WHS" 
+			name="WHS" sequence="30" 
+			action="action_delivery_today_past_WHS"
+			parent="menu_delivery_today_past"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_today_past_WHC" model="ir.actions.act_window">
+            <field name="name">WHC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','hypercold_logistic'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','harus_saujana']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_today_past_WHC" 
+			name="WHC" sequence="40" 
+			action="action_delivery_today_past_WHC"
+			parent="menu_delivery_today_past"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_today_past_WLNA" model="ir.actions.act_window">
+            <field name="name">WLNA</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','wlna'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            				 	  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_today_past_WLNA" 
+			name="WLNA" sequence="50" 
+			action="action_delivery_today_past_WLNA"
+			parent="menu_delivery_today_past"
+			groups="base.group_singapor"/>
+		
+		<!-- Delivery Tomorrow part ================================================= -->
+		
+		<menuitem id="menu_delivery_tomorrow" 
+			name="Delivery Tomorrow" sequence="20" 
+			parent="menu_warehouse_processing"/>
+		
+		
+		<record id="action_delivery_tomorrow_WIG" model="ir.actions.act_window">
+            <field name="name">WIG</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','iglo'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['batu_caves','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>		
+				
+		<menuitem id="menu_delivery_tomorrow_WIG" 
+			name="WIG" sequence="10"
+			action="action_delivery_tomorrow_WIG"
+			parent="menu_delivery_tomorrow"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_tomorrow_WBC" model="ir.actions.act_window">
+            <field name="name">WBC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','batu_caves'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_delivery_tomorrow_WBC" 
+			name="WBC" sequence="20" 
+			action="action_delivery_tomorrow_WBC"
+			parent="menu_delivery_tomorrow"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_tomorrow_WHS" model="ir.actions.act_window">
+            <field name="name">WHS</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','harus_saujana'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_tomorrow_WHS" 
+			name="WHS" sequence="30" 
+			action="action_delivery_tomorrow_WHS"
+			parent="menu_delivery_tomorrow"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_tomorrow_WHC" model="ir.actions.act_window">
+            <field name="name">WHC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','hypercold_logistic'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','harus_saujana']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_tomorrow_WHC" 
+			name="WHC" sequence="40" 
+			action="action_delivery_tomorrow_WHC"
+			parent="menu_delivery_tomorrow"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_tomorrow_WLNA" model="ir.actions.act_window">
+            <field name="name">WLNA</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','wlna'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_tomorrow_WLNA" 
+			name="WLNA" sequence="50" 
+			action="action_delivery_tomorrow_WLNA"
+			parent="menu_delivery_tomorrow"
+			groups="base.group_singapor"/>
+		
+
+				
+				
+		<!-- Delivery 2 - 3 day later part ================================================= -->
+		
+		<menuitem id="menu_delivery_2_3day" 
+			name="Delivery 2-3D later" sequence="30" 
+			parent="menu_warehouse_processing"/>
+		
+		
+		<record id="action_delivery_2_3day_WIG" model="ir.actions.act_window">
+            <field name="name">WIG</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','iglo'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['batu_caves','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>		
+				
+		<menuitem id="menu_delivery_2_3day_WIG" 
+			name="WIG" sequence="10"
+			action="action_delivery_2_3day_WIG"
+			parent="menu_delivery_2_3day"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_2_3day_WBC" model="ir.actions.act_window">
+            <field name="name">WBC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','batu_caves'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_delivery_2_3day_WBC" 
+			name="WBC" sequence="20" 
+			action="action_delivery_2_3day_WBC"
+			parent="menu_delivery_2_3day"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_2_3day_WHS" model="ir.actions.act_window">
+            <field name="name">WHS</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','harus_saujana'),
+            				      ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','hypercold_logistic']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_2_3day_WHS" 
+			name="WHS" sequence="30" 
+			action="action_delivery_2_3day_WHS"
+			parent="menu_delivery_2_3day"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_2_3day_WHC" model="ir.actions.act_window">
+            <field name="name">WHC</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','hypercold_logistic'),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_maping_name','not in',['iglo','batu_caves','harus_saujana']),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_2_3day_WHC" 
+			name="WHC" sequence="40" 
+			action="action_delivery_2_3day_WHC"
+			parent="menu_delivery_2_3day"
+			groups="base.group_malaysia"/>
+			
+		<record id="action_delivery_2_3day_WLNA" model="ir.actions.act_window">
+            <field name="name">WLNA</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','=','wlna'),
+            				      ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+        		]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+				
+		<menuitem id="menu_delivery_2_3day_WLNA" 
+			name="WLNA" sequence="50" 
+			action="action_delivery_2_3day_WLNA"
+			parent="menu_delivery_2_3day"
+			groups="base.group_singapor"/>		
+				
+		<!--    Inter-Warehouse =============================== -->
+		<record id="action_inter_warehouse" model="ir.actions.act_window">
+            <field name="name">Inter-warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic']),
+            					  '|',('dest_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic']),
+            					  ('dest_location_is_production','=',True)
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_inter_warehouse" 
+			name="Inter-warehouse" sequence="25" 
+			action="action_inter_warehouse"
+			parent="menu_logistics_ops_check"/>		
+				
+		<!--    Warehouse Put in Transit =============================== -->
+		<record id="action_warehouse_to_transit" model="ir.actions.act_window">
+            <field name="name">Warehouse Put in Transit</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_group_src_location' : 1,
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processed': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_warehouse_to_transit" 
+			name="Warehouse Put in Transit" sequence="30" 
+			action="action_warehouse_to_transit"
+			parent="menu_logistics_ops_check"/>
+		
+
+		<!-- Warehouse Dispute =============================== -->
+		<record id="action_warehouse_dispute" model="ir.actions.act_window">
+            <field name="name">Warehouse Dispute</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('is_dispute_picking','=',True),
+            					  '|',
+            					  ('dest_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            					  ('src_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna'])]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_yesterday_and_before': 1,
+            		'search_default_not_done_not_cancel': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_warehouse_dispute" 
+			name="Warehouse Dispute" sequence="40" 
+			action="action_warehouse_dispute"
+			parent="menu_logistics_ops_check"/>	
+				
+		
+				
+		<!-- Warehouse Waiting Availability =============================== -->
+		<record id="action_warehouse_waiting_availability" model="ir.actions.act_window">
+            <field name="name">Warehouse Waiting Availability</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            					  ('dest_location_usage','!=','customer')]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_waiting_partial': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_warehouse_waiting_availability" 
+			name="Warehouse Waiting Availability" sequence="50" 
+			action="action_warehouse_waiting_availability"
+			parent="menu_logistics_ops_check"/>	
+
+	</data>
+</openerp>

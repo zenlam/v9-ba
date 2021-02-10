@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="product_template_form_view_inherit_extend">
+            <field name="name">product.template.form.inherit.extend</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="purchase_requisition.product_template_form_view_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tracking']" position="replace"/>
+                <xpath expr="//field[@name='purchase_requisition']" position="after">
+                    <field name="is_default_ordering_uom" string="Standard UOM as Ordering UOM?"/>
+                    <field name="tracking" on_change="onchange_tracking(tracking)"
+                           widget="radio" attrs="{'invisible':[('type', 'in', ['service', 'digital'])]}"
+                           groups="stock.group_production_lot"/>
+                    <field name="custom_code"/>
+                    <field name="duty"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_product_form_expiry_extend">
+            <field name="name">product.normal.form.extend</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product_expiry.view_product_form_expiry" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='expiry_and_lots']" position="replace"/>
+                <xpath expr="//group[@name='stock_property']" position="before">
+                    <group name="expiry_and_lots" groups="stock.group_production_lot">
+                        <field name="life_time" />
+                        <field name="use_time" />
+                        <field name="removal_time" />
+                        <field name="alert_time" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+<!--        <record id="baskin_product_template_form_view_inherit" model="ir.ui.view">-->
+<!--            <field name="name">br.product.template.form.inherit</field>-->
+<!--            <field name="model">product.template</field>-->
+<!--            <field name="inherit_id" ref="product.product_template_form_view"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <field name="uom_po_id" position="after">-->
+<!--                    <field name="is_default_ordering_uom" />-->
+<!--                </field>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="br_stock_request_transfer_form_view_inherit" model="ir.ui.view">
+        	<field name="name">Stock Request Transfer Form View</field>
+            <field name="model">br.stock.request.transfer</field>
+            <field name="inherit_id" ref="br_stock_request.br_stock_request_transfer_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']" position="attributes">
+                    <attribute name="context">{'from_request_uom': True}</attribute>
+                </xpath>
+            	<xpath expr="//field[@name='line_ids']/tree/field[@name='uom_id']" position="attributes">
+            		<attribute name="context">{'product_id': product_id, 'uom_type': uom_type, 'from_request_uom': True}</attribute>
+            	</xpath>
+            </field>
+        </record>
+
+	</data>
+</openerp>

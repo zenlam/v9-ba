@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_tax_code_view" model="ir.ui.view">
+			<field name="name">account.tax.code.from</field>
+			<field name="model">account.tax.code</field>
+			<field name="arch" type="xml">
+                <form string="Account Tax Code">
+                    <group col="4" colspan="2">
+                      <field name="name"/>
+                      <field name="code"/>
+                      <field name="parent_id"/>
+                      <field name="company_id" groups="base.group_multi_company"/>
+                      <field name="sequence"/>
+                    </group>
+                 </form>
+            </field>
+		</record>
+
+    <record id="view_account_tax_code_tree" model="ir.ui.view">
+      <field name="name">account.tax.code.tree.simple</field>
+      <field name="model">account.tax.code</field>
+      <field name="arch" type="xml">
+          <tree string="Account Tax Code" toolbar="1">
+              <field name="name"/>
+              <field name="code"/>
+              <field name="parent_id"/>
+          </tree>
+      </field>
+    </record>
+
+		<record id="action_account_tax_code_from" model="ir.actions.act_window">
+      <field name="name">Account Tax Code</field>
+      <field name="res_model">account.tax.code</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="view_account_tax_code_tree"/>
+    </record>
+
+    <record id="account_tax_from_inherit" model="ir.ui.view">
+        <field name="name">Chart of Tax</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="tax_code_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_tax_code_tree" model="ir.ui.view">
+      <field name="name">account.tax.code.tree</field>
+      <field name="model">account.tax.code</field>
+      <field name="field_parent">child_ids</field>
+      <field name="arch" type="xml">
+          <tree string="Account Tax Code" toolbar="1">
+              <field name="sequence" widget="handle"/>
+              <field name="name"/>
+              <field name="code"/>
+              <field name="tax_amount"/>
+              <field name="company_id" groups="base.group_multi_company"/>
+              <field name="parent_id" invisible="1"/>
+          </tree>
+      </field>
+    </record>
+
+   <!--  <record id="action_tax_code_tree" model="ir.actions.act_window">
+      <field name="name">Chart of Taxes</field>
+      <field name="res_model">account.tax.code</field>
+      <field name="domain">[('parent_id','=',False)]</field>
+      <field name="view_type">tree</field>
+      <field name="view_id" ref="view_tax_code_tree"/>
+    </record> -->
+
+        <menuitem id="account_finance_menu_root" name="Finance" parent="account.menu_finance" sequence="4" />
+
+        
+
+        <menuitem id="account_tax_code_menu" name="Tax codes"
+                  parent="account.account_account_menu"
+                  action="action_account_tax_code_from" sequence="2"/>
+	</data>
+</openerp>

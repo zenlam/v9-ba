@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--Purchases > Purchase-->
+        <record model="ir.ui.menu" id="purchase.menu_purchase_form_action">
+            <field name="name">Purchase Order</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase_requisition.menu_purchase_requisition_pro_mgt">
+            <field name="name">Purchase Requisition</field>
+            <field name="sequence">6</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_purchase_rfq">
+            <field name="name">Requests for Quotation</field>
+            <field name="sequence">9</field>
+        </record>
+
+        <!--Purchases > Product-->
+        <menuitem id="menu_purchase_product"
+                  name="Product"
+                  parent="base.menu_purchase_root"
+                  sequence="3"/>
+
+        <record model="ir.ui.menu" id="purchase.menu_procurement_partner_contact_form">
+            <field name="parent_id" ref="menu_purchase_product"/>
+            <field name="name">Product</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record model="ir.ui.menu" id="base.menu_procurement_management_supplier_name">
+            <field name="parent_id" ref="menu_purchase_product"/>
+            <field name="name">Vendor</field>
+            <field name="sequence">6</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_product_pricelist_action2_purchase">
+            <field name="parent_id" ref="menu_purchase_product"/>
+            <field name="name">Supplier Pricelist</field>
+            <field name="sequence">9</field>
+        </record>
+
+        <!--Purchases > Control-->
+        <record model="ir.ui.menu" id="purchase.menu_action_picking_tree_in_move">
+            <field name="name">Incoming Product</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_procurement_management_pending_invoice">
+            <field name="name">Vendor Bill</field>
+        </record>
+
+        <!--Purchase > Configuration-->
+        <record model="ir.ui.menu" id="purchase.menu_product_category_config_purchase">
+            <field name="parent_id" ref="purchase.menu_purchase_config"/>
+            <field name="name">Product Category</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_purchase_uom_form_action">
+            <field name="parent_id" ref="purchase.menu_purchase_config"/>
+            <field name="name">Units of Measure</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_purchase_uom_categ_form_action">
+            <field name="parent_id" ref="purchase.menu_purchase_config"/>
+            <field name="name">Unit of Measure Category</field>
+        </record>
+
+        <record model="ir.ui.menu" id="purchase.menu_purchase_general_settings">
+            <field name="sequence">20</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequences for sale.res.partner -->
+    <record id="seq_sale_partner" model="ir.sequence">
+        <field name="name">Partner Internal ID</field>
+        <field name="code">sale.res.partner.partner</field>
+        <field name="prefix">PARTNER/</field>
+        <field name="padding">6</field>
+    </record>
+
+    <record id="view_partner_bank_form" model="ir.ui.view">
+        <field name="name">res.partner.bank.form</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="swift_code"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_view" model="ir.ui.view">
+        <field name="name">res.partner.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='function']" position="after">
+                <field name="business_registration_no" attrs="{'invisible': [('company_type', '!=', 'company')],
+                'required': [('company_type', '=', 'company')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='type']" position="before">
+                <field name="sequence_no" string="Partner ID"/>
+            </xpath>
+            <xpath expr="//field[@name='street']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='city']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='state_id']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='zip']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='country_id']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_payment_term_view" model="ir.ui.view">
+        <field name="name">res.partner.payment.term.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='property_payment_term_id']" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='property_supplier_payment_term_id']" position="attributes">
+                <attribute name="attrs">{'required': [('supplier', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
++</odoo>

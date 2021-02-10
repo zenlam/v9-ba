@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <!--<record id="br_view_production_lot_form" model="ir.ui.view">-->
+            <!--<field name="name">br.stock.productin.lot.form</field>-->
+            <!--<field name="model">stock.production.lot</field>-->
+            <!--<field name="inherit_id" ref="stock.view_production_lot_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//field[@name='quant_ids']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//field[@name='quant_ids']" position="after">-->
+                    <!--<field name="quant_ids_filtered">-->
+                        <!--<tree string="Stock Moves">-->
+                            <!--<field name="name"/>-->
+                            <!--<field name="product_id"/>-->
+                            <!--<field name="qty"/>-->
+                            <!--<field name="location_id" groups="stock.group_locations"/>-->
+                        <!--</tree>-->
+                    <!--</field>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+    </data>
+</openerp>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <menuitem id="menu_point_of_sale_menu"
+                  parent="point_of_sale.menu_point_root" name="Menu"
+                  sequence="50"/>
+
+        <menuitem id="br_menu_config_menu_names" name="Menu" parent="point_of_sale.menu_point_config_product" sequence="8" />
+        <menuitem id="br_menu_category_menu" name="Menu Category" parent="br_menu_config_menu_names" sequence="2" action="br_menu_category_action"/>
+        <menuitem id="menu_product_master" name="Menu Name" parent="menu_point_of_sale_menu" sequence="1" action="br_product_menu_action"/>
+        <menuitem action="point_of_sale.product_pos_category_action"
+                  id="point_of_sale.menu_product_pos_category"
+                  name="POS Category"
+                  parent="br_menu_config_menu_names" sequence="3" />
+
+        <menuitem id="point_of_sale_pricelist"
+                  parent="menu_point_of_sale_menu"
+                  name="Pricelist"
+                  sequence="2"
+                  action="product.product_pricelist_action2"
+                  groups="point_of_sale.group_pos_manager,point_of_sale.group_pos_user"/>
+
+        <record model='ir.ui.menu' id='point_of_sale.menu_pos_products'>
+            <field name="parent_id" ref="menu_point_of_sale_menu"/>
+            <field name="name">Product</field>
+            <field name="sequence">3</field>
+        </record>
+    </data>
+</openerp>

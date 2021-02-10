@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="stock_inventory_damage_wizard_form" model="ir.ui.view">
+            <field name="name">stock.inventory.damage.wizard.form</field>
+            <field name="model">stock.inventory.damage.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Inventory Report">
+                    <group>
+                        <label for="hq_wh" string="Filter"/>
+							<div name="hq_wh__outlet_wh">
+
+								<field name="hq_wh"/>
+								HQ Warehouses
+
+								<div class="oe_inline"  style="display: inline;">
+									<field name="outlet_wh"/>
+								</div>
+								Outlet Warehouses
+							</div>
+                        <field name="warehouse_ids" widget="many2many_tags"/>
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="product_categ_ids" widget="many2many_tags" context="{'from_wizard': True}" required="True"/>
+                        <field name="product_ids" widget="many2many_tags" context="{'product_categ_ids': product_categ_ids}"/>
+                        <!-- <field name="is_lot" /> -->
+                        <!-- <field name="report_type" /> -->
+                        <!-- <field name="test" /> -->
+                        <field name="uom_type"/>
+                    </group>
+                    <field name="inv_categ_uom_ids" context="{'parent_categ_ids': product_categ_ids}">
+                        <tree string='UoM Type' editable="top">
+                            <field name="uom_categ_id" context="{'parent_categ_ids': parent.product_categ_ids}" options="{'no_create_edit':True, 'no_create':True}"/>
+                            <field name="uom_type" />
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Print" name="action_print" type="object" icon="gtk-ok"/>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_stock_inventory_damage_wizard" model="ir.actions.act_window">
+            <field name="name">Inventory Damage Report</field>
+            <field name="res_model">stock.inventory.damage.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_inventory_damage_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 
+            id="stock_inventory_damage_wizard_menu"
+            name="Inventory Damage Report"
+            action="action_stock_inventory_damage_wizard"
+            parent="stock.menu_warehouse_report"/>
+
+        <report id="stock_inventory_wizard_damage_report"
+                model="stock.inventory.damage.wizard"
+                string="Inventory Damage Report"
+                report_type="xlsx"
+                name="stock_inventory_adj.stock_inventory_adj_damage_report"
+                file="stock_inventory_adj.stock_inventory_adj_damage_report"
+                attachment_use="False" />
+
+    </data>
+</openerp>
+

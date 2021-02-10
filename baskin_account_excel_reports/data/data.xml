@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+    	
+    	<record id="gl_main_table" model="gl.archive.table">
+            <field name="name">gl_consolidated_data</field>
+        </record>
+        
+        <record id="gl_period_date_record1" model="gl.period">
+            <field name="date_from" eval="DateTime.today() - timedelta(days=365)"></field>
+            <field name="date_to" eval="DateTime.today()"></field>
+            <field name="table_id" eval="ref('gl_main_table')"></field>
+        </record>
+        
+    </data>
+</openerp>

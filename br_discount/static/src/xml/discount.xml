@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+     <t t-name="DiscountButton">
+        <div class='control-button js_discount' style="display:none">
+            <i class='fa fa-tag' /> Discount
+        </div>
+    </t>
+
+    <t t-name="PromotionButton">
+        <div class='control-button js_discount'>
+            <i class='fa fa-tag' /> Discount
+        </div>
+    </t>
+    <t t-name="VoucherButton">
+        <div class='control-button js_voucher'>
+            <input id="div_voucher" style="width: 100%; height: 25px;"/>
+        </div>
+    </t>
+
+    <!--Truongnn-->
+    <t t-name="SelectionPromotionPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-selection">
+                <p class="title"><t t-esc=" widget.options.title || 'Select' " /></p>
+                <div class='selection scrollable-y touch-scrollable'>
+                    <ul class="promotion-popup">
+                        <t t-foreach="widget.list || []" t-as="item">
+                            <li class='selection-item selection-promotion-item' t-att-data-item-index='item_index' t-att-data-promotion-id="item.id">
+                                <div class="promotion-img">
+                                    <img t-att-src='image_url' />
+                                </div>
+                                <div class="promotion-name">
+                                    <t t-esc="item.label"/>
+                                </div>
+                                <t t-if="item.instruction != false" >
+                                    <div class="promotion-instruction">
+                                        <t t-esc="item.instruction"/>
+                                    </div>
+                                </t>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-extend="OrderWidget">
+        <t t-jquery=".order" t-operation="append">
+             <div class="summary clearfix">
+                <div>
+                    <div class="voucher-list"></div>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="ProductScreenWidget">
+        <t t-jquery="div.rightpane" t-operation="append">
+            <div class="discount-promotion-screen screen touch-scrollable oe_hidden">
+                <ul class="br-promotion-tabs">
+                    <li t-attf-class="tab-promotion-header">
+                        <div class="top-content" id="myTop">
+                            <span class='button back promotion'>
+                            <i class='fa fa-angle-double-left'></i>
+                            Back
+                            </span>
+                            <table >
+                            <tr>
+                                <td width="33%">Bill Discount</td>
+                                <td width="33%">Product Discount</td>
+                                <td width="33%">Bundle Discount</td>
+                            </tr>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
+                <div class="layout-promotion-placeholder">
+                <table class="layout-promotion-table">
+                        <tr class="tr-promotion-content">
+                            <td width="33%" class="discount-promotion-content">
+                                <div class="scroll-promotion-voucher">
+                                    <div class="bill-promotion-content">
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="33%" class="discount-promotion-content" >
+                                <div class="scroll-promotion-voucher">
+                                    <div class="product-promotion-content">
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td width="33%" class="discount-promotion-content">
+                                <div class="scroll-promotion-voucher">
+                                    <div class="bundle-promotion-content">
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                </table>
+            </div>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="CategoryPromotion">
+        <span class='category-promotion' t-att-data-promotion-id="promotion.id" t-att-data-type-promotion="promotion.type_promotion" >
+            <div class="promotion-img">
+                <img t-att-src="image_url" />
+            </div>
+            <div class="promotion-name">
+                <t t-esc="promotion.name"/>
+            </div>
+            <t t-if="promotion.instruction != false" >
+                <div class="promotion-instruction">
+                    <t t-esc="promotion.instruction"/>
+                </div>
+            </t>
+        </span>
+    </t>
+
+
+     <t t-name="PromotionProductScreenWidget">
+        <div class="product-screen screen">
+            <div class="leftpane">
+                <div class='window'>
+                    <div class='subwindow'>
+                        <div class='subwindow-container'>
+                            <div class='subwindow-container-fix'>
+                                <div class="placeholder-OrderWidget"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class='subwindow collapsed'>
+                        <div class='subwindow-container'>
+                            <div class='subwindow-container-fix pads'>
+                                <div class="control-buttons oe_hidden"></div>
+                                <div class="placeholder-ActionpadWidget"></div>
+                                <div class="placeholder-NumpadWidget"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="rightpane">
+                <table class="layout-table">
+
+                    <tr class="header-row">
+                        <td class="header-cell">
+                            <span class="placeholder-ProductCategoriesWidget" />
+                        </td>
+                    </tr>
+
+                    <tr class="content-row">
+                        <td class="content-cell">
+                            <div class="content-container">
+                                <span class="placeholder-ProductListWidget" />
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="ProductPromotion">
+        <span class='product' t-att-data-product-id="product.id" t-att-data-promotion-id="product.promotion_id">
+            <div class="product-img">
+                <img t-att-src='image_url' />
+                <t t-if="!product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.price)"/>
+                    </span>
+                </t>
+                <t t-if="product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.price)+'/Kg'"/>
+                    </span>
+                </t>
+            </div>
+            <div class="product-name">
+                <t t-esc="product.display_name"/>
+            </div>
+        </span>
+    </t>
+
+    <!--Vannh edit error popup widget-->
+    <t t-name="ErrorPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-error">
+                <p class="title"><t t-esc=" widget.options.title || 'Error' " /></p>
+                <p class="body" style="white-space: pre-line;"><t t-esc=" widget.options.body || '' "/></p>
+                <div class="footer">
+                    <div class="button cancel">
+                        Ok
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="BrNonSalePopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-selection">
+                <p class="title"><t t-esc=" widget.options.title || 'Select' " /></p>
+                <div class='selection scrollable-y touch-scrollable'>
+                    <t t-foreach="widget.list || []" t-as="item">
+                        <div class='selection-item'>
+                            <t t-esc='item.label'/>
+                        </div>
+                    </t>
+                </div>
+                <!--<p class="title">Comment: </p>-->
+                <!--<input type='text' t-att-value="widget.options.value || ''"></input>-->
+                 <div class="footer">
+                    <div class="button confirm">
+                        Next Order
+                    </div>
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="BrNonSalePopupValidationWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-selection">
+                <p class="title">Do you want to validate this transaction?</p>
+                 <div class="footer">
+                    <div class="button confirm">
+                        Next Order
+                    </div>
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-extend="PaymentScreenWidget">
+        <t t-jquery="div.js_tip" t-operation="replace">
+            <div class='button js_tip'>
+                <i class='fa fa-heart' /> Extra Voucher Value
+            </div>
+            <div class="button">
+                <div>
+                    <input id="third_party_id" class="third_party_id"
+                           placeholder="3rd Party Transaction ID"
+                           style="width: 100%; height: 27px;"/>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</templates>

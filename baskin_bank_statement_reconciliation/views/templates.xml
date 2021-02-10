@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="assets_backend" name="Backend Assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/baskin_bank_statement_reconciliation/static/src/js/view_form.js"/>
+                <link rel="stylesheet" href="/baskin_bank_statement_reconciliation/static/src/css/bank_recon.css"/>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

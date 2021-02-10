@@ -1,0 +1,15 @@
+<openerp>
+	<data>
+		<menuitem id="menu_logistics_ops_check" name="Logistics Ops Check" sequence="99" 
+		parent="stock.menu_stock_root"/>
+		<menuitem id="menu_production_ops_check" name="Production Ops Check" sequence="99" 
+		parent="stock.menu_stock_root"/>
+		<menuitem id="menu_pending_damaged" name="Pending Damaged" sequence="99" 
+		parent="stock.menu_stock_root"/>
+		<menuitem id="menu_pending_internal_transfer" name="Pending Internal Transfers" sequence="99" 
+		parent="stock.menu_stock_root"/>
+		<menuitem id="menu_pending_trade_sale" name="Trade Sales" sequence="99" 
+		parent="stock.menu_stock_root"/>
+		
+	</data>
+</openerp>

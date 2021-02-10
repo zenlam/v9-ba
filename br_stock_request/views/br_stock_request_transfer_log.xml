@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_stock_request_transfer_log_form_view" model="ir.ui.view">
+            <field name="name">Stock Request Transfer Log Form View</field>
+            <field name="model">br.stock.request.transfer.cron.log</field>
+            <field name="arch" type="xml">
+                <form string="Stock Request Transfer Log Form View" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Date"/>
+                                <field name="total_transfer" string="Total Transfers"/>
+                            </group>
+                            <group>
+                                <field name="success_transfer" string="Total Success Transfers"/>
+                                <field name="fail_transfer" string="Total Failed Transfers"/>
+                            </group>
+                        </group>
+                        <field name="log_line_ids">
+                            <tree string="Log Lines">
+                                <field name="picking_id" string="Picking"/>
+                                <field name="start_run_time" string="Start Running Time"/>
+                                <field name="picking_state" string="State After Scheduled Action"/>
+                                <field name="current_state" string="Latest Picking State"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_stock_request_transfer_log_tree_view" model="ir.ui.view">
+            <field name="name">Stock Request Transfer Log Tree View</field>
+            <field name="model">br.stock.request.transfer.cron.log</field>
+            <field name="arch" type="xml">
+                <tree string="Transfer Request Log" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="total_transfer"/>
+                    <field name="success_transfer"/>
+                    <field name="fail_transfer"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_br_stock_request_transfer_log" model="ir.actions.act_window">
+            <field name="name">Transfer Log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.stock.request.transfer.cron.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="br_stock_request.menu_br_stock_request_transfer_log" name="Transfer Log"
+                  action="action_br_stock_request_transfer_log" parent="stock.menu_stock_config_settings" sequence="120"/>
+    </data>
+</openerp>

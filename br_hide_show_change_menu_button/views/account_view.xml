@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_voucher.action_sale_receipt" model="ir.actions.act_window">
+            <field name="name">General Receipt Voucher</field>
+        </record>
+
+        <!-- hide register button in customer invoice -->
+        
+        <record id="invoice_form_inherit_hide_button" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <button name="%(account.action_account_invoice_payment)d" position="replace">
+                    <button name="%(account.action_account_invoice_payment)d" type="action" attrs="{'invisible': ['|', ('type', '=', 'out_invoice'), ('state', '!=', 'open')]}" string="Register Payment" groups="br_hide_show_change_menu_button.group_register_payment_visible" class="oe_highlight"/>
+                </button>
+            </field>
+        </record>
+
+        <!-- hide register button in supplier invoice -->
+
+        <record id="invoice_supplier_form_inherit_hide_button" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="%(account.action_account_invoice_payment)d" position="replace">
+                    <button name="%(account.action_account_invoice_payment)d" type="action" attrs="{'invisible': ['|', ('type', '=', 'in_invoice'), ('state', '!=', 'open')]}" string="Register Payment" groups="br_hide_show_change_menu_button.group_register_payment_visible" class="oe_highlight"/>
+                </button>
+                <field name="reference" position="attributes">
+                    <attribute name="string">Inv No/Ref</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- make quantity field readonly for finance team, of vendor bill's which created from PO -->
+
+        <record id="invoice_supplier_form_finance_readonly" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="groups_id" eval="[(6,0, [ref('br_base.group_qty_field_readonly')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='quantity']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('purchase_id','!=',False)]}</attribute>
+		        </xpath>
+            </field>
+        </record>
+
+        <!-- rename menu journal itmes -->
+        <record id="account.menu_action_account_moves_all" model="ir.ui.menu">
+            <field name="name">Journal Item Listing</field>
+        </record>
+
+        <!-- make sales team mandatory -->
+        <record id="view_invoice_customer_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.customer.form.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="sale.account_invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="team_id" position="attributes">
+                    <attribute name="required">True</attribute>
+                </field>
+            </field>
+        </record>
+
+        <template id="assets_backend" name="hide_edit_button_assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/br_hide_show_change_menu_button/static/src/js/hide_edit.js"></script>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

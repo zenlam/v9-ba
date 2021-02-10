@@ -1,0 +1,11 @@
+import stock_location
+import stock_picking
+import stock_change_product_qty
+import stock_valuation_history
+import stock_move
+import stock_inventory
+import stock_production_lot
+import stock_picking_type
+import stock_pack_operation
+import stock_pack_operation_lot
+import vehicle

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="br_cash_control_form" model="ir.ui.view">
+            <field name="name">Cash Control Form</field>
+            <field name="model">br.cash.control</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Cash Control Form">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_is_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="is_active" widget="boolean_button"
+                                       options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="action"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group>
+                                <field name="debit_account_id" domain="[('company_id', '=', company_id)]"/>
+                                <field name="credit_account_id" domain="[('company_id', '=', company_id)]"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_cash_control_tree" model="ir.ui.view">
+            <field name="name">Cash Control Tree</field>
+            <field name="model">br.cash.control</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Cash Control Tree">
+                    <field name="name"/>
+                    <field name="action"/>
+                    <field name="debit_account_id"/>
+                    <field name="credit_account_id"/>
+                    <field name="is_active"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="br_cash_control_action" model="ir.actions.act_window">
+            <field name="name">Cash Control</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.cash.control</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem parent="account.menu_finance_configuration" action="br_cash_control_action"
+                  id="br_cash_control_menu" sequence="40"/>
+
+    </data>
+</openerp>

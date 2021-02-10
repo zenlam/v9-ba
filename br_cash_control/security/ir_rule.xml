@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="cash_control_rule" model="ir.rule">
+            <field name="name">Cash Control multi-company</field>
+            <field name="model_id" ref="model_br_cash_control"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+    </data>
+</openerp>

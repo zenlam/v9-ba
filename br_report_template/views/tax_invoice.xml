@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_tax_invoice_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="partner_shipping_id" domain="['|',('id', '=', partner_id),('type','=','delivery'),('parent_id','=',partner_id)]"/>
+                    <field name="attn_to" domain="[('company_type','=','person'),('parent_id','=',partner_id),('type', '=','contact')]"/>
+                    <field name="remark"/>
+                </xpath>
+                <!--<xpath expr="//field[@name='currency_id']/.." position="after">-->
+                    <!--<field name="po_no"/>-->
+                    <!--<field name="delivery_date"/>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+    </data>
+</openerp>

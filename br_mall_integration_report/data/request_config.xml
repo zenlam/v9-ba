@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+        <record model="br.request.config" id="utama_mall_request_config">
+            <field name="name">Utama Mall</field>
+            <field name="is_async" eval="False"/>
+            <!--I know this is ugly but utama outlet was created manually, there's nothing i can do-->
+            <field name="outlet_ids">56</field>
+            <field name="period">daily</field>
+        </record>
+        <record model="br.request.details" id="utama_mall_post_request">
+            <field name="name">Send Request</field>
+            <field name="url">http://tms.1utama.com.my/POS/POSService.svc/SendReceipts</field>
+            <field name="request_method">post</field>
+            <field name="sequence">1</field>
+            <field name="model">br.request.config</field>
+            <field name="func_name">mall_integration_request_body</field>
+            <field name="config_id" ref="utama_mall_request_config"/>
+            <field name="use_fixed_data" eval="False"/>
+            <field name="request_method">put</field>
+        </record>
+        <record model="br.request.details.header" id="utam_mall_post_request_header_content_type">
+            <field name="name">Content-type</field>
+            <field name="value">text/json</field>
+            <field name="request_id" ref="utama_mall_post_request"/>
+        </record>
+        <record model="br.request.details.header" id="utam_mall_post_request_header_authorization">
+            <field name="name">Authorization</field>
+            <field name="value">Rks4OnpyZE42Q1V2Z1ZZPQ==</field>
+            <field name="request_id" ref="utama_mall_post_request"/>
+        </record>
+    </data>
+</openerp>

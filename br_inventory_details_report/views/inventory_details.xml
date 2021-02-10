@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="inventory_details_report_form">
+            <field name="name">Inventory Details Report Form</field>
+            <field name="model">inventory.details.report</field>
+            <field name="arch" type="xml">
+                <form string="Inventory Details">
+                    <group>
+                        <group>
+                            <field name="start_date" required="1"/>
+                            <field name="end_date" required="1"/>
+                            <field name="transit_loc"/>
+                            <field name="warehouse_type" widget="radio" attrs="{'invisible': [('transit_loc', '=', True)]}"/>
+                            <field name="warehouse_ids" widget="many2many_tags" attrs="{'invisible': [('transit_loc', '=', True)]}"/>
+                            <field name="location_ids" widget="many2many_tags" domain="[('usage', '!=', 'view')]"/>
+                        </group>
+                        <group>
+                            <field name="period" required="1"/>
+                            <field name="uom_type" required="1"/>
+                            <field name="report_type" required="1"/>
+                            <field name="product_categ_ids" widget="many2many_tags"/>
+                            <field name="product_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print" string="Print" class="oe_highlight oe_right" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="inventory_details_report_action" model="ir.actions.act_window">
+            <field name="name">Inventory Report</field>
+            <field name="res_model">inventory.details.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem parent="stock.menu_warehouse_report" id="menu_inventory_details_report"
+                  action="inventory_details_report_action" sequence="190"/>
+
+        <record model="ir.ui.menu" id="menu_inventory_details_report">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <report id="inventory_details_report_balance"
+                model="inventory.details.report"
+                string="Inventory Details Report Balance"
+                report_type="xlsx"
+                name="inventory.details.balance"
+                file="inventory.details.balance"
+                attachment_use="False"
+        />
+
+        <report id="inventory_details_report_movement"
+                model="inventory.details.report"
+                string="Inventory Details Report Movement"
+                report_type="xlsx"
+                name="inventory.details.movement"
+                file="inventory.details.movement"
+                attachment_use="False"
+        />
+    </data>
+</openerp>

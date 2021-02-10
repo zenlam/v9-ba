@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <!--Request Log Form View-->
+        <record id="br_api_request_log_form_view" model="ir.ui.view">
+            <field name="name">Request Log Form View</field>
+            <field name="model">br.request.log</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Request Log" create="false" delete="false" edit="false">
+                    <group>
+                        <group>
+                            <field name="config_id"/>
+                            <field name="name"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <notebook>
+                        <page string="Log Details">
+                            <field name="log_detail_ids" nolabel="1">
+                                <tree create="false" delete="false" edit="false">
+                                    <field name="request_id" required="1"/>
+                                    <field name="data" required="1"/>
+                                    <field name="details" required="1"/>
+                                    <field name="status" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_api_request_log_details_form_view" model="ir.ui.view">
+            <field name="name">Request Log Details Form View</field>
+            <field name="model">br.request.log.details</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Request Log Details" create="false" delete="false" edit="false">
+                    <group>
+                        <field name="request_id"/>
+                        <field name="data"/>
+                        <field name="details"/>
+                        <field name="status"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!--Request Log Tree View-->
+        <record id="br_request_log_tree_view" model="ir.ui.view">
+            <field name="name">Request Log Tree View</field>
+            <field name="model">br.request.log</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Request Log" create="false" delete="false" edit="false">
+                    <field name="config_id"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Request Log Action-->
+        <record id="br_request_log_action" model="ir.actions.act_window">
+            <field name="name">Request Log Action</field>
+            <field name="res_model">br.request.log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</openerp>

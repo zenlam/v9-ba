@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <menuitem id="stock.menu_stock_warehouse_mgmt" name="Operations" parent="stock.menu_stock_root" sequence="2"/>
+        <menuitem id="stock.all_picking" name="All Transfers" parent="stock.menu_stock_warehouse_mgmt" sequence="2" action="stock.action_picking_tree_all" groups="stock.group_stock_manager"/>
+    </data>
+</openerp>

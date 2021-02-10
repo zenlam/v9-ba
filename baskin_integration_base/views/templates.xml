@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Integration Base: Load JS Code -->
+        <template id="baskin_integration_base_pos_assets" name="POS Assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/baskin_integration_base/static/src/js/pos_models.js"></script>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

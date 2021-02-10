@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="journal_item_po_wizard_form" model="ir.ui.view">
+            <field name="name">journal.item.po.wizard.form</field>
+            <field name="model">journal.item.po.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Journal Items">
+                    <group>
+	                	<group>
+	                    	<field name="from_date"/>
+                        	<field name="to_date"/>
+	                    </group>
+	                	<group>
+	                    </group>
+                    </group>
+                    <footer>
+                        <button string="Get Items" name="get_items" type="object"/>
+                        <button string="Cancel" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

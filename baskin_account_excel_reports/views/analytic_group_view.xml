@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	
+    	<record id="view_analytic_group_form" model="ir.ui.view">
+            <field name="name">analytic.group.form</field>
+            <field name="model">analytic.group</field>
+            <field name="arch" type="xml">
+                <form string="Analytic Groups">
+                    <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="enable_pl_grouping"/>
+                        </group>
+                        <group>
+                        	<field name="sequence"/>
+                        	<field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                    	<page string="Analytic Accounts">
+                            <field name="analytic_account_ids">
+                            	<tree>
+                            		<field name="name"/>
+                            	</tree>
+                            </field>                    		
+                    	</page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_analytic_group_tree" model="ir.ui.view">
+            <field name="name">analytic.group.tree</field>
+            <field name="model">analytic.group</field>
+            <field name="arch" type="xml">
+                <tree string="Analytic Groups">
+                	<field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="enable_pl_grouping"/>
+                </tree>
+            </field>
+        </record>
+    	
+    	<record id="action_view_analytic_group_form" model="ir.actions.act_window">
+            <field name="name">Analytic Groups</field>
+            <field name="res_model">analytic.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    	<menuitem
+            action="action_view_analytic_group_form"
+            id="menu_action_view_analytic_group_form"
+            parent="account.menu_analytic_accounting" sequence="10"/>
+    	
+    </data>
+</openerp>

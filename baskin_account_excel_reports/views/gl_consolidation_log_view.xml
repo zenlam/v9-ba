@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	
+    	
+
+        <record id="view_gl_archive_table_tree" model="ir.ui.view">
+		    <field name="name">GL Consolidation Log</field>
+		    <field name="model">gl.consolidation.log</field>
+		    <field name="arch" type="xml">
+		        <tree edit='false' create='false' delete='false'>
+        	        <field name="date"/>
+					<field name="type"/>
+					<field name="start_time"/>
+					<field name="end_time"/>
+					<field name="table_id"/>
+					<field name="rows_affected"/>
+					<field name="user_id"/>
+		        </tree>
+		    </field>
+		</record>
+		
+		<record id="action_gl_consolidation_log" model="ir.actions.act_window">
+            <field name="name">GL Consolidation Log</field>
+            <field name="res_model">gl.consolidation.log</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">tree</field>
+        </record>
+            	
+       	<menuitem
+            action="action_gl_consolidation_log"
+            id="menu_action_gl_consolidation_log"
+            parent="menu_refresh_consolidation" sequence="25"/>
+            	
+    	       	
+    </data>
+</openerp>

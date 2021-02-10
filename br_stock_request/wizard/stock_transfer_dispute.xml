@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="view_stock_transfer_dispute_form" model="ir.ui.view">
+            <field name="name">Stock Transfer Dispute Form</field>
+            <field name="model">stock.transfer.dispute</field>
+            <field name="arch" type="xml">
+                <form string="Raise Dispute">
+                    <separator name="separator" string="Dispute Details" colspan="2"/>
+                    <field name="details_ids">
+                        <tree editable="bottom">
+                            <field name="in_built" invisible="1"/>
+                            <field name="product_id" attrs="{'readonly': [('is_from_transfer', '=', True)], 'required': True}"/>
+                            <field name="theo_qty" readonly="1"/>
+                            <field name="system_uom" attrs="{'readonly': [('in_built', '=', True)]}"/>
+                            <field name="real_qty" />
+                            <field name="diff_qty_related" readonly="1"/>
+                            <field name="diff_qty" invisible="1"/>
+                            <field name="is_from_transfer" invisible="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="process_dispute" type="object" string="Dispute" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

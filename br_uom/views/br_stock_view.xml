@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_stock_picking_form" model="ir.ui.view">
+            <field name="name">br.view.stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='product_uom_id']" position="attributes">
+                    <attribute name="context">{'product_id':product_id, 'supplier_id': parent.partner_id}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="after">
+                    <field name="calculate_total" invisible="1"/>
+                    <group string="Initial Demand" attrs="{'invisible':[('calculate_total', '=', False)]}">
+                            <field name="init_tub_total" string="Total Tub"/>
+                            <field name="init_cake_total" string="Total Cake"/>
+                            <field name="init_carton_total" string="Total Full Carton"/>
+                    </group>
+                    <group/>
+                    <group string="Operation Fulfillment" attrs="{'invisible':[('calculate_total', '=', False)]}">
+                        <group>
+                            <field name="fulfill_tub_total" string="Total Tub"/>
+                            <field name="fulfill_cake_total" string="Total Cake"/>
+                            <field name="fulfill_carton_total" string="Total Full Carton"/>
+                            <button name="update_init_fulfill_total" string="Update Total" type="object"/>
+                        </group>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="br_view_stock_move_picking_form" model="ir.ui.view">
+            <field name="name">br.view.stock.move.form.inherit</field>
+            <field name="model">stock.move</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom']" position="attributes">
+                    <attribute name="context">{'product_id':product_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_stock_move_picking_tree" model="ir.ui.view">
+            <field name="name">br.view.stock.move.tree.inherit</field>
+            <field name="model">stock.move</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom']" position="attributes">
+                    <attribute name="context">{'product_id':product_id, 'supplier_id': context.get('address_in_id', False)}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_stock_pack_oper_tree" model="ir.ui.view">
+            <field name="name">br.view.stock.pack.oper.inherit</field>
+            <field name="model">stock.pack.operation</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_pack_operation_details_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom_id']" position="attributes">
+                    <attribute name="context">{'product_id':product_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

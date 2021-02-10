@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_third_party,third.party,model_third_party,,1,1,1,1
+access_third_party_member,third.party.member,model_third_party_member,,1,1,1,1
+access_third_party_outlet_sync,third.party.outlet.sync,model_third_party_outlet_sync,,1,1,1,1
+access_third_party_menu_sync,third.party.menu.sync,model_third_party_menu_sync,,1,1,1,1
+access_third_party_promotion_sync_log,third.party.promotion.sync.log,model_third_party_promotion_sync_log,,1,1,1,0
+access_third_party_outlet_sync_log,third.party.outlet.sync.log,model_third_party_outlet_sync_log,,1,1,1,0
+access_outlet_facility,outlet.facility,model_outlet_facility,,1,1,1,0

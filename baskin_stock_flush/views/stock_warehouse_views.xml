@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <!-- Inherit the stock warehouse form view -->
+        <record id="br_view_warehouse_flush_inherit" model="ir.ui.view">
+            <field name="name">br.view.warehouse.flush.inherit</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='wh_output_stock_loc_id']" position="after">
+                    <field name="wh_flush_stock_loc_id"/>
+                    <button name="action_view_flush_locations"
+                            string="Show Flush Locations"
+                            class="oe_link"
+                            type="object"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

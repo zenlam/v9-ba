@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_bank_statement_reconcile_accountant,bank_statement_reconcile.accountant,model_bank_statement_reconcile,account.group_account_user,1,1,1,1
+
+access_bank_statement_reconcile_line_accountant,bank_statement_reconcile_line.accountant,model_bank_statement_reconcile_line,account.group_account_user,1,1,1,1
+
+access_bank_statement_reconcile_line_clone_accountant,bank_statement_reconcile_line_clone.accountant,model_bank_statement_reconcile_line_clone,account.group_account_user,1,1,1,1

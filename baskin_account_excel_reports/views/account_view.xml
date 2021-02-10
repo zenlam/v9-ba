@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_finance_legal_statement_excel" name="Excel Reports" parent="account.menu_finance_reports"/>
+
+        <record id="view_financial_item_form" model="ir.ui.view">
+            <field name="name">financial.item.form</field>
+            <field name="model">financial.item</field>
+            <field name="arch" type="xml">
+                <form string="Financial Item">
+                   <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                        <group>
+                        </group>
+                   </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_financial_item_tree" model="ir.ui.view">
+            <field name="name">financial.item.tree</field>
+            <field name="model">financial.item</field>
+            <field name="arch" type="xml">
+                <tree string="Financial Item">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_financial_item" model="ir.actions.act_window">
+            <field name="name">Financial Item</field>
+            <field name="res_model">financial.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_financial_item_tree"/>
+        </record>
+
+        <menuitem action="action_financial_item" id="menu_action_financial_item" parent="account.account_account_menu" sequence="20"/>
+
+        <!-- financial item line -->
+
+        <record id="view_financial_item_line_form" model="ir.ui.view">
+            <field name="name">financial.item.line.form</field>
+            <field name="model">financial.item.line</field>
+            <field name="arch" type="xml">
+                <form string="Financial Item Line">
+                   <group>
+                        <group>
+                            <field name="financial_item_id" />
+                        </group>
+                        <group>
+                            <field name="account_ids" widget="many2many_tags"/>
+                        </group>
+                   </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_financial_item_line_tree" model="ir.ui.view">
+            <field name="name">financial.item.line.tree</field>
+            <field name="model">financial.item.line</field>
+            <field name="arch" type="xml">
+                <tree string="Financial Item Line" editable="top">
+                    <field name="financial_item_id"/>
+                    <field name="account_ids" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_financial_item_line" model="ir.actions.act_window">
+            <field name="name">Financial Item Line</field>
+            <field name="res_model">financial.item.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_financial_item_line_tree"/>
+        </record>
+
+        <menuitem action="action_financial_item_line" id="menu_action_financial_item_line" parent="account.account_account_menu" sequence="30"/>
+
+        <!-- financial ratio item -->
+
+        <record id="view_financial_item_forumla_form" model="ir.ui.view">
+            <field name="name">financial.item.formula.form</field>
+            <field name="model">financial.item.formula</field>
+            <field name="arch" type="xml">
+                <form string="Financial Item Forumla">
+                    <group>
+                        <label for="source_ratio_item_id"/>
+                    <div>
+                        <field name="source_ratio_item_id" class="oe_inline"/>
+                        <field name="from_ratio_item_id" class="oe_inline"/>
+                        <label string="/"/>
+                        <field name="to_ratio_item_id" class="oe_inline"/>
+                    </div>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_financial_item_forumla_tree" model="ir.ui.view">
+            <field name="name">financial.item.formula.tree</field>
+            <field name="model">financial.item.formula</field>
+            <field name="arch" type="xml">
+                <tree string="Financial Item Formula">
+                    <field name="source_ratio_item_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_financial_item_formula" model="ir.actions.act_window">
+            <field name="name">Financial Item Formula</field>
+            <field name="res_model">financial.item.formula</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_financial_item_forumla_tree"/>
+        </record>
+
+        <menuitem action="action_financial_item_formula" id="menu_action_financial_item_formula" parent="account.account_account_menu" sequence="35"/>
+
+    </data>
+</openerp>

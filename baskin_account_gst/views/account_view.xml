@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_gst_mapping_form" model="ir.ui.view">
+            <field name="name">gst.mapping.form</field>
+            <field name="model">gst.mapping</field>
+            <field name="arch" type="xml">
+                <form string="GST Mapping">
+                   <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                        <group>
+                        	<field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                   </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_gst_mapping_tree" model="ir.ui.view">
+            <field name="name">gst.mapping.tree</field>
+            <field name="model">gst.mapping</field>
+            <field name="arch" type="xml">
+                <tree string="GST Mapping">
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_gst_mapping" model="ir.actions.act_window">
+            <field name="name">Configuration of GST-03 Format</field>
+            <field name="res_model">gst.mapping</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_gst_mapping_tree"/>
+        </record>
+
+        <menuitem action="action_gst_mapping" id="menu_action_gst_mapping" parent="menu_gst_03" sequence="10"/>
+
+        <menuitem action="action_gst_mapping" id="menu_action_gst_mapping_gst" parent="menu_finance_gst_03" sequence="9"/>
+
+
+        <!-- gst tax mapping -->
+
+        <record id="view_gst_tax_mapping_form" model="ir.ui.view">
+            <field name="name">gst.tax.mapping.form</field>
+            <field name="model">gst.tax.mapping</field>
+            <field name="arch" type="xml">
+                <form string="GST Tax Mapping">
+                    <group>
+                        <group>
+                            <field name="name" required="True"/>
+                            <field name="tax_type" required="True"/>
+                            <field name="is_base" attrs="{'invisible':['|', '|', ('is_formula', '=', True), ('is_carry_forward_refund', '=', True), ('is_msic', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="taxes_ids" widget="many2many_tags" attrs="{'invisible':['|', '|', ('is_carry_forward_refund', '=', True), ('is_formula', '=', True), ('is_msic', '=', True)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="is_carry_forward_refund" attrs="{'invisible':['|', '|', ('is_base', '=', True), ('is_formula', '=', True), ('is_msic', '=', True)]}"/>
+                        <field name="carry_forward_refund" attrs="{'invisible':[('is_carry_forward_refund', '!=', True)]}"/>
+                    </group>
+                    <group>
+                        <field name="is_msic" attrs="{'invisible':['|', '|', ('is_base', '=', True),  ('is_carry_forward_refund', '=', True), ('is_formula', '=', True)]}"/>
+                        <field name="msic_code" attrs="{'invisible':[('is_msic', '!=', True)], 'required':[('is_msic', '=', True)]}"/>
+                        <field name="data_gst_mapping_id" attrs="{'invisible':[('is_msic', '!=', True)], 'required':[('is_msic', '=', True)]}"/>
+                    </group>
+                    <group>
+                        <field name="is_formula" attrs="{'invisible':['|', '|', ('is_base', '=', True),  ('is_carry_forward_refund', '=', True), ('is_msic', '=', True)]}"/>
+                        <field name="from_gst_mapping_ids" widget="many2many_tags" attrs="{'required':[('is_formula', '=', True)], 'invisible':[('is_formula', '!=', True)]}"/>
+                        <field name="operator" attrs="{'required':[('is_formula', '=', True)], 'invisible':[('is_formula', '!=', True)]}"/>
+                        <field name="to_gst_mapping_ids" widget="many2many_tags" attrs="{'required':[('is_formula', '=', True)], 'invisible':[('is_formula', '!=', True)]}"/>
+                    </group>
+                    <group>
+                        <field name="is_tap_file"/>
+                        <field name="value_sequence" attrs="{'invisible':[('is_msic', '!=', True)], 'required':[('is_msic', '=', 'yes')]}"/>
+                        <field name="sequence" attrs="{'invisible':[('is_tap_file', '=', 'no')], 'required':[('is_tap_file', '=', 'yes')]}"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_gst_tax_mapping_tree" model="ir.ui.view">
+            <field name="name">gst.tax.mapping.tree</field>
+            <field name="model">gst.tax.mapping</field>
+            <field name="arch" type="xml">
+                <tree string="GST Mapping">
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_gst_tax_mapping" model="ir.actions.act_window">
+            <field name="name">Configuration of GST-03 (map with tax)</field>
+            <field name="res_model">gst.tax.mapping</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_gst_tax_mapping_tree"/>
+        </record>
+
+        <menuitem action="action_gst_tax_mapping" id="menu_action_gst_tax_mapping" parent="menu_gst_03" sequence="15"/>
+
+        <menuitem action="action_gst_tax_mapping" id="menu_action_gst_tax_mapping_gst" parent="menu_finance_gst_03" sequence="15"/>
+
+        <!-- account gst -->
+
+        <record id="view_account_gst_form" model="ir.ui.view">
+            <field name="name">account.gst.form</field>
+            <field name="model">account.gst</field>
+            <field name="arch" type="xml">
+                <form string="Account GST">
+                   <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date" />
+                        </group>
+                        <group>
+                            <field name="print_date"/>
+                            <field name="filename" />
+                            <field name="file" filename="filename"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                   </group>
+                   <field name="account_gst_line_ids">
+                        <tree string='GST Line' editable="top">
+                            <field name="name"/>
+                            <field name="amount"/>
+                        </tree>
+                   </field>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_gst_tree" model="ir.ui.view">
+            <field name="name">account.gst.tree</field>
+            <field name="model">account.gst</field>
+            <field name="arch" type="xml">
+                <tree string="GST Mapping" create="false" edit="false">
+                    <field name="start_date"/>
+                    <field name="end_date" />
+                    <field name="print_date"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_gst" model="ir.actions.act_window">
+            <field name="name">GST Data</field>
+            <field name="res_model">account.gst</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_gst_tree"/>
+        </record>
+
+        <menuitem action="action_account_gst" id="menu_action_account_gst" parent="menu_gst_03" sequence="20"/>
+
+        <menuitem action="action_account_gst" id="menu_action_account_gst_gst" parent="menu_finance_gst_03" sequence="20"/>
+
+
+    </data>
+</openerp>

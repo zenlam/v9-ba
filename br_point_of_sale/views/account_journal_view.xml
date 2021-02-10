@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="baskin_view_account_journal_pos_user_form">
+            <field name="name">Baskin POS Journal</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_user']" position="after">
+                    <field name="background_colour" widget="color"/>
+                    <field name="is_non_clickable"/>
+                    <field name="font_colour" widget="color"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_authorized_diff']" position="after">
+                    <field name="is_required_thirdparty"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

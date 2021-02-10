@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="view_transfer_cancel_confirmation_form" model="ir.ui.view">
+            <field name="name">Transfer Cancel Confirmation</field>
+            <field name="model">transfer.cancel.confirmation</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Cancel">
+                    <field name="remark" placeholder="Please key in remark here...."/>
+                    <footer>
+                        <button name="action_cancel" type="object" string="Cancel Transfer" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

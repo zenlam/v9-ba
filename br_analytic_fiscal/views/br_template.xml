@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--upgrade to oddo 9-->
+       <template id="assets_backend" name="br_page_view_width assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/br_analytic_fiscal/static/src/css/br_base.css"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>

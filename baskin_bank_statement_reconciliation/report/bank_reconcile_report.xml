@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+		<template id="bank_recon_report">
+			<t t-call="report.html_container">
+		        <t t-foreach="docs" t-as="doc">
+		        	<div class="page">
+						<div class="oe_structure"/>
+						
+						<style>
+			            	.div-hr{
+			            		background-color: black;
+			            		height: 2px;
+			            	}
+			            	.bold-right{
+								text-align : right;
+								font-weight : bold;
+								color: black;
+							}
+							.align-right{
+								text-align : right;
+							}
+							.bold{
+								font-weight : bold;
+								color: black;
+							}
+							.padding-top-5{
+								padding-top:5px;
+							}
+							.padding-bottom-5{
+								padding-bottom:5px;
+							}
+							th{
+								background-color: #D3D3D3;
+								color:black;
+							}
+							.border-bottom-1px {
+								border-bottom: 1px solid black;
+							}
+							.border-bottom-2px {
+								border-bottom: 2px solid black;
+							}
+							.text-red {
+								color : red;
+							}
+			            </style>
+			            			            
+			            <table class="oe_baskin_table_header">
+		                    <tr>
+		                        <td width="50%">
+		                             <strong class="oe_baskin_header"><t t-esc="doc.company_id.name"/></strong>
+		                        </td>
+		                        <td width="50%" class="oe_baskin_name">
+		                        </td>
+		                    </tr>
+		                    <tr>
+		                        <td>
+		                            <t t-if="doc.company_id.company_registry">
+		                                <t t-esc="doc.company_id.company_registry"/>
+		                                <br/>
+		                            </t>
+		                            <t t-if="doc.company_id.street">
+		                                <t t-esc="doc.company_id.street"/>,
+		                            </t>
+		                            <t t-if="doc.company_id.street2">
+		                                <t t-esc="doc.company_id.street2"/>
+		                                <br/>
+		                            </t>
+		                            <t t-if="doc.company_id.city">
+		                                <t t-esc="doc.company_id.city"/>,
+		                            </t>
+		                            <t t-if="doc.company_id.state_id">
+		                                <t t-esc="doc.company_id.state_id.name"/>
+		                            </t>
+		                            <t t-if="doc.company_id.zip">
+		                                <t t-esc="doc.company_id.zip"/>
+		                                <br/>
+		                            </t>
+		                            <t t-if="doc.company_id.phone">
+		                                Tel : <t t-esc="doc.company_id.phone"/>
+		                                <br/>
+		                            </t>
+		                            <t t-if="doc.company_id.fax">
+		                                Fax : <t t-esc="doc.company_id.fax"/>
+		                                <br/>
+		                            </t>
+		                            <t t-if="doc.company_id.vat">
+		                                GST Reg. No. : <t t-esc="doc.company_id.vat"/>
+		                                <br/>
+		                            </t>
+		                        </td>
+		                        <td>
+		                        </td>
+		                    </tr>
+		                </table>
+			            <div class="row">
+			            	<div class="col-xs-12">
+					            
+			            		<div class="div-hr"/>
+					            
+		            			<center>
+				                    <strong>Bank Reconciliation till <span t-field="doc.date_end"/></strong>
+					            </center>
+					            
+					            
+				            	<table>
+				            		<tr>
+				            			<td class="bold padding-top-5" style="width:20%">
+				            				Bank Account
+			            				</td>
+				            			<td class="bold padding-top-5">
+				            				<span t-field="doc.bank_account_id.name"/>
+			            				</td>
+				            		</tr>
+				            		<tr>
+										<td class="bold padding-top-5 padding-bottom-5">
+											Bank Statement Date
+										</td>
+										<td class="bold padding-top-5 padding-bottom-5">
+											<span t-field="doc.actual_bank_statement_date"/>
+										</td>
+				            		</tr>
+				            	</table>
+					            
+					            <div class="div-hr"/>
+				            	
+				            	<table>
+				            		<tr>
+										<td class="bold padding-top-5">
+											Balance As per Bank Account
+										</td>
+										<td class="bold-right padding-top-5">
+											<span t-esc="doc.balance_till_end + doc.opening_balance"
+											 t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+										</td>
+				            		</tr>
+				            		<tr>
+				            			<td class="bold padding-top-5 padding-bottom-5">ADD: Unpresented Cheques</td>
+				            			<td></td>
+				            		</tr>
+				            	</table>
+				            	<t t-set="credit_total" t-value="0.0"/>
+				            	<table style="table-layout: fixed;width:85%;" class="">
+				            		<thead>
+				            			<th style="width:13%;">Posting Date</th>
+				            			<th>Inv No/Ref</th>
+				            			<th>Memo</th>
+				            			<th>Label</th>
+				            			<th>Partner</th>
+				            			<th style="width:15%;">Amount</th>
+				            		</thead>
+				            		<t t-if="doc.state != 'draft'">
+				            			<t t-foreach="doc.bank_statement_reconcile_line_clone_ids" t-as="bank_line">
+					            			
+						            		<tr t-if="bank_line.credit and bank_line.bank_state == 'draft'">
+												<td>
+													<span t-field="bank_line.date"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.ref"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.memo"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.name"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.partner_id and bank_line.partner_id.name"/>
+												</td>
+												<td class="align-right">
+													<span t-field="bank_line.credit" 
+													 t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}' />
+												</td>
+		
+												<t t-set="credit_total" t-value="credit_total+bank_line.credit"/>
+						            		</tr>
+					            		</t>
+				            		</t>
+				            		<t t-if="doc.state == 'draft'">
+					            		<t t-foreach="doc.bank_statement_reconcile_line_ids" t-as="bank_line">
+					            			
+						            		<tr t-if="bank_line.credit and not bank_line.is_reconcile">
+												<td>
+													<span t-field="bank_line.date"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.ref"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.memo"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.name"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.partner_id and bank_line.partner_id.name"/>
+												</td>
+												<td class="align-right">
+													<span t-field="bank_line.credit" 
+													 t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}' />
+												</td>
+		
+												<t t-set="credit_total" t-value="credit_total+bank_line.credit"/>
+						            		</tr>
+					            		</t>
+				            		</t>
+				            	</table>
+					            		
+				            	<table>
+				            		<tr>
+										<td class="bold padding-top-5" style="width:80%">
+											
+										</td>
+										<td class="bold-right padding-top-5 border-bottom-1px">
+											<span t-esc="credit_total"
+											 t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+										</td>
+				            		</tr>
+				            		<tr>
+										<td class="padding-bottom-5">
+										</td>
+										<td class="bold-right padding-bottom-5 border-bottom-2px text-red">
+											<span t-esc="credit_total + doc.balance_till_end  + doc.opening_balance"
+											 t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+										</td>
+				            		</tr>
+				            	</table>
+				            	
+				            	<table>
+				            		<tr>
+				            			<td class="bold padding-top-5 padding-bottom-5">Less: Deposite Not Credited By Bank</td>
+				            			<td></td>
+				            		</tr>
+				            	</table>	
+				            	
+				            	<t t-set="debit_total" t-value="0.0"/>
+				            	<table style="table-layout: fixed;width:85%;" class="">
+				            		<thead>
+				            			<th style="width:13%;">Posting Date</th>
+				            			<th>Inv No/Ref</th>
+				            			<th>Memo</th>
+				            			<th>Label</th>
+				            			<th>Partner</th>
+				            			<th style="width:15%;">Amount</th>
+				            		</thead>
+				            		<t t-if="doc.state != 'draft'">
+					            		<t t-foreach="doc.bank_statement_reconcile_line_clone_ids" t-as="bank_line">
+						            		<tr t-if="bank_line.debit and bank_line.bank_state == 'draft'">
+												<td>
+													<span t-field="bank_line.date"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.ref"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.memo"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.name"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.partner_id and bank_line.partner_id.name"/>
+												</td>
+												<td class="align-right">
+													<span t-field="bank_line.debit"
+													 t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+												</td>
+		
+												<t t-set="debit_total" t-value="debit_total+bank_line.debit"/>
+						            		</tr>
+					            		</t>
+					            	</t>
+					            	<t t-if="doc.state == 'draft'">
+					            		<t t-foreach="doc.bank_statement_reconcile_line_ids" t-as="bank_line">
+						            		<tr t-if="bank_line.debit and not bank_line.is_reconcile">
+												<td>
+													<span t-field="bank_line.date"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.ref"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.memo"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.name"/>
+												</td>
+												<td style="display:block;word-wrap:break-word;">
+													<span t-field="bank_line.partner_id and bank_line.partner_id.name"/>
+												</td>
+												<td class="align-right">
+													<span t-field="bank_line.debit"
+													 t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+												</td>
+		
+												<t t-set="debit_total" t-value="debit_total+bank_line.debit"/>
+						            		</tr>
+					            		</t>
+					            	</t>
+				            	</table>
+					            		
+				            	<table>
+				            		<tr>
+										<td class="bold padding-top-5" style="width:80%">
+											
+										</td>
+										<td class="bold-right padding-top-5 border-bottom-1px">
+											<span t-esc="debit_total"
+												t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+										</td>
+				            		</tr>
+				            		<tr>
+										<td class="bold padding-bottom-5">Balance As per Bank Statement</td>
+										<td class="bold-right padding-bottom-5 border-bottom-2px text-red">
+											<span t-esc="credit_total + doc.balance_till_end - debit_total  + doc.opening_balance"
+												t-esc-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+										</td>
+				            		</tr>
+				            	</table>			            
+			            	</div>
+			            </div>
+			
+			        </div>
+			        <div class="oe_structure"/>
+		        </t>
+	        </t>
+		</template>
+		
+		<record id="br_paperformat_bank_recon" model="report.paperformat">
+            <field name="name">Baskin Bank Recon</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">80</field>
+        </record>
+	        
+	    <report id="bank_statement_recon_report"
+	        model="bank.statement.reconcile"
+	        string="Bank Recon Statement"
+	        report_type="qweb-pdf"
+	        name="baskin_bank_statement_reconciliation.bank_recon_report"
+	        file="baskin_bank_statement_reconciliation.bank_recon_report"
+			paperformat="br_paperformat_bank_recon"	/>
+
+	</data>
+</openerp>

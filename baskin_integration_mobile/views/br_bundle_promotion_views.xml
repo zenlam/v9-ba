@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Promotion: Fugumobile -->
+        <record id="br_bundle_promotion_form_fugumobile" model="ir.ui.view">
+            <field name="name">promotion.form.view.fugumobile</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="inherit_id" ref="baskin_integration_base.br_bundle_promotion_form_third_party"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_code_api']" position="after">
+                    <field name="mobile_promotion" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page name="fugumobile" string="Mobile Apps"
+                          attrs="{'invisible':[('mobile_promotion','=',False)]}">
+                        <group>
+                            <field name="free_deal"/>
+                            <field name="flexible_end_date"/>
+                            <field name="validity_days"
+                                   attrs="{'invisible':[('flexible_end_date','=',False)],
+                                   'required':[('flexible_end_date','=',True)]}"/>
+                            <field name="suspend_promotion"/>
+                            <field name="promotion_description"/>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//button[@name='sync_data']" position="after">
+                    <button name="suspend" type="object" string="Suspend"
+                                class="oe_stat_button" icon="fa-pause"
+                                attrs="{'invisible': ['|','|',('mobile_promotion', '=' ,False),('suspend_promotion', '=', True),('sync_id', '=', False)]}"
+                                confirm="You are suspending this discount and this will remove the discount from the third party, click 'OK' if you would like to proceed?"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Promotion: Tree -->
+        <record id="br_bundle_promotion_tree_third_party_inherit" model="ir.ui.view">
+            <field name="name">promotion.tree.view.third.party.inherit</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="inherit_id" ref="br_discount.br_bundle_promotion_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_hq_voucher']" position="after">
+                    <field name="third_party_id"/>
+                    <field name="free_deal"/>
+                    <field name="flexible_end_date"/>
+                    <field name="validity_days"/>
+                    <field name="suspend_promotion"/>
+                    <field name="sync_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

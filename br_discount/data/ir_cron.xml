@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!--Daily Reset Quota-->
+        <record id="ir_cron_reset_daily_quota" model="ir.cron">
+            <field name="name">Reset Quota Daily</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=1) - timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">br.bundle.promotion</field>
+            <field name="function">action_reset_quota</field>
+            <field name="args">(('daily'), )</field>
+        </record>
+
+        <!--Weekkly Reset Quota-->
+        <record id="ir_cron_reset_weekly_quota" model="ir.cron">
+            <field name="name">Reset Quota Weekly</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=7 - DateTime.now().weekday()) - timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">br.bundle.promotion</field>
+            <field name="function">action_reset_quota</field>
+            <field name="args">(('weekly'), )</field>
+        </record>
+
+        <!--Monthly Reset Quota-->
+        <record id="ir_cron_reset_monthly_quota" model="ir.cron">
+            <field name="name">Reset Quota Monthly</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + relativedelta(months=1) - timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">br.bundle.promotion</field>
+            <field name="function">action_reset_quota</field>
+            <field name="args">(('monthly'), )</field>
+        </record>
+
+        <!--Yearly Reset Quota-->
+        <record id="ir_cron_reset_yearly_quota" model="ir.cron">
+            <field name="name">Reset Quota Yearly</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">12</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + relativedelta(years=1) - timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">br.bundle.promotion</field>
+            <field name="function">action_reset_quota</field>
+            <field name="args">(('yearly'), )</field>
+        </record>
+    </data>
+</openerp>

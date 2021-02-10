@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_restoration_config_user,restoration.config.user,model_restoration_config,base.group_user,1,1,1,1
+access_restoration_log_user,restoration.log.user,model_restoration_log,base.group_user,1,1,1,1

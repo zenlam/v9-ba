@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+        <record model="ir.sequence" id="br_dispute_picking_type_sequence">
+            <field name="name">Dispute Picking Type Sequence</field>
+            <field name="prefix">DPT/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="br_dispute_picking_type" model="stock.picking.type">
+            <field name="name">Dispute</field>
+            <field name="code">outgoing</field>
+            <field name="sequence_id" ref="br_stock_request.br_dispute_picking_type_sequence"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="br_dispute_picking_type_mega" model="stock.picking.type">
+            <field name="name">Dispute</field>
+            <field name="code">outgoing</field>
+            <field name="sequence_id" ref="br_stock_request.br_dispute_picking_type_sequence"/>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_view_inventory_form_inherit_inherit">
+            <field name="name">br.stock.inventory.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock_account.view_inventory_form_inherit"/>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='accounting_date']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Hide Menu Starts Here -->
+        <record model="ir.ui.menu" id="stock_account.menu_action_wizard_valuation_history">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <record model="ir.ui.menu" id="stock.menu_report_stock_line_date">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <record model="ir.ui.menu" id="stock.menu_packagings">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <record model="ir.ui.menu" id="stock.menu_stock_procurement_action">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+    </data>
+</openerp>

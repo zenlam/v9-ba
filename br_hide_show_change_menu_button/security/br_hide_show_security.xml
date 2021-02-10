@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="group_register_payment_visible" model="res.groups">
+	        <field name="name">Register Payment Visible</field>
+	        <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+    	</record>
+
+    </data>
+</openerp>

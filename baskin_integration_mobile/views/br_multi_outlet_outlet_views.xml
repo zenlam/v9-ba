@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Outlet Form View: Mobile -->
+        <record id="view_br_outlet_form_inherit_mobile" model="ir.ui.view">
+            <field name="name">view.br.outlet.form.inherit.mobile</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="inherit_id" ref="br_multi_outlet.view_br_outlet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='status']" position="after">
+                    <field name="mobile_status" options='{"no_open": True, "no_create":True}'/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

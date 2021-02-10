@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="br_stock_move_report_wizard" model="ir.ui.view">
+            <field name="name">br.stock.move.report.wizard</field>
+            <field name="model">stock.move.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Stock Move Report">
+                    <group>
+                        <group>
+							<field name="location_ids" widget="many2many_tags"/>
+							<field name="location_dest_ids" widget="many2many_tags"/>
+							<field name="start_date"/>
+	                    	<field name="end_date"/>
+	                    	<field name="product_categ_ids" widget="many2many_tags"/>
+	                    	<field name="product_ids" widget="many2many_tags"/>
+	                    </group>
+                    </group>
+                    <footer>
+                        <button string="Print" name="action_print" type="object" icon="gtk-ok"/>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_stock_move_report_wizard" model="ir.actions.act_window">
+            <field name="name">Stock Move Report Wizard</field>
+            <field name="res_model">stock.move.report.wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="br_stock_move_report_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            id="stock_move_report_menu"
+            name="Stock Move Report"
+            action="action_stock_move_report_wizard"
+            parent="stock.menu_warehouse_report"/>
+
+        <report id="stock_move_report_xls"
+                model="br_stock_move_report"
+                string="Stock Move Report"
+                report_type="xlsx"
+                name="br_stock.br_stock_move_report"
+                file="br_stock.br_stock_move_report"/>
+    </data>
+</openerp>
+

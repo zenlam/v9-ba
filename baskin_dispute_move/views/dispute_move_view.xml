@@ -1,0 +1,126 @@
+<openerp>
+    <data>
+
+        <record id="view_dispute_move_report_search" model="ir.ui.view">
+            <field name="name">dispute.move.search</field>
+            <field name="model">stock.move.report</field>
+            <field name="arch" type="xml">
+                <search string="Stock Moves">
+                    <field name="request_id"/>
+                    <field name="picking_id"/>
+                    <field name="location_id"/>
+                    <field name="location_dest_id"/>
+                    <field name="product_id"/>
+                    <field name="state"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Transfer" name="by_transfer" domain="[]"  context="{'group_by':'request_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="br_dispute_move_report_tree_view" model="ir.ui.view">
+            <field name="name">Dispute Stock Move</field>
+            <field name="model">stock.move.report</field>
+            <field name="arch" type="xml">
+                <tree string="Dispute Stock Move" create="false" editable="bottom" default_order="id">
+                    <field name="request_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="picking_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="location_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="location_dest_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="request_date_order" readonly="1"/>
+                    <field name="request_expected_date" readonly="1"/>
+                    <field name="product_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="product_uom" readonly="1" options="{'no_open': True}"/>
+                    <field name="request_delivered_qty" string="Delivered Qty" readonly="1"/>
+                    <field name="request_dispute_qty" readonly="1" string="Final Dispute Qty Summary"/>
+                    <field name="initial_move_qty" readonly="1" string="Initial Dispute Qty"/>
+                    <field name="product_uom_qty" readonly="1" string="Move Qty"/>
+                    <field name="state" readonly="1"/>
+                    <field name="is_dispute_move" invisible="1"/>
+                    <field name="is_accept_dispute" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="is_reject_dispute" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="is_disagree_dispute" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="adjusted_dispute_qty" string="Adjusted Move Qty" attrs="{'readonly': ['|', ('is_disagree_dispute', '=', False), ('state', '!=', 'draft')]}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="dispute_move_confirm_view" model="ir.ui.view">
+            <field name="name">dispute.move.confirm.form</field>
+            <field name="model">dispute.move.confirm</field>
+            <field name="arch" type="xml">
+                <form string="Confirm Dispute Moves">
+                    <div>
+                        Do you want to perform the actions to those dispute moves?
+                    </div>
+                    <footer>
+                        <button string="Confirm" name="confirm_dispute_moves" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="dispute_move_action_view" model="ir.ui.view">
+            <field name="name">dispute.move.action.form</field>
+            <field name="model">dispute.move.action</field>
+            <field name="arch" type="xml">
+                <form string="Assign Dispute Move Action">
+                    <field name="move_ids">
+                        <tree create="false" delete="false" editable="bottom" default_order="request_name, picking_name, id">
+                            <field name="request_name" readonly="1"/>
+                            <field name="picking_name" readonly="1"/>
+                            <field name="source_location" readonly="1"/>
+                            <field name="dest_location" readonly="1"/>
+                            <field name="product_name" readonly="1"/>
+                            <field name="uom_name" readonly="1"/>
+                            <field name="delivered_qty" readonly="1"/>
+                            <field name="dispute_qty" readonly="1"/>
+                            <field name="product_uom_qty" readonly="1"/>
+                            <field name="accept_dispute"/>
+                            <field name="reject_dispute"/>
+                            <field name="disagree_dispute"/>
+                            <field name="adjusted_dispute_qty" string="Adjusted Move Qty" attrs="{'readonly': [('disagree_dispute', '=', False)]}"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button string="Save" name="save_action" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_br_dispute_move_report_tree" model="ir.actions.act_window">
+            <field name="name">Dispute Move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.move.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="br_dispute_move_report_tree_view"/>
+            <field name="search_view_id" ref="view_dispute_move_report_search"/>
+            <field name="domain">[('is_dispute_move','=',True)]</field>
+            <field name="context">{'readonly_by_pass': ['adjusted_dispute_qty']}</field>
+        </record>
+
+        <act_window id="action_dispute_move_action"
+                    multi="True"
+                    key2="client_action_multi" name="Assign Dispute Moves Action"
+                    res_model="dispute.move.action" src_model="stock.move.report"
+                    context="{'readonly_by_pass': ['adjusted_dispute_qty']}"
+                    view_mode="form" target="new" view_type="tree" />
+
+        <act_window id="action_dispute_move_confirm"
+                    multi="True"
+                    key2="client_action_multi" name="Confirm Dispute Moves"
+                    res_model="dispute.move.confirm" src_model="stock.move.report"
+                    view_mode="form" target="new" view_type="form" />
+
+        <menuitem id="br_dispute_move_report_menu"
+                  name="Dispute Move"
+                  parent="br_stock_request.menu_dispute_and_unfulfilled_request"
+                  sequence="20" action="action_br_dispute_move_report_tree"/>
+
+    </data>
+</openerp>

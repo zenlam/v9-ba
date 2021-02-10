@@ -1,0 +1,76 @@
+<openerp>
+	<data>
+		<record id="view_order_form_address_enhancement" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='partner_id']" position="attributes">
+            		<attribute name="domain">[('customer','=',True),('is_company','=',True)]</attribute>
+            	</xpath>
+            	
+            	<xpath expr="//field[@name='partner_invoice_id']" position="attributes">
+            		<attribute name="readonly">1</attribute>
+            	</xpath>
+            	
+            	<xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+            		<attribute name="string">Delivery Point</attribute>
+            		<attribute name="domain">['|',('id', '=', partner_id),('type','=','delivery'),('parent_id','=',partner_id)]</attribute>
+            	</xpath>
+            	
+            	<xpath expr="//field[@name='partner_shipping_id']" position="after">
+            		<field name="attn_to" domain="[('company_type','=','person'),('parent_id','=',partner_id),('type', '=','contact')]"/>
+            	</xpath>
+            	
+            </field>
+        </record>
+        
+        <!-- bellow all action to add readonly_by_pass -->
+        
+        <record id="sale.action_orders" model="ir.actions.act_window">
+		    <field name="context">{'show_sale': True, 'readonly_by_pass': ['partner_invoice_id']}</field>
+		</record>
+		
+		<record id="sale.action_quotations" model="ir.actions.act_window">
+		    <field name="context">{'readonly_by_pass': ['partner_invoice_id']}</field>
+		</record>
+		
+		<record id="sale.action_orders_to_invoice" model="ir.actions.act_window">
+		    <field name="context">{'show_sale': True, 'readonly_by_pass': ['partner_invoice_id']}</field>
+		</record>
+		
+		<record id="sale.action_orders_upselling" model="ir.actions.act_window">
+		    <field name="context">{'show_sale': True, 'readonly_by_pass': ['partner_invoice_id']}</field>
+		</record>
+		
+		<record id="sale.action_orders_salesteams" model="ir.actions.act_window">
+		    <field name="context">{
+                    'show_sale': True,
+                    'search_default_team_id': [active_id],
+                    'default_team_id': active_id,
+		    		'readonly_by_pass': ['partner_invoice_id']
+                }</field>
+		</record>
+		
+		<record id="sale.action_orders_to_invoice_salesteams" model="ir.actions.act_window">
+		    <field name="context">{
+                    'show_sale': True,
+                    'search_default_team_id': [active_id],
+                    'default_team_id': active_id,
+		    		'readonly_by_pass': ['partner_invoice_id']
+                }</field>
+		</record>
+		
+		<record id="sale.action_quotations_salesteams" model="ir.actions.act_window">
+		    <field name="context">{
+                    'search_default_team_id': [active_id],
+                    'default_team_id': active_id,
+                    'show_address': 1,
+		    		'readonly_by_pass': ['partner_invoice_id']
+                }</field>
+		</record>
+		
+		
+		
+	</data>
+</openerp>

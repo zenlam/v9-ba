@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_pos_pos_form">
+            <field name="name">pos.order</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='picking_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('picking_id', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_invoice']" position="before">
+                    <button name="action_post" string="Post" type="object" states="paid"
+                            attrs="{'readonly': [('partner_id','=',False)]}"
+                            groups="br_point_of_sale.group_allowed_post_pos_order"/>
+                </xpath>
+                 <!--<xpath expr="//button[@name='refund']" position="replace">-->
+                   <!--<button name="refund" string="Return Products" type="object" invisible="1" attrs="{'invisible':[('state','=','draft')]}"/>-->
+                <!--</xpath>-->
+                <xpath expr="//field[@name='lines']/tree/field[@name='product_id']" position="before">
+                    <field name="master_id" string="Number"/>
+                    <field name="menu_name_id"/>
+                </xpath>
+                <xpath expr="//field[@name='lines']/tree/field[@name='discount']" position="replace">
+                    <field name="discount_amount"/>
+                    <field name="user_promotion"/>
+                    <field name="non_sale"/>
+                </xpath>
+                <xpath expr="//page[1]" position="after">
+                    <page string="Menu Names" name="Menu Names">
+                        <field name="master_ids" colspan="4" nolabel="1">
+                            <tree string="Menu Name Line" editable="bottom">
+                                <field name="name"/>
+                                <field name="product_id" string="Menu Name"/>
+                                <field name="price_unit"/>
+                                <field name="qty"/>
+                                <!-- <field name="discount_amount" />-->
+                                <field name="price_subtotal"/>
+                                <field name="price_subtotal_incl"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='pos_reference']" position="after">
+                    <field name="invoice_no" readonly="1"/>
+                    <field name="time_spend" widget="float_time"/>
+                    <field name="third_party_id"/>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="pos_order_line_master_form" model="ir.ui.view">
+            <field name="name">POS Order Line Master Form</field>
+            <field name="model">br.pos.order.line.master</field>
+            <field name="arch" type="xml">
+                <form string="Menu Name Line">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="price_unit"/>
+                            <field name="company_id"/>
+                            <field name="qty"/>
+                            <field name="product_id" string="Menu Name"
+                                   context="{'form_view_ref': 'br_product.br_product_menu_form_view'}"/>
+                        </group>
+                        <group>
+                            <field name="order_id" string="POS Order"/>
+                            <field name="price_subtotal"/>
+                            <field name="price_subtotal_incl"/>
+                            <field name="discount_amount"/>
+                            <field name="discount"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="br_pos_config_form" model="ir.ui.view">
+            <field name="name">Br Pos Config Form</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='picking_type_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='fiscal_position_ids']" position="replace">
+                    <field name="code"/>
+                    <field name="fiscal_position_ids" options="{'no_create': True}"/>
+                    <field name="is_trade_sales"/>
+                    <field name="pc_number"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_ids']" position="after">
+                    <group>
+                        <group>
+                            <field name="default_payment_method" context="{'journal_ids': journal_ids}"/>
+                        </group>
+                        <group></group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_account_fiscal_position_form" model="ir.ui.view">
+            <field name="name">Br Account Fiscal Position Form</field>
+            <field name="model">account.fiscal.position</field>
+            <field name="inherit_id" ref="account.view_account_position_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tax_ids']" position="replace">
+                    <field name="tax_ids" widget="one2many_list" nolabel="1">
+                        <tree string="Tax Mapping" editable="bottom">
+                            <field name="tax_src_id" domain="[('type_tax_use', '!=', None)]"/>
+                            <field name="tax_dest_id"
+                                   domain="[('type_tax_use', '!=', None)]"/>
+                        </tree>
+                        <form string="Tax Mapping">
+                            <field name="tax_src_id" domain="[('type_tax_use', '!=', None)]"/>
+                            <field name="tax_dest_id"
+                                   domain="[('type_tax_use', '!=', None)]"/>
+                        </form>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+        <record id="br_view_account_journal_pos_user_form_inherit" model="ir.ui.view">
+            <field name="name">POS Journal</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_user']" position="after">
+                    <field name="is_rounding_method"/>
+                    <field name="edc_terminal"/>
+                    <field name="e_wallet_id" options="{'no_open': True, 'no_create':True}"
+                           attrs="{'invisible':[('edc_terminal','!=','cimb_ewallet')], 'required':[('edc_terminal','=','cimb_ewallet')]}"/>
+                    <field name="payment_type" attrs="{'invisible': [('journal_user', '!=', True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="sequence"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="br_view_pos_order_tree" model="ir.ui.view">
+            <field name="name">Pos Order Tree View</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="point_of_sale.product_pos_category_action">
+            <field name="name">Pos Category</field>
+        </record>
+    </data>
+</openerp>

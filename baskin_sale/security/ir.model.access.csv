@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_customer_area,customer.area,model_customer_area,,1,1,1,1
+access_customer_region,customer.region,model_customer_region,,1,1,1,1
+
+

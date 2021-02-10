@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_view_currency_form">
+            <field name="name">Currency Form View</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='symbol']" position="before">
+                    <field name="display_name"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="br_view_currency_tree">
+            <field name="name">Currency Tree View</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="display_name"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

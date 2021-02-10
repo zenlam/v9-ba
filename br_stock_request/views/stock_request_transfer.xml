@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_stock_request_transfer_form_view" model="ir.ui.view">
+            <field name="name">Stock Request Transfer Form View</field>
+            <field name="model">br.stock.request.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Stock Request Transfer Form View">
+                    <header>
+                        <button name="action_request" states="draft" string="Send Order" groups="base.group_user"
+                                type="object" class="oe_highlight"/>
+                        <button name="action_cancel_confirm"
+                                states="ordered,partially_available,assigned,partially_processed,processed"
+                                string="Cancel" groups="base.group_user"
+                                type="object"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,ordered,available,transit,done" readonly="1"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="action_view_picking" class="oe_stat_button" icon="fa-truck">
+                                <field name="picking_count" widget="statinfo" string="Shipment" help="Shipments"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group col="3" colspan="3">
+                            <group>
+                                <field name="dest_warehouse_id" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="form_id" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       domain="['|', ('warehouse_dest_ids', '=', dest_warehouse_id), ('len_warehouse_dest_ids', '=', 0),
+                                            '|','|','|',
+                                           '&amp;', ('from_date', '&lt;=', current_date),
+                                           ('to_date', '&gt;=', current_date),
+                                           '&amp;', ('from_date', '&lt;=', current_date),
+                                           ('to_date', '=', None),
+                                           '&amp;', ('from_date', '=', None),
+                                           ('to_date', '&gt;=', current_date),
+                                           '&amp;', ('from_date', '=', None),
+                                           ('to_date', '=', None)
+                                       ]"/>
+                                <field name="warehouse_id" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                        domain="[('id', 'in', form_source_warehouse[0][2])]"/>
+                                <field name="form_source_warehouse" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="date_order" readonly="1"/>
+                                <field name="expected_date" attrs="{'readonly': [('state', 'in', ('done', 'undelivered', 'cancelled', 'dropped'))]}"/>
+                                <field name="requestor_id" readonly="1"/>
+                                <field name="dispute_time" readonly="1"/>
+                                <field name="closed_time" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="schedule_date" groups="br_stock_request.group_inventory_executive"
+                                       attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                <field name="received_date" groups="br_stock_request.group_inventory_pic"
+                                       attrs="{'invisible': [('state', '=', 'draft')],
+                                       'readonly': [('state', 'in', ('done', 'undelivered', 'cancelled', 'dropped'))]}" />
+                                <field name="operator_id" readonly="1"
+                                       attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                <field name="driver" groups="br_stock_request.group_inventory_executive"
+                                       attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                <field name="truck" domain="[('active', '=', True)]" groups="br_stock_request.group_inventory_executive"
+                                       attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <group>
+                                    <button name="recompute_qty_on_hand" type="object" string="Recompute Qty On Hand"/>
+                                </group>
+                                <field name="line_ids" nolabel="1"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                    <tree editable="bottom" create="false">
+                                        <field name="product_id" required="1" readonly="1"/>
+                                        <field name="uom_id" required="1"
+                                               context="{'product_id': product_id, 'uom_type': False}"/>
+                                        <field name="qty_on_hand" invisible="1"/>
+                                        <field name="qty_on_hand_related" readonly="1"/>
+                                        <field name="ordered_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                        <field name="committed_qty" readonly="1"/>
+                                        <field name="delivered_qty" readonly="1"/>
+                                        <field name="pending_qty"/>
+                                        <field name="dispute_qty" readonly="1"/>
+                                        <field name="uom_type" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Additional Information">
+                                <group>
+                                    <field name="remark" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_br_stock_request_transfer_line_tree" model="ir.ui.view">
+            <field name="name">Stock Transfer Request Line Tree</field>
+            <field name="model">br.stock.request.transfer.line</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Transfer Request" create="false" edit="false">
+                    <field name="transfer_id"/>
+                    <field name="dest_warehouse_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="date_order"/>
+                    <field name="expected_date"/>
+                    <field name="schedule_date"/>
+                    <field name="schedule_expected_diff"/>
+                    <field name="product_id"/>
+                    <field name="ordered_qty"/>
+                    <field name="pending_qty"/>
+                    <field name="dispute_qty"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_br_stock_request_transfer_line_form" model="ir.ui.view">
+            <field name="name">Stock Request Transfer Line Form</field>
+            <field name="model">br.stock.request.transfer.line</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Line">
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="uom_type"/>
+                            <field name="uom_id"/>
+                        </group>
+                        <group>
+                            <field name="qty_on_hand"/>
+                            <field name="delivered_qty"/>
+                            <field name="dispute_qty"/>
+                            <field name="ordered_qty"/>
+                            <field name="committed_qty"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_stock_request_transfer_tree_view" model="ir.ui.view">
+            <field name="name">Stock Request Transfer Tree View</field>
+            <field name="model">br.stock.request.transfer</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Request Transfer Tree View">
+                    <field name="name"/>
+                    <field name="dest_warehouse_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="form_id"/>
+                    <field name="date_order"/>
+                    <field name="expected_date"/>
+                    <field name="schedule_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_br_stock_request_transfer" model="ir.actions.act_window">
+            <field name="name">Outlet Ordering</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.stock.request.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="view_stock_request_transfer_line_search" model="ir.ui.view">
+            <field name="name">stock.request.transfer.line.search</field>
+            <field name="model">br.stock.request.transfer.line</field>
+            <field name="arch" type="xml">
+                <search string="Transfers">
+                    <filter name="schedule_expected_diff" string="Delivery Date &lt;&gt; Schedule Date" domain="[('schedule_expected_diff','!=', 0)]"/>
+                    <filter name="schedule_gt_expected" string="Delivery Date &gt; Schedule Date" domain="[('schedule_expected_diff','&gt;', 0)]"/>
+                    <filter name="schedule_lt_expected" string="Delivery Date &lt; Schedule Date" domain="[('schedule_expected_diff','&lt;', 0)]"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="ordered" string="Ordered" domain="[('state', '=', 'ordered')]"/>
+                    <filter name="order_cancelled" string="Order Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <filter name="dropped" string="Dropped" domain="[('state', '=', 'dropped')]"/>
+                    <filter name="dispute_raised" string="Dispute Raised" domain="[('state', '=', 'dispute_raised')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Origin Warehouse" context="{'group_by':'warehouse_id'}"/>
+                        <filter string="Destination Warehouse" context="{'group_by':'dest_warehouse_id'}"/>
+                        <filter string="Schedule Date" context="{'group_by':'schedule_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_br_stock_request_transfer_line" model="ir.actions.act_window">
+            <field name="name">Dispute</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.stock.request.transfer.line</field>
+            <field name="domain">[('dispute_qty', '!=', 0)]</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_stock_request_transfer_line_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_unfulfilled_br_stock_request_transfer_line" model="ir.actions.act_window">
+            <field name="name">Unfulfilled</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.stock.request.transfer.line</field>
+            <field name="domain">[('pending_qty', '!=', 0)]</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_stock_request_transfer_line_search"/>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!--Outlet Ordering Menus-->
+        <menuitem id="br_stock_request.menu_outlet_ordering_mngt" name="Outlet Ordering" parent="stock.menu_stock_root" sequence="3"/>
+
+
+        <menuitem id="br_stock_request_form_menu"
+                  name="Order Form"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="8" action="action_br_stock_request_form"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_stock_request_transfer_menu"
+                  name="Outlet Ordering"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="9" action="action_br_stock_request_transfer"
+                  groups="stock.group_stock_manager"/>
+    </data>
+</openerp>

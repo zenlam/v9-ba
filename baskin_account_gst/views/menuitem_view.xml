@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	
+    	<menuitem name="GST 03 Configuration" id="menu_gst_03" parent="account.account_account_menu" sequence="10"/>
+
+		<!-- finance menu -->
+
+		<menuitem name="Finance" id="menu_gst_finance" sequence="41" groups="account.group_account_user,account.group_account_manager,account.group_account_invoice"/>
+
+		<menuitem name="GST 03 Configuration" id="menu_finance_gst_03" parent="menu_gst_finance" sequence="5"/>
+
+		<menuitem name="GST 03 Report" id="menu_finance_gst_03_report" parent="menu_gst_finance" sequence="10"/>
+
+
+
+    </data>
+</openerp>

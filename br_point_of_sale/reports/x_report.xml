@@ -1,0 +1,944 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data> 
+        <template id="x_report_template">
+            <script>
+                var tid = setInterval( function () {
+                    if ( document.readyState !== 'complete' ) return;
+                    clearInterval( tid );
+                    window.print();
+                    window.close();
+                }, 100 );
+            </script>
+            <div class="page baskin_page" style="color: black !important; font-family: Arial !important; font-size:14px !important;">
+                <style>
+                    table {
+                        width: 100%;
+                        font-family: Arial !important;
+                        color: black !important;
+                        font-size:14px !important;
+                    }
+                    td {
+                        padding-right: 5px;
+                        padding-left: 5px;
+                    }
+                    span {
+                        font-family: Arial !important;
+                        color: black !important;
+                        font-size:14px !important;
+                    }
+                    .delimiter {
+                        width: 100%;
+                        border: double black 3px;
+                        border-style: double;
+                        border-right: 0px;
+                        border-left: 0px;
+                        margin-top: 5px;
+                        margin-bottom: 5px;
+                        border-bottom: 0px;
+                        height: 1px;
+                    }
+
+                    .td_header {
+                        font-weight: bold;
+                        text-align: center;
+                    }
+                    .td_right {
+                        text-align: right
+                    }
+                    .td_center {
+                        text-align: center
+                    }
+
+                    .border_dotted, .border_dotted td {
+                        border: 1px dotted black;
+                    }
+
+                    .span_italic {
+                        font-style: italic;
+                    }
+                </style>
+                <div>
+                    <t t-if="doc.env.user.company_id.logo_web">
+                        <div class="company_logo" style="text-align: center">
+                            <img t-att-src="'data:image/png;base64,'+doc.env.user.company_id.logo_web" width="170%"/>
+                        </div>
+                    </t>
+                </div>
+                <div class="body">
+                    <div class="td_center">
+                        <span t-esc="report_data['report_name']"/>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col width="35%"/>
+                            <col width="65%"/>
+                        </colgroup>
+                        <tr>
+                            <td colspan="2" class="td_center">
+                                <b>
+                                    <span t-esc="outlet.name"/>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 10%">Address</td>
+                            <td class="td_right">
+                                <t t-if="outlet.outlet_name">
+                                    <span t-esc="outlet.outlet_name"/>
+                                </t>
+                                <t t-if="outlet.outlet_street1">
+                                    <span t-esc="outlet.outlet_street1"/>
+                                </t>
+                                <t t-if="outlet.outlet_street2">
+                                    <span t-esc="outlet.outlet_street2"/>
+                                </t>
+                                <t t-if="outlet.outlet_city">
+                                    <span t-esc="outlet.outlet_city"/>
+                                </t>
+                                <t t-if="outlet.outlet_country and outlet.outlet_country.name">
+                                    <span t-esc="outlet.outlet_country.name"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tel</td>
+                            <td class="td_right">
+                                <span t-esc="outlet.outlet_phone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Website</td>
+                            <td class="td_right">
+                                <span t-esc="outlet.company_id.website"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="margin-top: 5px; margin-bottom: 5px">
+                        <colgroup>
+                            <col width="35%"/>
+                            <col width="65%"/>
+                        </colgroup>
+                        <tr>
+                            <td>Report Time</td>
+                            <td class="td_right">
+                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M:%S')"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td># of Print</td>
+                            <td class="td_right">
+                                <t t-if="report_data['rp_name'] != 'pre_closing'">
+                                    <span t-esc="no_of_printed or report_data['sessions'][0].no_of_printed"/>
+                                </t>
+                                <t t-if="report_data['rp_name'] == 'pre_closing'">
+                                    <span t-esc="no_of_printed or report_data['sessions'][0].pre_closing_no_of_printed"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <t t-if="active_register">
+                            <tr>
+                                <td>Active Register</td>
+                                <td class="td_right">
+                                    <span t-esc="active_register"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+
+                    <t t-foreach="report_data['sessions']" t-as="session">
+                        <table>
+                            <colgroup>
+                                <col width="40%"/>
+                                <col width="60%"/>
+                            </colgroup>
+                            <tr>
+                                <td>Session ID</td>
+                                <td class="td_right">
+                                    <span t-esc="session.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PIC</td>
+                                <td class="td_right">
+                                    <span t-esc="session.user_id.partner_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Session Start Time</td>
+                                <td class="td_right">
+                                    <span t-esc="context_timestamp(datetime.datetime.strptime(session.start_at, '%Y-%m-%d %H:%M:%S')).strftime('%Y-%m-%d %H:%M:%S')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Session End Time</td>
+                                <td class="td_right">
+                                    <span t-esc="context_timestamp(datetime.datetime.strptime(session.stop_at, '%Y-%m-%d %H:%M:%S')).strftime('%Y-%m-%d %H:%M:%S') if session.stop_at else ''"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="delimiter"/>
+                    </t>
+
+                    <table t-if="False">
+                        <t t-if="report_data['rp_name'] != 'pre_closing'">
+                            <tr>
+                                <td colspan="2" class="td_header">Sales</td>
+                            </tr>
+                            <tr id="total_sale">
+                                <td>Sales (incl. Tax)</td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['total_sale'])"/>
+                                </td>
+                            </tr>
+                            <tr id="gst">
+                                <td>Tax</td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['gst'])"/>
+                                </td>
+                            </tr>
+                            <tr id="total_net_sale">
+                                <td>Net Sales (excl. Tax)</td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['total_net_sale'])"/>
+                                </td>
+                            </tr>
+                            <tr id="ticket_count">
+                                <td>Ticket Count</td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['ticket_count']"/>
+                                </td>
+                            </tr>
+                            <tr id="ticket_avg">
+                                <td>Ticket Average</td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['ticket_avg']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"></td>
+                            </tr>
+                        </t>
+                        <tr>
+                            <td colspan="2" class="td_header">Cancelled Receipts</td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td class="td_right">
+                                <span t-esc="'{:,.2f}'.format(report_data['cancelled_receipt_amount'])"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#of Cancelled Receipts</td>
+                            <td class="td_right">
+                                <span t-esc="report_data['cancelled_receipt_count']"/>
+                            </td>
+                        </tr>
+                        <t t-set="count" t-value="1"/>
+                        <tr t-foreach="report_data['all_cancelled_receipt']" t-as="receipt">
+                            <td colspan="2">
+                                <![CDATA[&nbsp;&nbsp;&nbsp;]]><t t-esc="count"/>/
+                                <span style="font-style: italic" t-esc="receipt"/>
+                            </td>
+                            <t t-set="count" t-value="count + 1"/>
+                        </tr>
+                    </table>
+                    <!--<div class="delimiter"/>-->
+
+                    <table>
+                        <t t-if="report_data['rp_name'] != 'pre_closing'">
+                            <tr>
+                                <td colspan="4" class="td_header">Transaction Summary</td>
+                            </tr>
+                            <tr>
+                                <td >
+
+                                </td>
+                                <td class="td_right">
+                                    On-site Sales
+                                </td>
+                                <td class="td_right">
+                                    Off-site Sales
+                                </td>
+                                <td class="td_right">
+                                    Redemption Sales
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Gross (incl. Tax)
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_on_site_amount']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_off_site_amount']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_redemption_amount']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Net (excl. Tax)
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['net_on_site_excl_tax']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['net_off_site_excl_tax']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['net_redemption_site_excl_tax']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Transaction Count
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_on_site_qty']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_off_site_qty']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['all_payment_types_redemption_qty']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Transaction Average
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['on_ticket_avg']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['off_ticket_avg']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['redumption_ticket_avg']"/>
+                                </td>
+                            </tr>
+
+                        </t>
+
+                    </table>
+
+                    <div class="delimiter"/>
+                    <table>
+                        <tr>
+                            <td colspan="3" class="td_header">Sales Summary</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="td_right">
+                                Outlet Sales
+                            </td>
+                            <td class="td_right">
+                                Incentive Reference
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Gross (incl. tax)</td>
+                            <td class="td_right">
+                                <t t-set="sale_total_outlet_gross" t-value="report_data['all_payment_types_on_site_amount'] + report_data['all_payment_types_off_site_amount']"/>
+                                <span t-esc="sale_total_outlet_gross"/>
+                            </td>
+                            <td class="td_right">
+                                <t t-set="sale_total_incentive_gross" t-value="report_data['all_payment_types_on_site_amount'] + report_data['all_payment_types_off_site_amount'] + report_data['all_payment_types_redemption_amount']"/>
+                                <span t-esc="sale_total_incentive_gross"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Net (excl. Tax)</td>
+                            <td class="td_right">
+                                <t t-set="sale_total_gross_net" t-value="report_data['net_on_site_excl_tax'] + report_data['net_off_site_excl_tax']"/>
+                                <span t-esc="sale_total_gross_net"/>
+                            </td>
+                            <td class="td_right">
+                                <t t-set="sale_total_incentive_net" t-value="report_data['net_on_site_excl_tax'] + report_data['net_off_site_excl_tax'] + report_data['net_redemption_site_excl_tax'] or 0.0"/>
+                                <span t-esc="sale_total_incentive_net"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ticket Count</td>
+                            <td class="td_right">
+                                <span t-esc="report_data['sale_insentive_ticket_count']['on_off_site']"/>
+                            </td>
+                            <td class="td_right">
+                                <span t-esc="report_data['sale_insentive_ticket_count']['on_off_redemption']"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ticket Average</td>
+                            <td class="td_right">
+                                <span t-esc="round(sale_total_gross_net / (report_data['sale_insentive_ticket_count']['on_off_site'] or 1),2)"/>
+                            </td>
+                            <td class="td_right">
+                                <span t-esc="round(sale_total_incentive_net / (report_data['sale_insentive_ticket_count']['on_off_redemption'] or 1),2)"/>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    <div class="delimiter"/>
+                    <table>
+                        <tr>
+                            <td colspan="2" class="td_header">Total Orders</td>
+                        </tr>
+                        <tr>
+                            <td>Total Orders</td>
+                            <td class="td_right">
+                                <span t-esc="report_data['total_order']"/>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    <div class="delimiter"/>
+                    <table>
+                        <tr>
+                            <td colspan="2" class="td_header">Cancelled Receipts</td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td class="td_right">
+                                <span t-esc="'{:,.2f}'.format(report_data['cancelled_receipt_amount'])"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#of Cancelled Receipts</td>
+                            <td class="td_right">
+                                <span t-esc="report_data['cancelled_receipt_count']"/>
+                            </td>
+                        </tr>
+                        <t t-set="count" t-value="1"/>
+                        <tr t-foreach="report_data['all_cancelled_receipt']" t-as="receipt">
+                            <td colspan="2">
+                                <![CDATA[&nbsp;&nbsp;&nbsp;]]><t t-esc="count"/>/
+                                <span style="font-style: italic" t-esc="receipt"/>
+                            </td>
+                            <t t-set="count" t-value="count + 1"/>
+                        </tr>
+                    </table>
+
+                    <div class="delimiter"/>
+
+                    <table>
+                        <colgroup>
+                            <col width="44%"/>
+                            <col width="28%"/>
+                            <col width="28%"/>
+                        </colgroup>
+                        <tr>
+                            <td colspan="3" class="td_header">Payment Mode</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="td_right"># of Transactions</td>
+                            <td class="td_right">Value</td>
+                        </tr>
+                        <tr t-foreach="report_data['all_payments']" t-as="payment">
+                            <td>
+                                <span t-esc="payment"/>
+                            </td>
+                            <td class="td_right">
+                                <span t-esc="'{:,.2f}'.format(report_data['all_payments'][payment]['qty'])"/>
+                            </td>
+                            <td class="td_right">
+                                <span t-esc="'{:,.2f}'.format(report_data['all_payments'][payment]['amount'])"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- ******************************* Cash Control ******************************* -->
+
+                    <div class="delimiter"/>
+                    <table>
+                        <colgroup>
+                            <col width="40%"/>
+                            <col width="30%"/>
+                            <col width="30%"/>
+                        </colgroup>
+                        <tr>
+                            <td colspan="3" class="td_header">Cash Control</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Remarks</td>
+                            <td class="td_right">Value</td>
+                        </tr>
+                        <tr>
+                            <td>Opening Balance</td>
+                            <td></td>
+                            <td class="td_right">
+                                <span t-esc="'{:,.2f}'.format(report_data['cash_register_balance_start'])"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="padding: 10px"></td>
+                        </tr>
+                        <t t-if="report_data['rp_name'] != 'pre_closing'">
+                            <tr>
+                                <td>Cash Sales</td>
+                                <td></td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['cash_purchase'])"/>
+                                </td>
+                            </tr>
+                            <tr t-foreach="report_data['cash_controls']" t-as="cash_control">
+                                <td>
+                                    <span t-esc="report_data['cash_controls'][cash_control]['name']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="report_data['cash_controls'][cash_control]['remark']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['cash_controls'][cash_control]['amount'])"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="padding: 10px"></td>
+                            </tr>
+                            <tr>
+                                <td>Theo. Closing Bal.</td>
+                                <td></td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['theoretical_closing_balance'])"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Act. Closing Bal.</td>
+                                <td></td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['cash_register_balance_end_real'])"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Cash Var.</td>
+                                <td></td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['cash_var'])"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+
+                    <!-- ******************************* Non Cash ******************************* -->
+
+                    <!--<div class="delimiter"/>-->
+                    <!--<table>-->
+                        <!--<colgroup>-->
+                            <!--<col width="40%"/>-->
+                            <!--<col width="30%"/>-->
+                            <!--<col width="30%"/>-->
+                        <!--</colgroup>-->
+                        <!--<tr>-->
+                            <!--<td colspan="3" class="td_header">Non Cash</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td></td>-->
+                            <!--<td>Total transaction</td>-->
+                            <!--<td>Total value</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td>Total</td>-->
+                            <!--<td><span t-esc="'{:,.2f}'.format(report_data['non_cash']['qty'])"/></td>-->
+                            <!--<td class="td_right">-->
+                                <!--<span t-esc="'{:,.2f}'.format(report_data['non_cash']['amount'])"/>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+
+                    <!-- ******************************* Menu Mix ******************************* -->
+                    <t t-if="report_data['rp_name'] != 'pre_closing'">
+                        <div class="delimiter"></div>
+                        <table>
+                            <tr>
+                                <td colspan="3" class="td_header">Menu Mix</td>
+                            </tr>
+                            <tr>
+                                <td>Dept.</td>
+                                <td class="td_right">Qty</td>
+                                <td class="td_right">Sales</td>
+                            </tr>
+                            <t t-set="menu_total_qty" t-value="0"/>
+                            <t t-set="menu_total_sales" t-value="0"/>
+                            <tr t-foreach="report_data['menus']" t-as="menu">
+                                <td>
+                                    <span t-esc="menu"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="report_data['menus'][menu]['qty']"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(report_data['menus'][menu]['sales'])"/>
+                                </td>
+
+                                <t t-set="menu_total_qty" t-value="menu_total_qty + report_data['menus'][menu]['qty']"/>
+                                <t t-set="menu_total_sales" t-value="menu_total_sales + report_data['menus'][menu]['sales']"/>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Total</b>
+                                </td>
+                                <td class="td_right">
+                                    <b>
+                                        <span t-esc="menu_total_qty"/>
+                                    </b>
+                                </td>
+                                <td class="td_right">
+                                    <b>
+                                        <span t-esc="'{:,.2f}'.format(menu_total_sales)"/>
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- ******************************* Discount ******************************* -->
+                        <div class="delimiter"></div>
+                        <table>
+                            <tr>
+                                <td colspan="3" class="td_header">Discount</td>
+                            </tr>
+                            <tr>
+                                <td>Discount</td>
+                                <td class="td_right">Qty</td>
+                                <td class="td_right">Discount Amt.</td>
+                            </tr>
+                            <t t-set="discount_total_qty" t-value="0"/>
+                            <t t-set="discount_total_sales" t-value="0"/>
+                            <t t-foreach="report_data['discounts']" t-as="discount">
+                                <t t-if="report_data['discounts'][discount]['rate_promotion']">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="discount"/>
+                                        </td>
+                                        <td class="td_right">
+                                            <span t-esc="'{:,.0f}'.format(report_data['discounts'][discount]['rate_promotion'])"/>
+                                        </td>
+                                        <td class="td_right">
+                                            <span t-esc="'{:,.2f}'.format(report_data['discounts'][discount]['amount'])"/>
+                                        </td>
+                                    </tr>
+                                    <!--<t t-foreach="report_data['discounts'][discount]['vouchers']" t-as="voucher">-->
+                                        <!--<tr>-->
+                                            <!--<td colspan="3"><![CDATA[&nbsp;&nbsp;&nbsp;]]>-->
+                                                <!--<span style="font-style: italic" t-esc="voucher"/>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    <!--</t>-->
+                                    <t t-set="discount_total_qty" t-value="discount_total_qty + report_data['discounts'][discount]['rate_promotion']"/>
+                                    <t t-set="discount_total_sales" t-value="discount_total_sales + report_data['discounts'][discount]['amount']"/>
+                                </t>
+                            </t>
+                            <tr>
+                                <td>
+                                    <b>Total</b>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="discount_total_qty"/>
+                                </td>
+                                <td class="td_right">
+                                    <span t-esc="'{:,.2f}'.format(discount_total_sales)"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <!-- ******************************* Non-Sale Transactions ******************************* -->
+                    <div class="delimiter"></div>
+                    <table>
+                        <colgroup>
+                            <col width="40%"/>
+                            <col width="20%"/>
+                            <col width="40%"/>
+                        </colgroup>
+                        <tr>
+                            <td colspan="3" class="td_header">Non Sales Transaction</td>
+                        </tr>
+                        <tr>
+                            <td>Non Sales Transaction</td>
+                            <td class="td_right">Qty</td>
+                            <td class="td_right">Product</td>
+                        </tr>
+                        <t t-set="none_sales" t-value="report_data['none_sales']"/>
+                        <t t-foreach="none_sales" t-as="order">
+                            <t t-foreach="none_sales[order]" t-as="promotion">
+                                <t t-foreach="none_sales[order][promotion]['products']" t-as="product">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="promotion"/>
+                                        </td>
+                                        <td class="td_right">
+                                            <span t-esc="none_sales[order][promotion]['products'][product]"/>
+                                        </td>
+                                        <td class="td_right">
+                                            <span t-esc="product"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="3"> <![CDATA[&nbsp;&nbsp;&nbsp;]]>
+                                        <span style="font-style: italic" t-esc="none_sales[order][promotion]['note']"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </table>
+                    <t t-if="report_data['report_name'] == 'Z Report'">
+                        <!-- *******************************Stock Transfer ******************************* -->
+                        <div class="delimiter"></div>
+                        <table>
+                            <colgroup>
+                                <col width="40%"/>
+                                <col width="20%"/>
+                                <col width="40%"/>
+                            </colgroup>
+                            <tr>
+                                <td colspan="3" class="td_header">Stock Transfers</td>
+                            </tr>
+                            <tr>
+                                <td>Transfer No.</td>
+                                <td>Status</td>
+                                <td class="td_right">Scheduled Date</td>
+                            </tr>
+                            <t t-foreach="report_data['stock_transfers'][report_data['sessions'][0].id]" t-as="st">
+                                <tr>
+                                    <td><span t-esc="st['name']"/></td>
+                                    <td><span t-esc="st['state']"/></td>
+                                    <td class="td_right"><span t-esc="context_timestamp(datetime.datetime.strptime(st['min_date'], '%Y-%m-%d %H:%M:%S')).strftime('%Y-%m-%d %H:%M:%S')"/></td>
+                                </tr>
+                            </t>
+                        </table>
+                    </t>
+                    <t t-if="report_data['rp_name'] != 'pre_closing'">
+                        <div class="delimiter"></div>
+                        <span><strong>Remarks :</strong></span>
+                        <table style="border: 1px solid black; border-collapse: collapse;">
+                            <tr style="height: 100px;">
+                                <td colspan="2" style="border: 1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;" width="50%">Cash in Safe</td>
+                                <td style="border: 1px solid black;" width="50%"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;">Cash in Float Location</td>
+                                <td style="border: 1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;">Total Cash</td>
+                                <td style="border: 1px solid black;"></td>
+                            </tr>
+                        </table>
+                        <table style="margin-top: 10%">
+                            <tr>
+                                <td class="">Acknowledged by PIC:</td>
+                                <td class="">Witnessed by:</td>
+                            </tr>
+                        </table>
+                        <!--Blank for signature-->
+                        <div class="delimiter" style="margin-top: 20%"/>
+                        <table style="">
+                            <tr>
+                                <td class="">Name:</td>
+                                <td class="">Name:</td>
+                            </tr>
+                            <tr>
+                                <td class="">Date:</td>
+                                <td class="">Date:</td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <table style="margin-top: 10%" width="50%">
+                        <tr>
+                            <td class="">Reviewed by AreaMgr / Auditor</td>
+                        </tr>
+                    </table>
+                    <!--Blank for signature-->
+                    <div class="delimiter" style="margin-top: 20%" width="50%"/>
+                    <table style="" width="50%">
+                        <tr>
+                            <td class="">Name:</td>
+                        </tr>
+                        <tr>
+                            <td class="">Date:</td>
+                        </tr>
+
+                    </table>
+
+
+                    <!--<table>-->
+                        <!--<colgroup>-->
+                            <!--<col width="20%"/>-->
+                            <!--<col width="10%"/>-->
+                            <!--<col width="14%"/>-->
+                            <!--<col width="14%"/>-->
+                            <!--<col width="14%"/>-->
+                            <!--<col width="14%"/>-->
+                            <!--<col width="14%"/>-->
+                        <!--</colgroup>-->
+                        <!--<tr class="border_dotted">-->
+                            <!--<td colspan="7" class="td_header" style="font-weight: bold" >Collection Reconciliation</td>-->
+                        <!--</tr>-->
+                        <!--<tr class="border_dotted">-->
+                            <!--<td>-->
+                                <!--<t t-if="report_data['rp_name'] != 'pre_closing'">-->
+                                    <!--<span>Cash Variance - Gain / Loss</span>-->
+                                <!--</t>-->
+                                <!--<t t-if="report_data['rp_name'] == 'pre_closing'">-->
+                                    <!--<span>Cash Sale</span>-->
+                                <!--</t>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_right">-->
+                                <!--<span t-esc="'{:,.2f}'.format(report_data['cash_var'])"/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> = </span>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr t-foreach="report_data['all_payments']" t-as="payment" class="border_dotted">-->
+                            <!--<td>-->
+                                <!--<span t-esc="payment"/>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span t-esc="'{:,.2f}'.format(report_data['all_payments'][payment]['qty'])"/>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> - </span>-->
+                            <!--</td>-->
+                            <!--<td class="td_right">-->
+                                <!--<span t-esc="'{:,.2f}'.format(report_data['all_payments'][payment]['amount'])"/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> = </span>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span></span>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr t-foreach="report_data['cash_controls']" t-as="cash_control" class="border_dotted">-->
+                            <!--<td>-->
+                                <!--<span t-esc="report_data['cash_controls'][cash_control]['name']"/>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_right">-->
+                                <!--<t t-if="report_data['cash_controls'][cash_control]['action'] == 'in'">-->
+                                    <!--<span t-esc="'{:,.2f}'.format(report_data['cash_controls'][cash_control]['amount'])"/>-->
+                                <!--</t>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> - </span>-->
+                            <!--</td>-->
+                            <!--<td class="td_right">-->
+                                <!--<t t-if="report_data['cash_controls'][cash_control]['action'] == 'out'">-->
+                                    <!--<span t-esc="'{:,.2f}'.format(report_data['cash_controls'][cash_control]['amount'])"/>-->
+                                <!--</t>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> = </span>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span></span>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        <!--<tr class="border_dotted">-->
+                            <!--<td>-->
+                                <!--<span>Actual Gain / Loss</span>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_right">-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                            <!--<td class="td_center">-->
+                                <!--<span> = </span>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<span/>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+                    <!--<span>Explanation :</span>-->
+                    <!--<table style="border: 1px solid black">-->
+                        <!--<tr style="height: 100px;">-->
+                            <!--<td></td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+
+                    <!--<table style="margin-top: 10%">-->
+                        <!--<tr>-->
+                            <!--<td class="td_center">PIC Signature</td>-->
+                            <!--<td class="td_center">Witness Signature</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+                    <!--&lt;!&ndash;Blank for signature&ndash;&gt;-->
+                    <!--<div class="delimiter" style="margin-top: 20%"/>-->
+                </div>
+            </div>
+        </template>
+
+        <template id="x_report">
+            <t t-call="report.html_container">
+                <t t-set="doc" t-value="docs"/>
+                <t t-set="report_data" t-value="doc.get_x_report_data()"/>
+                <t t-set="outlet" t-value="report_data['outlet']"/>
+                <!--<t t-foreach="docs" t-as="doc">-->
+                <t t-call="br_point_of_sale.x_report_template" t-lang="doc.env.user.partner_id.lang"/>
+                <!--</t>-->
+            </t>
+        </template>
+
+        <record id="x_report_format" model="report.paperformat">
+            <field name="name">X Report Format</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">375</field>
+            <field name="page_width">79</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">5</field>
+            <field name="dpi">200</field>
+        </record>
+
+        <report
+                id="action_x_report"
+                string="X Report"
+                model="pos.session"
+                report_type="qweb-pdf"
+                name="br_point_of_sale.x_report"
+                file="br_point_of_sale.x_report"
+                paperformat="br_point_of_sale.x_report_format"
+        />
+    </data>
+</openerp>

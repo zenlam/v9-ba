@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!-- Loading Widget -->
+    <t t-extend="Chrome">
+        <!--<t t-jquery=".pos-branding" t-operation="replace">
+            &lt;!&ndash; Remove pos breading &ndash;&gt;
+        </t>-->
+        <t t-jquery=".loader" t-operation="prepend">
+            <div class="loading-baskin oe_hidden">
+                <div class="loading-img">
+                    &amp;nbsp;
+                </div>
+                <div class="loading-progress">
+                    &amp;nbsp;
+                </div>
+                <div class="loading-bg">
+                    <div style="background:#f06eaa;height:40%">
+                        <!-- ice cream part -->
+                        &amp;nbsp;
+                    </div>
+                    <div style="background:#D32E79;height:60%">
+                        <!-- cone part -->
+                        &amp;nbsp;
+                    </div>
+                </div>
+                <h1 class="baskin_message"></h1>
+            </div>
+        </t>
+    </t>
+    <!-- Replace  ProductCategoriesWidget -->
+    <t t-name="ProductCategoriesWidget">
+        <div>
+            <header class='rightpane-header'>
+                <div class="breadcrumbs">
+                    <span class="breadcrumb">
+                        <span class=" breadcrumb-button pos-home">
+                            <img src="/point_of_sale/static/src/img/home.png" class="breadcrumb-homeimg" />
+                        </span>
+                    </span>
+                    <t t-foreach="widget.breadcrumb" t-as="category">
+                        <span class="breadcrumb">
+                            <img src="/point_of_sale/static/src/img/bc-arrow-big.png" class="breadcrumb-arrow" />
+                            <span class="breadcrumb-button js-category-switch" t-att-data-category-id="category.id" >
+                                <t t-esc="category.name"/>
+                            </span>
+                        </span>
+                    </t>
+                    <!--<t t-foreach="widget.extra_breadcrumb" t-as="br">-->
+                    <!--<span class="breadcrumb">-->
+                    <!--<img src="/point_of_sale/static/src/img/bc-arrow-big.png" class="breadcrumb-arrow" />-->
+                    <!--<span class="breadcrumb-button">-->
+                    <!--<t t-esc="br"/>-->
+                    <!--</span>-->
+                    <!--</span>-->
+                    <!--</t>-->
+                </div>
+                <span class='placeholder-HeaderActionBar'></span>
+                <div class="searchbox">
+                    <input placeholder="Search Products" />
+                    <span class="search-clear"></span>
+                </div>
+            </header>
+
+            <div class="categories">
+                <div class="breadcrumb-button-apply-back">
+                     <span class="breadcrumb-button-apply"><i class='fa fa-angle-double-left'> Apply</i></span>
+                     <span class="breadcrumb-button-back"><i class='fa fa-angle-double-left'> Back</i></span>
+                     <span class="promotion_name" id="promotion_id"></span>
+                </div>
+                <div class="category-list">
+                </div>
+                <div class="item-master-list">
+                </div>
+            </div>
+        </div>
+    </t>
+
+     <t t-name="BrItemMasterWidget">
+        <div class="product-list-container">
+            <div class="">
+                <div class="bom-tabs-placeholder">
+
+                </div>
+                <div class="product-list-header" style="height:35px;">
+                    <div class="product-list-filter-bar">
+                    </div>
+                    <div class="sort-mode">
+                        <!--<span class="most-common-mode btn-sort-mode" data-sort-mode="most-common">Most Common</span>-->
+                        <span class="reset-filter-mode btn-sort-mode selected" data-sort-mode="reset-filter">A - Z</span>
+                    </div>
+                    <div style="clear:both">&amp;nbsp;</div>
+                </div>
+                <div class="product-list touch-scrollable">
+                </div>
+                <div class="item-master-message">
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="BrBomLineWidget">
+        <div class="bom-line-container"
+             t-att-data-bom-line-id="bom_line.id" t-att-data-times-add="times_add">
+            <div class="bom-line-content" t-att-data-bom-qty="bom_qty">
+
+            </div>
+        </div>
+    </t>
+     <t t-name="BrErrorPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-confirm br-popup">
+                <p style="white-space: pre-line; text-align: left; margin-left: 10px" class="message br-message"><t t-esc=" widget.message || 'Error' " /></p>
+                <p class="comment"><t t-esc=" widget.comment || '' "/></p>
+                <div class="footer">
+                    <div class="button">
+                        Ok
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!--TODO Move this to br_discount-->
+     <t t-name="BrLoginUserPopupWidget">
+        <div class="modal-dialog">
+            <div class="popup br_login_user" style="height: 450px !important;">
+                <p class="title">Login User</p>
+                <p class="br_search_user">
+                    <span>
+                        <input placeholder="Search User" id="txt_br_login_search"/>
+                        <span class="search-clear"></span>
+                    </span>
+                </p>
+                <div class="br_login_content">
+                     User: <select class='lsuser'>
+                        <t t-foreach="widget.list || []" t-as="item">
+                            <option t-att-value='item.value'>
+                                <t t-esc='item.label'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class="br_login_content">
+                    Password: <input id="txtPassword" t-att-value="widget.password || ''"></input>
+                </div>
+
+                <div class="br_login_content">
+                    Comment: <input type='text' id="txtComment"/>
+                </div>
+                <div class="footer">
+                    <div class="button">
+                        Validate
+                    </div>
+                    <div class="cancel">
+                        Cancel
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+    <t t-name="BrBomLineTabs">
+        <ul class="br-tabs">
+            <t t-if="bom_lines">
+                <t t-foreach="bom_lines" t-as="line">
+                    <li t-attf-class="tab-header {{line_index == 0 ? 'selected': ''}}" t-att-data-bom-line-id="line.id" >
+                    <a href="javascript:void(0)" >
+                        <t t-esc="line.name" />
+                    </a>
+                    </li>
+                </t>
+                <li class="item-msg">
+                    <span style="font-weight:bold"></span>
+                </li>
+
+            </t>
+        </ul>
+
+        <div style="clear:both">&amp;nbsp;</div>
+    </t>
+    <t t-name="Orderline">
+        <li t-attf-class="orderline #{ line.selected ? 'selected' : '' }
+                        #{(line.is_flavour_item) ? 'purchase_ok': ''}
+                        #{line.show_in_cart === false ? 'oe_hidden': ''}
+                        "
+            t-att-data-product-id="line.product.id"
+            t-att-data-times-add="times_add"
+            t-att-data-bom-line-id="line.bom_line_id"
+            t-att-data-product-master-id="line.product_master_id"
+
+                >
+            <span class="product-name">
+                <t t-if="line.error">
+                    <i class="fa fa-exclamation-circle" style="color:red"></i>
+                </t>
+                <t t-esc="line.get_product().display_name"/>
+            </span>
+            <span class="price">
+                <t t-esc="widget.format_currency(line.get_display_price())"/>
+            </span>
+            <ul class="info-list">
+                <t t-if="line.get_quantity_str() !== '1' || line.selected ">
+                    <li class="info">
+                        <em>
+                            <t t-esc="line.get_quantity_str()" />
+                        </em>
+                        <t t-if="line.is_flavour_item == true">
+                            <span class="info-after">
+                                unit(s)
+                            </span>
+                        </t>
+                        <t t-if="line.is_flavour_item == false">
+                            <t t-esc="line.get_unit().name" />
+                            at
+                            <t t-esc="widget.format_currency(line.get_unit_price())" />
+
+                        </t>
+                    </li>
+                </t>
+                <!--<t t-if="line.get_discount_str() !== '0'">-->
+                <!--<li class="info">-->
+                <!--@-->
+                <!--<em>-->
+                <!--<t t-esc="line.get_discount_str()" /> %-->
+                <!--</em>-->
+                <!--disc-->
+                <!--</li>-->
+                <!--</t>-->
+                <!--<t t-if="line.discount_amount > 0">-->
+                <!--<li class="info">-->
+                <!--@-->
+                <!--<em>-->
+                <!--<t t-esc="widget.format_currency(line.discount_amount,'Product Price')" />-->
+                <!--</em>-->
+                <!--Disc-->
+                <!--</li>-->
+                <!--</t>-->
+
+            </ul>
+        </li>
+    </t>
+    <!--Hide this button-->
+    <t t-name="SetFiscalPositionButton">
+        <div class='control-button oe_hidden'>
+            <i class='fa fa-book' /> Tax
+        </div>
+    </t>
+
+    <t t-extend="CategorySimpleButton">
+        <t t-jquery="span" t-operation="replace">
+            <span class='category-simple-button js-category-switch' t-att-data-category-id="category.id" t-attf-style="#{ category.x_background === '' ? '' : 'background: ' + category.x_background + ' none repeat scroll 0 0;' } #{ category.x_color === '' ? '' : 'color: ' + category.x_color }">
+                <t t-esc="category.name"/>
+            </span>
+        </t>
+    </t>
+
+    <t t-extend="PaymentScreen-Paymentlines">
+        <t t-jquery=".paymentlines tbody" t-operation="replace">
+            <t t-foreach='paymentlines' t-as='line'>
+                <t t-if='line.selected'>
+                    <tr class='paymentline selected'>
+                        <td class='col-due'>
+                            <t t-esc='widget.format_currency_no_symbol(order.get_due(line))' />
+                        </td>
+                        <td class='col-tendered edit'>
+                            <t t-esc='widget.inputbuffer' />
+                            <!-- <t t-esc='line.get_amount()' /> -->
+                        </td>
+                        <t t-if='order.get_change(line)'>
+                            <td class='col-change highlight' >
+                                <t t-esc='widget.format_currency_no_symbol(order.get_change(line))' />
+                            </td>
+                        </t>
+                        <t t-if='!order.get_change(line)'>
+                            <td class='col-change' ></td>
+                        </t>
+
+                        <td class='col-name' > <t t-esc='line.name' /> </td>
+                        <td class='delete-button' t-att-data-cid='line.cid'> <i class='fa fa-times-circle' /> </td>
+                    </tr>
+                </t>
+                <t t-if='!line.selected'>
+                    <t t-if="line.cashregister.journal.is_rounding_method or line.locked">
+                        <tr class='paymentline' t-att-data-cid='line.cid' style='background-color: #c7c7c7'>
+                            <td class='col-due'></td>
+                            <td class='col-tendered'> <t t-esc='widget.format_currency_no_symbol(line.get_amount())' /> </td>
+                            <td class='col-change'>
+                                <t t-if='order.get_change(line)'>
+                                    <t t-esc='widget.format_currency_no_symbol(order.get_change(line))' />
+                                 </t>
+                            </td>
+                            <td class='col-name'> <t t-esc='line.name' /> </td>
+                            <td> </td>
+                        </tr>
+                    </t>
+                    <t t-if="!line.cashregister.journal.is_rounding_method and !line.locked">
+                        <tr class='paymentline' t-att-data-cid='line.cid'>
+                            <td class='col-due'> <t t-esc='widget.format_currency_no_symbol(order.get_due(line))' /> </td>
+                            <td class='col-tendered'> <t t-esc='widget.format_currency_no_symbol(line.get_amount())' /> </td>
+                            <td class='col-change'>
+                                <t t-if='order.get_change(line)'>
+                                    <t t-esc='widget.format_currency_no_symbol(order.get_change(line))' />
+                                 </t>
+                            </td>
+                            <td class='col-name'> <t t-esc='line.name' /> </td>
+                            <td class='delete-button' t-att-data-cid='line.cid'> <i class='fa fa-times-circle' /> </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+            <t t-if='extradue'>
+                <tr class='paymentline extra' t-att-data-cid='0'>
+                    <td class='col-due'> <t t-esc='widget.format_currency_no_symbol(extradue)' /> </td>
+                </tr>
+            </t>
+        </t>
+    </t>
+
+    <t t-name="PaymentScreen-Paymentmethods">
+        <div class='paymentmethods'>
+            <t t-foreach="widget.pos.cashregisters" t-as="cashregister" t-if="!cashregister.journal.is_rounding_method">
+                <t t-if="cashregister.journal.is_non_clickable">
+                    <div class="button paymentmethod" style="pointer-events:none; background-color: grey; color: black;" t-att-data-id="cashregister.journal_id[0]">
+                        <t t-esc="cashregister.journal_id[1]" />
+                    </div>
+                </t>
+                <t t-if="!cashregister.journal.is_non_clickable">
+                     <div class="button paymentmethod" t-attf-style="background-color:#{cashregister.journal.background_colour}; color:#{cashregister.journal.font_colour};" t-att-data-id="cashregister.journal_id[0]">
+                        <t t-esc="cashregister.journal_id[1]" />
+                     </div>
+                </t>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="ActionpadWidget">
+        <div class="actionpad">
+            <button t-attf-class='button set-customer #{ ( widget.pos.get_client() and widget.pos.get_client().name.length > 10) ? "decentered" : "" }' >
+                <i class='fa fa-user' />
+                <t t-if="widget.pos.get_client()">
+                    <t t-esc="widget.pos.get_client().name" />
+                </t>
+                <t t-if="!widget.pos.get_client()">
+                    Customer
+                </t>
+            </button>
+            <button class='button pay'>
+                <div class='pay-circle'>
+                    <i class='fa fa-chevron-right' />
+                </div>
+                Payment
+            </button>
+             <div class="button" style="height: 61px;">
+                <input id="bulk_quantity" placeholder="Bulk quantity" class="br_input" type="number" max = "100"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="NumpadWidget">
+        <div class="numpad">
+            <button class="input-button number-char">1</button>
+            <button class="input-button number-char">2</button>
+            <button class="input-button number-char">3</button>
+            <button class="mode-button" data-mode='quantity'>Qty</button>
+            <br />
+            <button class="input-button number-char">4</button>
+            <button class="input-button number-char">5</button>
+            <button class="input-button number-char">6</button>
+            <button class="br_disable"></button>
+            <br />
+            <button class="input-button number-char">7</button>
+            <button class="input-button number-char">8</button>
+            <button class="input-button number-char">9</button>
+            <button class="input-button"  >
+                <!--<img height="21" src="/br_point_of_sale/static/src/img/close.png" style="pointer-events: none;" width="24"/>-->
+            </button>
+            <br />
+            <button class="input-button numpad-minus br_disable" ></button>
+            <button class="input-button number-char">0</button>
+            <button class="input-button number-char br_disable"></button>
+            <button class="input-button numpad-backspace">
+                <img style="pointer-events: none;" src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" />
+            </button>
+        </div>
+    </t>
+
+    <t t-name="Product">
+        <span class='product' style="margin: 2px !important" t-att-data-product-id="product.id">
+            <div class="product-img">
+                <img t-att-src='image_url' />
+                <t t-if="!product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.price)"/>
+                    </span>
+                </t>
+                <t t-if="product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.price)+'/'+widget.pos.units_by_id[product.uom_id[0]].name"/>
+                    </span>
+                </t>
+            </div>
+            <div class="product-name">
+                <t t-esc="product.display_name"/>
+            </div>
+        </span>
+    </t>
+
+    <t t-name="OrderWidget">
+        <div class="order-container">
+            <div class="order-scroller touch-scrollable">
+                <div class="order">
+                    <t t-if="orderlines.length === 0" >
+                        <div class='order-empty'>
+                            <i class='fa fa-shopping-cart' />
+                            <h1>Your shopping cart is empty</h1>
+                        </div>
+                    </t>
+                    <t t-if="orderlines.length > 0">
+                        <ul class="orderlines"></ul>
+                        <div class="summary clearfix">
+                            <div class="line">
+                                <div class='entry total'>
+                                    <div class='subtotal'>Total (Excl. Tax): <span class="value">0.00€</span></div>
+                                    <div class='subentry'>Taxes: <span class="value">0.00€</span></div>
+                                    <span class="label">Total: </span> <span class="value">0.00 €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

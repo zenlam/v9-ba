@@ -1,0 +1,68 @@
+<openerp>
+    <data>
+
+        <record id="br_voucher_listing_filter" model="ir.ui.view">
+            <field name="name">br.voucher.listing.filter</field>
+            <field name="model">br.voucher.listing</field>
+            <field name="arch" type="xml">
+                <search string="Search Voucher">
+                    <field name="promotion_name"/>
+                    <field name="voucher_code"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Discount Name" domain="[]" context="{'group_by':'promotion_name'}"/>
+                    </group>
+                </search>
+             </field>
+        </record>
+
+        <record id="br_voucher_listing_tree" model="ir.ui.view">
+            <field name="name">br.voucher.listing.tree</field>
+            <field name="model">br.voucher.listing</field>
+            <field name="arch" type="xml">
+                <tree string="Voucher" create="false" edit="false" default_order="promotion_name,id"
+                      decoration-danger="status=='expired'" decoration-muted="status=='redeemed'">
+                    <field name="promotion_code"/>
+                    <field name="promotion_name"/>
+                    <field name="voucher_code"/>
+                    <field name="voucher_validation_code" string="Voucher Validation Code" groups="br_discount.group_voucher_view_validation"/>
+                    <field name="partner_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="date_red"/>
+                    <field name="status"/>
+                    <field name="order_id"/>
+                    <field name="outlet_name"/>
+                    <field name="approval_no"/>
+                    <field name="remarks"/>
+                    <field name="c_date"/>
+                    <field name="c_uid"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_voucher_listing" model="ir.actions.act_window">
+            <field name="name">Codes</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.voucher.listing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="br_voucher_listing_tree"/>
+        </record>
+
+        <menuitem
+                parent="menu_config_discount"
+                action="action_voucher_listing"
+                id="br_voucher_listing_menu"
+                name="Code Listing"
+                groups="br_discount.group_voucher_user"
+                sequence="2"/>
+
+        <record id="br_voucher_listing_rule" model="ir.rule">
+            <field name="name">Br Voucher Listing multi-company</field>
+            <field name="model_id" ref="model_br_voucher_listing"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+    </data>
+</openerp>

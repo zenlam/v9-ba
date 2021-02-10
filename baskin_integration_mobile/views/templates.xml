@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Load the mobile app integration js -->
+        <template id="mobile_phone_point_of_sale_assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/baskin_integration_mobile/static/src/js/chrome.js"></script>
+                <script type="text/javascript" src="/baskin_integration_mobile/static/src/js/gui.js"></script>
+                <script type="text/javascript" src="/baskin_integration_mobile/static/src/js/popups.js"></script>
+                <script type="text/javascript" src="/baskin_integration_mobile/static/src/js/sha1.js"></script>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

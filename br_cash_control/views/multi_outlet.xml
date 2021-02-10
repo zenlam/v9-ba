@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_multi_outlet_form">
+            <field name="name">Multi Outlet Form</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="inherit_id" ref="br_multi_outlet.view_br_outlet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state_id']/.." position="after">
+                    <group string="Cash control">
+                        <field name="float_amount"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

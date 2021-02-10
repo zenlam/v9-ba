@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_pos_session_inherit">
+            <field name="name">Pos Session Inherit</field>
+            <field name="model">pos.session</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']/button[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='cash_register_id']" position="after">
+                    <field name="is_outlet_pic"/>
+                </xpath>
+
+                <xpath expr="//label[@for='cash_register_total_entry_encoding']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|', ('is_outlet_pic', '=', True), ('state', '=', 'opening_control')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='cash_register_total_entry_encoding']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|', ('is_outlet_pic', '=', True), ('state', '=', 'opening_control')]}</attribute>
+                </xpath>
+
+                <xpath expr="//label[@for='cash_register_balance_end']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|', ('is_outlet_pic', '=', True), ('state', 'in', ('opening_control', 'closed'))]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='cash_register_balance_end']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|', ('is_outlet_pic', '=', True), ('state', 'in', ('opening_control', 'closed'))]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='cash_register_balance_end']" position="after">
+                    <label for="posted_cash_register_balance_end"
+                           attrs="{'invisible' : [('state', '!=', 'closed')]}"
+                           string="= Theoretical Closing Balance" class="oe_force_bold oe_opening_total"/>
+                    <field name="posted_cash_register_balance_end" nolabel="1"
+                           attrs="{'invisible' : [('state', '!=', 'closed')]}" class="oe_bold oe_pos_total"
+                           widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='cash_register_difference']" position="attributes">
+                    <attribute name="attrs">{'invisible' : ['|', ('is_outlet_pic', '=', True), ('state', 'in', ('closed'))]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='cash_register_difference']" position="after">
+                    <field name="posted_cash_register_difference"
+                           attrs="{'invisible': [('state', '!=', 'closed')]}"
+                           class="oe_subtotal_footer_separator oe_right oe_pos_total oe_pos_difference"
+                           widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

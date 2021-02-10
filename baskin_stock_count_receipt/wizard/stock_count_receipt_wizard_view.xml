@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Wizard to print receipt -->
+        <act_window id="stock_count_receipt_wizard_act"
+            name="Print Stock Count Receipt"
+            src_model="stock.inventory"
+            res_model="stock.count.receipt.wizard"
+            view_type="form" view_mode="form"
+            key2="client_action_multi" target="new"
+             />
+
+        <!-- wizard view -->
+        <record id="stock_count_receipt_wizard_form_view" model="ir.ui.view">
+            <field name="name">Print Stock Count Receipt</field>
+            <field name="model">stock.count.receipt.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print Stock Count Receipt Wizard">
+                	
+                		<group invisible="0">
+                			<field name="inventory_id" invisible="1"/>
+                			<field name="group_name_ids_string" invisible="1"/>
+                			<field name="all_group"/>
+                			<field name="group_name_ids" 
+                				widget="many2many_tags" 
+                				attrs="{'invisible':[('all_group','=',True)],
+                						'required':[('all_group','=',False)]}"/>
+                			
+                		</group>
+                	
+                    <footer>
+                        <button string="Print" name="action_print" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+    
+    <data noupdate="1">
+
+        <!--every 2 Month erase report data tables-->
+        <record id="ir_cron_erase_stock_count_receipt_model_data" model="ir.cron">
+            <field name="name">Erase Stock Count Report Model Data</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">2</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=7) - timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">stock.count.receipt.wizard</field>
+            <field name="function">erase_stock_count_model_data</field>
+            <field name="args">()</field>
+        </record>
+        
+    </data>
+    
+</openerp>

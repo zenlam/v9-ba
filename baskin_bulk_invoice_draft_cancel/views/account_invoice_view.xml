@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="action_account_invoice_cancel_value" model="ir.values">
+            <field name="model">account.invoice</field>
+            <field name="name">Cancel Selected Invoices</field>
+            <field name="key">action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('account.action_account_invoice_cancel'))" />
+        </record>
+
+        <record id="account_cancel_redraft_view" model="ir.ui.view">
+            <field name="name">account.invoice.cancel.redraft.form</field>
+            <field name="model">account.invoice.draft</field>
+            <field name="arch" type="xml">
+                <form string="Set Selected Invoices to Draft State">
+                    <footer>
+                        <button string="Confirm Invoices to Draft" name="invoice_draft" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id="action_account_invoice_draft"
+            multi="True"
+            key2="client_action_multi" name="Cancel &amp; Redraft Invoices"
+            res_model="account.invoice.draft" src_model="account.invoice"
+            view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>

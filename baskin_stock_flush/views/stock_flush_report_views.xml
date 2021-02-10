@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+
+        <!-- Stock Flush Report Tree -->
+        <record id="view_stock_flush_report_tree" model="ir.ui.view">
+            <field name="name">stock.flush.report.tree</field>
+            <field name="model">stock.flush.report</field>
+            <field name="arch" type="xml">
+                <tree string="Flush Reports" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="location_id"/>
+                    <field name="flush_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Stock Flush Report Form -->
+        <record id="view_stock_flush_report_form" model="ir.ui.view">
+            <field name="name">stock.flush.report.form</field>
+            <field name="model">stock.flush.report</field>
+            <field name="arch" type="xml">
+                <form string="Flush Reports" create="false" edit="false">
+                    <group>
+                        <field name="name"/>
+                        <field name="warehouse_id"/>
+                        <field name="location_id"/>
+                        <field name="flush_date"/>
+                        <field name="flush_quant_ids"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action Stock Flush Report -->
+        <record id="action_stock_flush_report" model="ir.actions.act_window">
+            <field name="name">Stock Flush Report</field>
+            <field name="res_model">stock.flush.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menuitem Stock Flush report -->
+        <menuitem
+                id="stock_flush_report_menu"
+                name="Flush Report"
+                action="action_stock_flush_report"
+                parent="stock.menu_warehouse_config"/>
+    </data>
+</openerp>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="integration_summary_template_form" model="ir.ui.view">
+            <field name="name">Mall Integration Template Config</field>
+            <field name="model">mall.template.summary.config</field>
+            <field name="arch" type="xml">
+                <form string="Form">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="test_connection" type="object" string="Run Test" class="oe_stat_button oe_inline" icon="fa-cogs"/>
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <!--config server information-->
+                            <group>
+                                <field name="name" required="True"/>
+                                <field name="outlet_ids"/>
+                                <field name="company_id"/>
+                                <field name="ip"
+                                       attrs="{'required':[('picker_transfer','=',False)], 'invisible':[('picker_transfer','=',True)]}"/>
+                                <field name="machine" required="True"/>
+                                <field name="password"
+                                       attrs="{'required':[('picker_transfer','=',False)], 'invisible':[('picker_transfer','=',True)]}"/>
+                                <field name="type"
+                                       attrs="{'required':[('picker_transfer','=',False)], 'invisible':[('picker_transfer','=',True)]}"/>
+                                <field name="passive_mode" attrs="{'invisible': ['|',('type', '=', 'sftp'),('picker_transfer','=',True)]}"/>
+                                <!--<field name="data_type" required="True"/>-->
+                                <field name="port"
+                                       attrs="{'required':[('picker_transfer','=',False)], 'invisible':[('picker_transfer','=',True)]}"/>
+                                <field name="period" required="True"/>
+                            </group>
+                            <group>
+                                <field name="name_file"/>
+                                <field name="filename_date_format"/>
+                                <field name="last_modified_seq"/>
+                                <field name="prefix"/>
+                                <field name="sequence"/>
+                                <field name="next_number"/>
+                                <field name="sequence_padding"/>
+                                <field name="transfer_directory"/>
+                                <field name="client_request"/>
+                                <field name="picker_transfer"
+                                       attrs="{'invisible':[('client_request','=',False)]}"/>
+                                <field name="file_format"/>
+                            </group>
+                        </group>
+                        <!--data content-->
+                        <group col="3" string="Content Data">
+                            <group>
+                                <field name="position"/>
+                                <field name="date_format" col="3"/>
+                                <field name="padding"/>
+                                <field name="gst_padding"/>
+                                <field name="before_gst_padding"/>
+                                <field name="discount_padding"/>
+                                <field name="cash_padding"/>
+                                <field name="other_padding"/>
+                                <field name="ticket_count_padding"/>
+                                <field name="total_quantity_padding"/>
+                            </group>
+                        </group>
+
+                        <group col="3" string="Legend (for Date Format, Position)">
+                            <group string="Common">
+                                <label colspan="2" string="hour : Hour index"/>
+                                <label colspan="2" string="cash : Payment by Cash"/>
+                                <label colspan="2" string="discount : Total Amount Discount"/>
+                                <label colspan="2" string="cash_wo_tax : Payment by Cash Exclude Tax"/>
+                                <label colspan="2" string="Date Format with YYYYMMDD HHMMSS: %Y%m%d %H%M%S"/>
+                                <label colspan="2" string="Date Format with YYYYMMDD: %Y%m%d"/>
+                                <label colspan="2" string="Date Format with DDMMYYYY: %d%m%Y"/>
+                                <label colspan="2" string="Date Format with MMYYYY: %m%Y"/>
+                                <label colspan="2" string="File Name format example without separate: {prefix}{machine}{filename_date}.{sequence}"/>
+                                <label colspan="2" string="Data format example without separate: {prefix}{machine}{date}{total}{before_tax}{gst}{cash}{other}{ticker_count}{hour}"/>
+                                <label colspan="2" string="Data format example with separate: {prefix},{machine},{date},{padding}|{gst}|{cash}|{other}|{ticker_count}|{hour}"/>
+                            </group>
+                            <group string="Onsite">
+                                <label colspan="2" string="ticket_count : Count Total Transaction (Onsite Only)"/>
+                                <label colspan="2" string="total : Total Amount Include Tax (Onsite Only)"/>
+                                <label colspan="2" string="total_quantity : Count Total Quantity (Onsite Only)"/>
+                                <label colspan="2" string="gst : Total Tax (Onsite Only)"/>
+                                <label colspan="2" string="before_tax : Total Amount Exclude Tax (Onsite Only)"/>
+                                <label colspan="2" string="other : Payment by Other Modes (Onsite Only)"/>
+                                <label colspan="2" string="other_wo_tax : Payment by Other Modes Exclude Tax (Onsite Only)"/>
+                            </group>
+                        </group>
+                        <group col="3">
+                            <group string="Onsite &amp; Offsite">
+                                <label colspan="2" string="ticket_count_on_off : Count Total Transaction (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="total_on_off : Total Amount Include Tax (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="total_on_off_quantity : Total Amount Include Tax (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="gst_on_off : Total Tax (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="before_tax_on_off : Total Amount Exclude Tax (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="other_on_off : Payment by Other Modes (Onsite &amp; Offsite)"/>
+                                <label colspan="2" string="other_wo_tax_on_off : Payment by Other Modes Exclude Tax (Onsite &amp; Offsite)"/>
+                            </group>
+                            <group string="Offsite">
+                                <label colspan="2" string="ticket_off_site : Count Total Transaction (Offsite Only)"/>
+                                <label colspan="2" string="total_off_quantity : Count Total Transaction (Offsite Only)"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="integration_summary_template_tree" model="ir.ui.view">
+            <field name="name">Mall Integration Template Config</field>
+            <field name="model">mall.template.summary.config</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" required="True"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="integration_summary_template_action" model="ir.actions.act_window">
+            <field name="name">File Transfer Configuration</field>
+            <field name="res_model">mall.template.summary.config</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="br_mall_intergration_parent_menu" name="Mall Integration" parent="point_of_sale.menu_point_root" sequence="150"/>
+
+        <menuitem id="br_mall_file_transfer_integeration_menu" name="File Transfer" parent="br_mall_intergration_parent_menu" sequence="20"/>
+        <menuitem parent="br_mall_file_transfer_integeration_menu" id="integration_summary_template_menu"
+                  name="File Transfer Config"
+                  action="integration_summary_template_action" sequence="100"/>
+    </data>
+</openerp>

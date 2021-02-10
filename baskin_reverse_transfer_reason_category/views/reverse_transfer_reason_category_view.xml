@@ -1,0 +1,36 @@
+<openerp>
+	<data>
+		<record id="view_reverse_transfer_reason_category_tree" model="ir.ui.view">
+		    <field name="name">Reverse Transfer Reason Category</field>
+		    <field name="model">reverse.transfer.reason.category</field>
+		    <field name="arch" type="xml" >
+		        <tree editable="top">
+        	        <field name="name"/>
+					<field name="type_code"/>
+					<field name="need_remarks"/>
+					<field name="active"/>
+					<field name="create_uid"/>
+		        </tree>
+		    </field>
+		</record>
+		
+		<record id="action_reverse_transfer_reason_category" model="ir.actions.act_window">
+            <field name="name">Reverse Transfer Reason Category</field>
+            <field name="res_model">reverse.transfer.reason.category</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+        </record>
+            	
+       	<menuitem
+            action="action_reverse_transfer_reason_category"
+            id="menu_reverse_transfer_reason_category_sale"
+            parent="base.menu_sale_config" sequence="20"/>
+       	
+
+    	<menuitem
+            action="action_reverse_transfer_reason_category"
+            id="menu_reverse_transfer_reason_category_inventory"
+            parent="stock.menu_stock_config_settings" sequence="110"/>    
+            	
+	</data>
+</openerp>

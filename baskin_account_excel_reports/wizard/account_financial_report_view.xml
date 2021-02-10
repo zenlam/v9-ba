@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="accounting_report_view_excel_report" model="ir.ui.view">
+        <field name="name">Accounting Report</field>
+        <field name="model">accounting.report</field>
+        <field name="inherit_id" ref="account.accounting_report_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='check_report']" position="after">
+                <button name="action_print" string="Print Excel" type="object" default_focus="1" class="oe_highlight" invisible="not context.get('from_pl_excel', False)"/>
+            </xpath>
+            <field name="enable_filter" position="before">
+                <field name="report_type" invisible="not context.get('from_pl_excel', False)"/>
+                <field name="outlet_id" attrs="{'invisible' : [('report_type','!=','pl_by_outlet_month')], 'required': [('report_type','=','pl_by_outlet_month')]}"/>
+                <field name="account_analytic_ids" widget="many2many_tags"
+                	attrs="{'invisible' : [('report_type','!=','pl_by_department_month')], 'required': [('report_type','=','pl_by_department_month')]}"/>
+            	
+            </field>
+        </field>
+    </record>
+
+    <record id="action_account_report_pl_excel" model="ir.actions.act_window">
+        <field name="name">Profit and Loss</field>
+        <field name="res_model">accounting.report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="accounting_report_view_excel_report"/>
+        <field name="target">new</field>
+        <field name="context" eval="{'default_account_report_id':ref('account.account_financial_report_profitandloss0'),
+         'from_pl_excel': True, 'is_excel_report': True}"/>
+    </record>
+
+    <menuitem 
+        id="menu_account_report_pl_excel"
+        name="Profit and Loss"
+        action="action_account_report_pl_excel"
+        parent="menu_finance_excel_reports"
+        sequence="5"/>
+
+    <report id="accouting_profit_loss_wizard_report"
+        model="account.account"
+        string="Profit Loss Report"
+        report_type="xlsx"
+        name="baskin_excel_report.accoutingprofitlossreport"
+        file="baskin_excel_report.accoutingprofitlossreport"
+        attachment_use="False" />
+
+</odoo>

@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_gst_mapping_manager,gst.mapping.manager,model_gst_mapping,account.group_account_manager,1,1,1,1
+access_gst_mapping_user,gst.mapping.user.user,model_gst_mapping,account.group_account_user,1,1,1,0
+access_gst_mapping_invoice,gst.mapping.invoice.invoice,model_gst_mapping,account.group_account_invoice,1,1,1,0
+
+access_gst_tax_mapping_manager,gst.tax.mapping.manager,model_gst_tax_mapping,account.group_account_manager,1,1,1,1
+access_gst_tax_mapping_user,gst.tax.mapping.user,model_gst_tax_mapping,account.group_account_user,1,1,1,0
+access_gst_tax_mapping_invoice,gst.tax.mapping.invoice,model_gst_tax_mapping,account.group_account_invoice,1,1,1,0
+
+access_account_gst_manager,account.gst.manager,model_account_gst,account.group_account_manager,1,1,1,1
+access_account_gst_user,account.gst.user,model_account_gst,account.group_account_user,1,1,1,0
+access_account_gst_invoice,account.gst.invoice,model_account_gst,account.group_account_invoice,1,1,1,0
+
+
+access_account_gst_line_manager,account.gst.line.manager,model_account_gst_line,account.group_account_manager,1,1,1,1
+access_account_gst_line_user,account.gst.line.user,model_account_gst_line,account.group_account_user,1,1,1,0
+access_account_gst_line_invoice,account.gst.line.invoice,model_account_gst_line,account.group_account_invoice,1,1,1,0

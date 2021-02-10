@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+        <menuitem id="br_kpmg_root_menu"
+                  name="KPMG"
+                  groups="base.kpmg_auditor"/>
+
+        <!-- accounting-->
+        <menuitem id="br_kpmg_account_menu"
+                  name="Accounting"
+                  parent="baskin_kpmg_auditor.br_kpmg_root_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="5"/>
+
+        <menuitem id="br_kpmg_journal_item_list_menu"
+                  name="Journal Item Listing"
+                  action="account.action_account_moves_all_a"
+                  parent="baskin_kpmg_auditor.br_kpmg_account_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="5"/>
+
+        <!-- purchase menus -->
+        <menuitem id="br_kpmg_purchase_menu"
+                  name="Purchases"
+                  parent="baskin_kpmg_auditor.br_kpmg_root_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="10"/>
+
+        <menuitem id="br_kpmg_vendor_bill_menu"
+                  name="Vendor bills"
+                  action="account.action_invoice_tree2"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="5"/>
+
+        <menuitem id="br_kpmg_vendor_refund_menu"
+                  name="Vendor Refund"
+                  action="baskin_credit_note.action_invoice_tree4"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="10"/>
+
+        <menuitem id="br_kpmg_general_payment_menu"
+                  name="General Payment"
+                  action="account_voucher.action_purchase_receipt"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor" sequence="15"/>
+
+        <menuitem id="br_kpmg_vendor_payment_menu"
+                  name="Vendor Payment"
+                  action="baskin_bulk_payment.action_account_bulk_payment_supplier"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor" sequence="20"/>
+
+        <menuitem id="br_kpmg_vendor_depo_adv_payment_menu"
+                  name="Vendor Deposit / Adv Payment"
+                  action="baskin_bulk_payment.action_account_payments_payable_deposit"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor" sequence="25"/>
+
+        <menuitem id="br_kpmg_vendors_menu"
+                  name="Vendors"
+                  action="base.action_partner_supplier_form"
+                  parent="baskin_kpmg_auditor.br_kpmg_purchase_menu"
+                  groups="base.kpmg_auditor" sequence="30"/>
+
+        <!-- Inventory Menu -->
+        <menuitem id="br_kpmg_inventory_menu"
+                  name="Inventory"
+                  parent="baskin_kpmg_auditor.br_kpmg_root_menu"
+                  groups="base.kpmg_auditor"
+                  sequence="15"/>
+
+        <menuitem id="br_kpmg_inventory_adjustment_menu"
+                  name="Inventory Adjustment"
+                  parent="baskin_kpmg_auditor.br_kpmg_inventory_menu"
+                  groups="base.kpmg_auditor"
+                  action="stock.action_inventory_form"
+                  sequence="5"/>
+    </data>
+</openerp>

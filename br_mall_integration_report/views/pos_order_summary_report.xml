@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="gto_summary_form" model="ir.ui.view">
+            <field name="name">Manual GTO Rreport</field>
+            <field name="model">gto.summary.report</field>
+            <field name="arch" type="xml">
+                <form string="Form">
+                    <group>
+                        <group>
+                            <field name="date" required="True"/>
+                            <field name="outlet_ids" required="True"/>
+                        </group>
+                        <group>
+
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print" string="Print" class="oe_highlight oe_right" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="gto_summary_action" model="ir.actions.act_window">
+            <field name="name">Manual GTO Report</field>
+            <field name="res_model">gto.summary.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem parent="br_mall_intergration_parent_menu" id="gto_summary_menu"
+                  action="gto_summary_action" sequence="210"/>
+
+        <report id="gto_summary_data_report"
+                model="gto.summary.report"
+                string="Manual GTO Report"
+                report_type="txt"
+                name="br_mall_integration_report.gto_summary_data"
+                file="br_mall_integration_report.gto_summary_data"
+                attachment_use="False"
+        />
+
+        <!-- Scheduler for Daily transfer file GTO report-->
+        <record model="ir.cron" id="ir_cron_scheduler_gto_daily">
+            <field name="name">Transfer GTO report daily</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+            <field name="model">ftp.gto.summary</field>
+            <field name="function">ftp_gto_summary_daily</field>
+            <field name="args">()</field>
+        </record>
+
+        <!-- Scheduler for Monthly transfer file GTO report-->
+        <record model="ir.cron" id="ir_cron_scheduler_gto_month">
+            <field name="name">Transfer GTO report monthly</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>months</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+            <field name="model">ftp.gto.summary</field>
+            <field name="function">ftp_gto_summary_monthly</field>
+            <field name="args">()</field>
+        </record>
+    </data>
+</openerp>

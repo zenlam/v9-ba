@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_bank_statement_reconcile_search" model="ir.ui.view">
+            <field name="name">bank.statement.reconcile.search</field>
+            <field name="model">bank.statement.reconcile</field>
+            <field eval="3" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Bank Reconcile">
+                    <field name="bank_account_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Bank" name="by_bank_account_id" domain="[]"  context="{'group_by':'bank_account_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_bank_statement_reconcile_tree" model="ir.ui.view">
+            <field name="name">bank.statement.reconcile.tree</field>
+            <field name="model">bank.statement.reconcile</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="bank_account_id"/>
+                    <field name="opening_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="closing_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="date_from"/>
+                    <field name="date_end"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bank_statement_reconcile_form" model="ir.ui.view">
+            <field name="name">bank.statement.reconcile.form</field>
+            <field name="model">bank.statement.reconcile</field>
+            <field name="arch" type="xml">
+                <form string="Stock Moves">
+                    <header>
+                        <button name="set_to_draft" class="oe_highlight" states="validated" string="Set to Draft" type="object"
+                                groups="baskin_bank_statement_reconciliation.group_set_draft_statement_reconciliation"/>
+                        <button name="pre_validate" class="oe_highlight" states="draft" string="Validate" type="object"/>
+                        <!--                	<button name="cancel" class="oe_highlight" states="draft" string="Cancel" type="object"/-->
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="bank_account_id" attrs="{'readonly':[('state','in',['cancelled','validated'])]}"
+                                   options="{'on_change_msg':'You are changing Bank, You need to click again Load Items button to have updated lines.',
+                            'trigger_field':'has_lines'}"
+                            />
+                        </group>
+                        <group>
+                            <field name="currency_id"/>
+                            <field name="validate_date" readonly="1"/>
+                            <field name="validate_by" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Actual Bank Statement Info">
+                        <group>
+                            <field name="actual_bank_statement_date" attrs="{'readonly':[('state','in',['cancelled','validated'])]}"/>
+                            <field name="actual_bank_statement_balance"
+                                   attrs="{'readonly':[('state','in',['cancelled','validated'])]}"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <group>
+                            <field name="internal_note"/>
+                        </group>
+                    </group>
+                    <group string="System Info">
+                        <group>
+                            <field name="date_from" attrs="{'readonly':[('state','in',['cancelled','validated'])]}"
+                                   options="{'on_change_msg':'You are changing Start Date, You need to click again Load Items button to have updated lines.',
+                            	'trigger_field':'has_lines'} "
+                            />
+                            <label for="date_end_copy" string="System Balance till"/>
+                            <div class="">
+                                <field name="date_end_copy" style="width:30%;"/>
+                                is
+                                <field name="balance_till_end" style="width:45%;"
+                                       widget="monetary"
+                                       options="{'currency_field': 'currency_id'}" />
+                            </div>
+                        </group>
+                        <group>
+                            <field name="date_end" attrs="{'readonly':[('state','in',['cancelled','validated'])]}"
+                                   options="{'on_change_msg':'You are changing End Date, You need to click again Load Items button to have updated lines.',
+                            	'trigger_field':'has_lines'} "/>
+                        </group>
+
+                        <group>
+                            <field name="opening_balance"
+                                   attrs="{'readonly': True}"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="difference" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <group>
+                            <button name="compute_closing_balance" type="object"
+                                    string="Compute Closing Balance" class="oe_highlight"
+                                    attrs="{'invisible':[('state','in',['validated','cancelled']) ]}"/>
+                            <br/>
+                            <field name="closing_balance"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}" readonly='1'/>
+                            <field name="has_lines" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Bank Statement Line">
+
+                            <button name="load_items" type="object" string="Load Items" class="btn-primary"
+                                    attrs="{'invisible':[('state','in',['validated','cancelled'])]}"/>
+
+                            <field name="bank_statement_reconcile_line_ids" attrs="{'readonly':[('state','in',['cancelled','validated'])]}">
+                                <tree  editable="top" create="false" delete="false" class="bank_recon_line_tree">
+                                    <field name="is_reconcile" string=""/>
+                                    <field name="date" readonly="1"/>
+                                    <field name="ref" readonly="1" />
+                                    <field name="cheque_no" readonly="1"/>
+                                    <field name="memo" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="move_id" readonly="1"/>
+                                    <field name="debit" readonly="1" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                    <field name="credit" readonly="1" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                    <field name="amount_currency" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="bank_state" readonly="1"/>
+                                    <field name="company_currency_id" invisible="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="is_reconcile"/>
+                                            <field name="date" readonly="1"/>
+                                            <field name="ref" readonly="1"/>
+                                            <field name="memo" readonly="1"/>
+                                            <field name="name" readonly="1"/>
+                                            <field name="partner_id" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="move_id" readonly="1"/>
+                                            <field name="debit" readonly="1" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                            <field name="credit" readonly="1" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                            <field name="amount_currency" readonly="1" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                            <field name="bank_state" readonly="1"/>
+                                            <field name="company_currency_id" invisible="1"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Journal Items">
+                            <field name="account_move_line_ids">
+                                <tree  editable="top" create="false" edit="false" delete="false">
+                                    <field name="date" readonly="1"/>
+                                    <field name="ref" readonly="1"/>
+                                    <field name="cheque_no" readonly="1"/>
+                                    <field name="name" readonly="1"/>
+                                    <field name="partner_id" readonly="1"/>
+                                    <field name="move_id" readonly="1"/>
+                                    <field name="debit" readonly="1"/>
+                                    <field name="credit" readonly="1"/>
+                                    <field name="amount_currency" readonly="1"/>
+                                    <field name="bank_state" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                    </notebook>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="action_bank_statement_reconcile" model="ir.actions.act_window">
+            <field name="name">Bank Statement Reconcile</field>
+            <field name="res_model">bank.statement.reconcile</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_bank_statement_reconcile_tree"/>
+            <field name="search_view_id" ref="view_bank_statement_reconcile_search"/>
+            <field name="context">{'readonly_by_pass': ['currency_id', 'opening_balance']}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a Bank Statement Reconciliation.
+                </p><p>
+                This menu gives you the full traceability of inventory
+                operations on a specific product. You can filter on the product
+                to see all the past or future movements for the product.
+            </p>
+            </field>
+        </record>
+
+        <menuitem parent="account.menu_finance_entries" id="menu_action_bank_statement_reconcile"
+                  action="action_bank_statement_reconcile" sequence="120"/>
+
+    </data>
+</openerp>

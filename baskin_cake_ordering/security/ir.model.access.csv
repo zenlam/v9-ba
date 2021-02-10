@@ -1,0 +1,36 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_stock_move_cake_ordering_manager,stock.move.cake.ordering manager,model_stock_move_cake_ordering,stock.group_stock_manager,1,1,1,1
+access_stock_move_cake_ordering_user,stock.move.cake.ordering user,model_stock_move_cake_ordering,stock.group_stock_user,1,1,1,0
+
+access_stock_move_cake_ordering_invoicing_payments,stock.move.cake.ordering,model_stock_move_cake_ordering,account.group_account_invoice,1,1,1,0
+
+access_stock_move_cake_orderinge_salesman,stock.move.cake.ordering salesman,model_stock_move_cake_ordering,base.group_sale_salesman,1,1,1,0
+access_stock_move_cake_ordering_manager,stock.move.cake.ordering manager,model_stock_move_cake_ordering,base.group_sale_manager,1,1,1,1
+
+access_stock_move_cake_ordering_purchase_user,stock.move.cake.ordering,model_stock_move_cake_ordering,purchase.group_purchase_user,1,1,1,0
+access_stock_move_cake_ordering_purchase_user_manager,stock.move.cake.ordering,model_stock_move_cake_ordering,purchase.group_purchase_manager,1,1,1,1
+
+access_stock_move_cake_ordering_pos_user,stock.move.cake.ordering pos_user,model_stock_move_cake_ordering,point_of_sale.group_pos_user,1,1,1,1
+
+access_stock_move_cake_ordering_mrp_worker,stock.move.cake.ordering mrp_worker,model_stock_move_cake_ordering,mrp.group_mrp_user,1,1,1,0
+access_stock_move_cake_ordering_mrp_manager,stock.move.cake.ordering mrp_manager,model_stock_move_cake_ordering,mrp.group_mrp_manager,1,0,0,0
+
+
+
+access_stock_move_report_manager,stock.move.report manager,model_stock_move_report,stock.group_stock_manager,1,1,1,1
+access_stock_move_report_user,stock.move.report user,model_stock_move_report,stock.group_stock_user,1,1,1,0
+
+access_stock_move_report_invoicing_payments,stock.move.report,model_stock_move_report,account.group_account_invoice,1,1,1,0
+
+access_stock_move_report_salesman,stock.move.report salesman,model_stock_move_report,base.group_sale_salesman,1,1,1,0
+access_stock_move_report_manager,stock.move.report manager,model_stock_move_report,base.group_sale_manager,1,1,1,1
+
+access_stock_move_report_purchase_user,stock.move.report,model_stock_move_report,purchase.group_purchase_user,1,1,1,0
+access_stock_move_report_purchase_user_manager,stock.move.report,model_stock_move_report,purchase.group_purchase_manager,1,1,1,1
+
+access_stock_move_report_pos_user,stock.move.report pos_user,model_stock_move_report,point_of_sale.group_pos_user,1,1,1,1
+
+access_stock_move_report_mrp_worker,stock.move.report mrp_worker,model_stock_move_report,mrp.group_mrp_user,1,1,1,0
+access_stock_move_report_mrp_manager,stock.move.report mrp_manager,model_stock_move_report,mrp.group_mrp_manager,1,0,0,0
+

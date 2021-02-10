@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Company Form View -->
+        <record id="br_product_menu_form_view_inherit_third_party" model="ir.ui.view">
+            <field name="name">res.company.form.view.inherit.integration.base</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="api_config" string="API Configuration">
+                        <group name="api_config">
+                            <field name="api_attempts_count"/>
+                            <field name="repeat_attempts_count"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_outlet_users_form_view">
+            <field name="name">br_outlet_users_form_view</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="point_of_sale.res_users_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_ids']/.." position="after">
+                    <group string="Point of sale" groups="base.group_light_multi_company">
+                        <field name="outlet_ids" widget="many2many_tags"/>
+                        <field name="warehouse_ids" widget="many2many_tags"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

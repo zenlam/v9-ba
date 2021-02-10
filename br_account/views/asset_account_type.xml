@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_account_asset_category_form_inherit" model="ir.ui.view">
+            <field name="name">account.asset.category.form.inherit</field>
+            <field name="model">account.asset.category</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_category_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="br_asset_account" string="Fixed Asset Account"/>
+                </xpath>
+                <xpath expr="//form/group/group/div/label[1]" position="attributes">
+                    <attribute name="string">Asset Acc Depreciation Account</attribute>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</openerp>

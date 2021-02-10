@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Promotion: Third Party Form-->
+        <record id="br_bundle_promotion_form_third_party" model="ir.ui.view">
+            <field name="name">promotion.form.view.third.party</field>
+            <field name="model">br.bundle.promotion</field>
+            <field name="inherit_id" ref="br_discount.br_bundle_promotion_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="third_party_id"
+                           options='{"no_open": True, "no_create":True}'/>
+                    <field name="sync_id" attrs="{'invisible':[('third_party_id','=',False)]}"/>
+                    <field name="create_code_api" invisible="1"/>
+                    <field name="sync_promotion_data" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='image']" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="sync_data" type="object" string="Sync"
+                                class="oe_stat_button" icon="fa-refresh"
+                                attrs="{'invisible': [('sync_promotion_data', '=', False)]}"
+                                confirm="Are you sure to sync the promotion data to the third party?"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='create_voucher']/.." position="after">
+                    <group col="6" colspan="6">
+                        <field name="default_number_of_alphabet"
+                               attrs="{'invisible':[('create_code_api','=',False)],
+                               'required':[('create_code_api','=',True)]}"/>
+                        <field name="default_number_of_digit"
+                               attrs="{'invisible':[('create_code_api','=',False)],
+                               'required':[('create_code_api','=',True)]}"/>
+                        <field name="default_remarks"
+                               attrs="{'invisible':[('create_code_api','=',False)],
+                               'required':[('create_code_api','=',True)]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//button[@name='create_voucher']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('create_code_api','=',True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

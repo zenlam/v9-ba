@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_run_request_config_form_view">
+            <field name="name">br_run_request_config_form_view</field>
+            <field name="model">br.run.request.config</field>
+            <field name="arch" type="xml">
+                <form string="Run Config">
+                    <group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="run" type="object" string="Run Config" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="br_run_request_config_act">
+            <field name="name">Run Config</field>
+            <field name="res_model">br.run.request.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="br_run_request_config_form_view"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

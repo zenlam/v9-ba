@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Mobile Phone Button Widget -->
+    <t t-name="MobilePhoneButtonWidget">
+        <div class="oe_status js_mobile_phone">
+            <div class="oe_icon oe_white">
+                <i class="fa fa-fw fa-mobile"/>
+            </div>
+        </div>
+    </t>
+
+    <!-- Mobile Phone Numpad Widget -->
+    <t t-name="MobilePhoneNumpadWidget">
+        <div class="modal-dialog">
+            <div class="popup popup-number">
+                <p class="title"><t t-esc="widget.options.title || ''"/></p>
+                <div>
+                    <div class="popup-input value active">
+                        <t t-esc="widget.inputbuffer"/>
+                    </div>
+                </div>
+                <div class="popup-numpad">
+                    <button class="input-button number-char" data-action="1">1</button>
+                    <button class="input-button number-char" data-action="2">2</button>
+                    <button class="input-button number-char" data-action="3">3</button>
+                    <br/>
+                    <button class="input-button number-char" data-action="4">4</button>
+                    <button class="input-button number-char" data-action="5">5</button>
+                    <button class="input-button number-char" data-action="6">6</button>
+                    <br/>
+                    <button class="input-button number-char" data-action="7">7</button>
+                    <button class="input-button number-char" data-action="8">8</button>
+                    <button class="input-button number-char" data-action="9">9</button>
+                    <br/>
+                    <button class="input-button number-char" data-action="CLEAR">C</button>
+                    <button class="input-button number-char" data-action="0">0</button>
+                    <button class="input-button number-backspace" data-action="BACKSPACE">
+                        <img style="pointer-events: none;" src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" />
+                    </button>
+                    <br/>
+                </div>
+                <div class="footer centered">
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                    <div class="button confirm">
+                        Ok
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
+

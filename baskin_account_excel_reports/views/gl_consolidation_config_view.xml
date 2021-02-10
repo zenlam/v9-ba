@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	
+    	<record id="view_gl_consolidation_config_form" model="ir.ui.view">
+            <field name="name">gl.consolidation.config.form</field>
+            <field name="model">gl.consolidation.config</field>
+            <field name="arch" type="xml">
+                <form string="GL Consolidation">
+                    <sheet>
+                    <group>
+                        <group>
+                            <field name="consolidation_method"/>
+                            <field name="account_ids" widget="many2many_tags"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            
+                        </group>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_gl_consolidation_config_tree" model="ir.ui.view">
+            <field name="name">gl.consolidation.config.tree</field>
+            <field name="model">gl.consolidation.config</field>
+            <field name="arch" type="xml">
+                <tree string="GL Consolidation">
+                    <field name="consolidation_method" />
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+    	
+    	<record id="action_gl_consolidation_config_form" model="ir.actions.act_window">
+            <field name="name">GL Consolidation Methods</field>
+            <field name="res_model">gl.consolidation.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    	<menuitem
+            action="action_gl_consolidation_config_form"
+            id="menu_action_gl_consolidation_config_form"
+            parent="menu_refresh_consolidation" sequence="10"/>
+    	
+            	
+    	<record id="view_gl_period_config_form" model="ir.ui.view">
+		    <field name="name">GL Consolidation Period</field>
+		    <field name="model">gl.period.config</field>
+		    <field name="arch" type="xml">
+		        <form string="GL Consolidation Period" class="oe_form_configuration">
+		            <header>
+		                <button string="Apply" type="object"
+		                    name="execute" class="oe_highlight"/>
+		                or
+		                <button string="Cancel" type="object"
+		                    name="cancel" class="oe_link"/>
+		            </header>
+		            <group string="GL Consolidation Period">
+		            	<label for="date_from" string="Date From"/>
+		                <div>
+		                    <div>
+		                        <field name="date_from"/>
+		                    </div>
+		                    
+		                </div>
+		            </group>
+		            <group>
+		            	<label for="date_to" string="Date To"/>
+		                <div>
+		                    <div>
+		                        <field name="date_to"/>
+		                    </div>
+		                </div>
+		            </group>
+		            <group>
+		            	<label for="table_id" string="Table Name"/>
+		                <div>
+		                    <div>
+		                        <field name="table_id" options='{"no_open": True, "no_create":True}'/>
+		                    </div>
+		                </div>
+		            </group>
+		        </form>
+		    </field>
+		</record>
+
+		<record id="action_gl_period_config_form" model="ir.actions.act_window">
+            <field name="name">GL Consolidation Period</field>
+            <field name="res_model">gl.period.config</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+            	
+       	<menuitem
+            action="action_gl_period_config_form"
+            id="menu_action_gl_period_config_form"
+            parent="menu_refresh_consolidation" sequence="15"/>
+
+        <record id="view_gl_archive_table_tree" model="ir.ui.view">
+		    <field name="name">GL Consolidation Table Tree</field>
+		    <field name="model">gl.archive.table</field>
+		    <field name="arch" type="xml">
+		        <tree>
+        	        <field name="name"/>
+		        </tree>
+		    </field>
+		</record>
+		
+		<record id="view_gl_archive_table_form" model="ir.ui.view">
+		    <field name="name">GL Consolidation Table Form</field>
+		    <field name="model">gl.archive.table</field>
+		    <field name="arch" type="xml">
+		        <form>
+		        	<header>
+		        		<button name="clone_data_between_tables" string="Clone from main table" type="object"/>
+		        	</header>
+					<sheet>
+						<group>
+							<group>
+			        	        <field name="name"/>
+							</group>
+							<group></group>
+						</group>
+					</sheet>
+		        </form>
+		    </field>
+		</record>
+
+		<record id="action_gl_archive_table" model="ir.actions.act_window">
+            <field name="name">GL Consolidation Table</field>
+            <field name="res_model">gl.archive.table</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+            	
+       	<menuitem
+            action="action_gl_archive_table"
+            id="menu_action_gl_archive_table"
+            parent="menu_refresh_consolidation" sequence="20"/>
+            	
+    	       	
+    </data>
+</openerp>

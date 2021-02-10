@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <template id="baskin_report_receipt_document_member" inherit_id="br_point_of_sale.baskin_report_receipt_document">
+            <xpath expr="//table[@style='margin-top: 10px']" position="inside">
+                <tr t-if="o.member_name">
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Member</td>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">: <span t-field="o.member_name"/></td>
+                </tr>
+                <tr t-if="not o.member_name and o.member_code">
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Member</td>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">: <span t-field="o.member_code"/></td>
+                </tr>
+            </xpath>
+        </template>
+    </data>
+</openerp>

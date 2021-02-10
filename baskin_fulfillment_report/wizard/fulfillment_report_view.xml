@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+
+        <record id="fulfillment_report_wizard_view" model="ir.ui.view">
+            <field name="name">Fulfillment Report</field>
+            <field name="model">fulfillment.report</field>
+            <field name="arch" type="xml">
+                <form string="Fulfillment Report">
+                    <group>
+                        <group>
+                            <field name="report_type" required="1"/>
+                            <field name="show_by" widget="selection" required="1" domain="['|', ('type', '=', 'all'), ('type', '=', report_type)]"/>
+                            <field name="product_category_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="product_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}" domain="[('type', '!=', 'service')]"
+                                   context="{'product_categ_ids': product_category_ids}"/>
+                            <field name="uom_type" required="1"/>
+                        </group>
+                        <group>
+                            <field name="start_date" required="1"/>
+                            <field name="end_date" required="1"/>
+                            <field name="source_warehouse_internal" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"
+                                   domain="[('is_main_warehouse', '=', True)]" string="Source Warehouse"
+                                   attrs="{'required': [('report_type', '=', 'internal')], 'invisible': [('report_type', '!=', 'internal')]}"/>
+                            <field name="source_warehouse_external" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"
+                                   string="Source Outlet/Warehouse"
+                                   attrs="{'required': [('report_type', '=', 'external')], 'invisible': [('report_type', '!=', 'external')]}"/>
+                            <field name="dest_warehouse" widget="many2many_tags" string='Destination Outlet/Warehouse'
+                                   options="{'no_create': True, 'no_open': True}"
+                                   attrs="{'required': [('report_type', '!=', 'external')], 'invisible': [('report_type', '=', 'external')]}"/>
+                        </group>
+                        <group>
+                            <field name="show_by_code" invisible="1"/>
+                            <field name="group_by" attrs="{'invisible':[('show_by_code', '!=', 'by_product')],
+                            'readonly':[('show_by_code', '!=', 'by_product')], 'required':[('show_by_code', '=', 'by_product')]}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print" string="Print" class="oe_highlight" type="object"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_fulfillment_report" model="ir.actions.act_window">
+            <field name="name">Fulfillment Report</field>
+            <field name="res_model">fulfillment.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fulfillment_report_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Fulfillment Report" id="menu_fulfillment_report" action="action_fulfillment_report"
+                  parent="stock.menu_warehouse_report" sequence="210"/>
+
+    </data>
+</openerp>

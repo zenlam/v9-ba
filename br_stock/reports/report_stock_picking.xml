@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <report
+            string="Delivery Order Excel"
+            id="action_report_picking_xlsx"
+            model="stock.picking"
+            report_type="xlsx"
+            name="br_stock.report_picking_xlsx"
+            file="br_stock.report_picking_operations_xlsx"
+        />
+    </data>
+</openerp>

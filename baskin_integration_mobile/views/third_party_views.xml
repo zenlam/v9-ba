@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Third Party Tree View: Mobile Inherit -->
+        <record id="third_party_tree_view_mobile_inherit" model="ir.ui.view">
+            <field name="name">third.party.tree.view.mobile.inherit</field>
+            <field name="model">third.party</field>
+            <field name="inherit_id" ref="baskin_integration_base.third_party_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_baskin']" position="after">
+                    <field name="is_mobile_apps"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Third Party Form View: Mobile Inherit -->
+        <record id="third_party_form_view_mobile_inherit" model="ir.ui.view">
+            <field name="name">third.party.form.view.mobile.inherit</field>
+            <field name="model">third.party</field>
+            <field name="inherit_id" ref="baskin_integration_base.third_party_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='is_baskin']" position="after">
+                    <field name="is_mobile_apps"/>
+                </xpath>
+                <xpath expr="//field[@name='api_url']" position="after">
+                    <field name="sign_keyword"
+                           attrs="{'required':[('is_mobile_apps', '=', True)], 'invisible':[('is_mobile_apps', '=', False)]}"
+                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Third Party Mobile Apps Api: Promotion Log Window Action -->
+        <record id="third_party_api_mobile_apps_promotion_action" model="ir.actions.act_window">
+            <field name="name">Discount</field>
+            <field name="res_model">third.party.promotion.sync.log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('third_party_code', '=', 'APP')]</field>
+            <field name="view_id" ref="baskin_integration_base.third_party_promotion_sync_log_tree_view"/>
+            <field name="context">{'search_default_today':1}</field>
+        </record>
+
+        <!-- Third Party Mobile Apps Api: Outlet Log Window Action -->
+        <record id="third_party_api_mobile_apps_outlet_action" model="ir.actions.act_window">
+            <field name="name">Outlet</field>
+            <field name="res_model">third.party.outlet.sync.log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('third_party_code', '=', 'APP')]</field>
+            <field name="view_id" ref="baskin_integration_base.third_party_outlet_sync_log_tree_view"/>
+            <field name="context">{'search_default_today':1}</field>
+        </record>
+
+        <!-- Third Party Mobile Apps API Log Menuitem -->
+        <menuitem id="third_party_api_mobile_apps_menu"
+                  name="Mobile Apps"
+                  parent="baskin_integration_base.third_party_api_menu"
+                  sequence="30"/>
+
+        <!-- Third Party Mobile Apps Api: Promotion Log Menuitem -->
+        <menuitem id="third_party_api_mobile_apps_promotion_menu"
+                  name="Discount"
+                  action="third_party_api_mobile_apps_promotion_action"
+                  parent="third_party_api_mobile_apps_menu"
+                  sequence="40"/>
+
+        <!-- Third Party Mobile Apps Api: Outlet Log Menuitem -->
+        <menuitem id="third_party_api_mobile_apps_outlet_menu"
+                  name="Outlet"
+                  action="third_party_api_mobile_apps_outlet_action"
+                  parent="third_party_api_mobile_apps_menu"
+                  sequence="41"/>
+
+    </data>
+</openerp>

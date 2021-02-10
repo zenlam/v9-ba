@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_inventory_form" model="ir.ui.view">
+            <field name="name">stock.inventory.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <field name="line_ids" position="attributes">
+                    <attribute name="context">{'default_company_id': company_id, 'default_location_id': location_id, 'default_product_id': product_id, 'default_prod_lot_id': lot_id, 'default_package_id': package_id, 'default_partner_id': partner_id, 'default_analytic_account': account_analytic_id, 'default_loss_location': br_loss_inventory_id}</attribute>
+                </field>
+                <xpath expr="//field[@name='line_ids']" position="before">
+                    <button name="action_refresh_summary" type="object"
+                            string="Refresh Summary" class="btn"
+                            attrs="{'invisible': [('state', 'not in', ('confirm', 'official_count_in_progress'))]}"
+                            style="margin-top: 10px;"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='remark']" position="after">
+                    <field name="company_id" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'readonly': 1}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="after">
+                    <field name="location_manage_expirydate" invisible="1"/>
+                    <field name="manage_expirydate"
+                           attrs="{'invisible': [('location_manage_expirydate', '=', False)],
+                           'readonly': ['|', ('state', '!=', 'draft'), ('stock_count_type', '=', 'official')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="before">
+                    <field name="warehouse_id" required="1" context="{'adjustment_warehouse_filter':True}"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='filter']" position="before">
+                    <field name="is_from_unofficial" invisible="1"/>
+                    <field name="stock_count_type" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                    <field name="template_id" required="1"
+                           attrs="{'readonly': [('state', '!=', 'draft')]}"
+                           domain="['|', ('warehouse_ids', '=', warehouse_id),
+                           ('warehouse_ids_len', '=', 0),
+                           ('type', 'in', (stock_count_type, False))]"/>
+                    <field name="inventory_action_id"
+                           attrs="{'invisible': [('state', 'not in', ('1st_degree', '2nd_degree', 'no_case'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='filter']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='prepare_inventory']" position="after">
+                    <button name="action_confirm" string="Confirm" states="official_acount_initiated" type="object"/>
+                </xpath>
+                <xpath expr="//button[@name='action_done']" position="after">
+                    <button name="action_done"
+                            string="Validate Inventory" type="object"
+                            attrs="{'invisible': ['|', ('stock_count_type', '=', 'official'), ('state', 'not in', ('confirm', 'official_count_in_progress'))]}"
+                            class="oe_highlight" groups="stock.group_stock_user"/>
+                    <button name="action_to_official" string="To Official"
+                            attrs="{'invisible': ['|', ('state', 'not in', ('done')), ('stock_count_type', '=', 'official')]}"
+                            type="object" class="oe_highlight" groups="stock.group_stock_manager"/>
+
+                    <button name="action_to_first_degree" string="1st Degree"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ('2nd_degree', 'no_case', 'done'))]}"
+                            groups="stock.group_stock_manager"/>
+                    <button name="action_to_second_degree" string="2nd Degree"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ('1st_degree', 'no_case', 'done'))]}"
+                            groups="stock.group_stock_manager"/>
+                    <button name="action_to_no_case" string="No Case"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ('1st_degree', '2nd_degree', 'done'))]}"
+                            groups="stock.group_stock_manager"/>
+                </xpath>
+                <xpath expr="//button[@name='action_done']" position="replace">
+                    <button name="action_done"
+                            string="Validate Inventory" type="object"
+                            attrs="{'invisible': ['|', ('stock_count_type', '=', 'unofficial'), ('state', 'not in', ('confirm', 'official_count_in_progress'))]}"
+                            class="oe_highlight" groups="stock.group_stock_manager"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_inventory']" position="attributes">
+                    <attribute name="states">waiting,confirm,official_count_in_progress</attribute>
+                </xpath>
+                <xpath expr="//field[@name='create_uid']" position="after">
+                    <field name="pic_id"/>
+                </xpath>
+                <xpath expr="//notebook" position="before">
+                    <field name="currency_id" invisible="1"/>
+                    <field name="summary_line_ids" nolable="1" attrs="{'invisible': [('state', 'in', ('draft', 'waiting'))]}">
+                        <tree>
+                            <field name="group_name"/>
+                            <field name="uom_type"/>
+                            <field name="qty" sum="Total Unofficial Loss/Gain Qty"/>
+                            <field name="amount" sum="Total Unofficial Loss/Gain Amount"/>
+                            <field name="official_qty" sum="Total Official Loss/Gain Qty"/>
+                            <field name="official_amount" sum="Total Official Loss/Gain Amount"/>
+                            <field name="stock_count_type" invisible="1"/>
+                            <field name="is_from_unofficial" invisible="1"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//notebook/page[1]" position="attributes">
+                    <attribute name="string">Official Count</attribute>
+                    <attribute name="attrs">{'invisible': [('stock_count_type', '=', 'unofficial')]}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[1]" position="before">
+                    <page string="Unofficial Count"
+                          attrs="{'invisible': [('stock_count_type', '=', 'official'), ('is_from_unofficial', '=', False)]}">
+                        <button name="action_refresh_summary" type="object" string="Refresh Summary"
+                                class="btn" attrs="{'invisible': [('state', '!=', 'confirm')]}" style="margin-top: 10px;"/>
+                        <field name="line_unofficial_ids" attrs="{'readonly': [('is_from_unofficial', '=', True)]}">
+                            <tree string="Inventory Details" editable="bottom"
+                                  colors="green:is_total_count == True"
+                                  context="{'default_location_id': location_id, 'default_product_id': product_id, 'default_prod_lot_id': lot_id, 'default_package_id': package_id, 'default_partner_id': partner_id, 'default_analytic_account': account_analytic_id, 'default_loss_location': br_loss_inventory_id}">
+                                <field name="is_edit_lot" invisible="1"/>
+                                <field name="is_total_count" invisible="1"/>
+                                <field name="is_loaded" invisible="1"/>
+                                <field name="group_name" readonly="1"/>
+                                <field name="product_id"
+                                       attrs="{'readonly': ['|', ('is_loaded', '=', True), ('is_total_count', '=', True)]}"
+                                       domain="[('type','=','product')]"
+                                       on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"
+                                       context="{'manage_expirydate': parent.manage_expirydate, 'parent_location_id': parent.location_id}"
+                                />
+                                <field name="vendor_uom_count" invisible="1"/>
+                                <field name="br_supplier_id"
+                                       attrs="{'required': [('vendor_uom_count', '!=', 0), ('product_qty', '!=', 0), ('product_id', '!=', False), ('is_loaded', '=', False)], 'readonly': [('is_loaded', '=', True), ('theoretical_qty', '!=', 0)]}"
+                                       context="{'filter_on_inventory': True, 'product_vendor_id': product_id, 'prod_lot_id': prod_lot_id}"/>
+                                <field name="account_analytic_id" attrs="{'readonly': [('is_loaded', '=', True)]}"
+                                       context="{'default_location_id': context.get('default_location_id',False)}"
+                                       invisible="1"/>
+                                <field name="prod_lot_id"
+                                       attrs="{'readonly': [('is_edit_lot', '=', False)], 'required': [('is_edit_lot', '=', True), ('product_id', '!=', False), ('product_qty', '>', 0)]}"
+                                       domain="[('product_id', '=', product_id)]"
+                                       string="Expiry Date" context="{'default_product_id': product_id}"
+                                       groups="stock.group_production_lot"
+                                       options="{'no_create': True}"/>
+                                <field name="br_qty_l1" string="Qty L1"/>
+                                <field name="product_standard_uom" invisible="1"/>
+                                <field name="product_uom_id" context="{'supplier_id': br_supplier_id}"
+                                       groups="product.group_uom" string="UOM L1"
+                                       on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"
+                                       domain="[('id', '=', product_standard_uom)]"
+                                       attrs="{'readonly': [('product_id', '=', False)], 'required': [('product_id', '!=', False)]}"/>
+                                <field name="br_qty_l2" string="Qty L2"/>
+                                <field name="br_uom_l2"
+                                       context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                                <field name="br_qty_l3" string="Qty L3"/>
+                                <field name="br_uom_l3"
+                                       context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                                <field name="br_qty_l4" string="Qty L4"/>
+                                <field name="br_uom_l4"
+                                       context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                                <field name="package_id" invisible="1"
+                                       domain="['|', ('location_id','=', False), ('location_id', '=', location_id)]"
+                                       on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"
+                                       groups="stock.group_tracking_lot"/>
+                                <field name="partner_id" invisible="1"
+                                       on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"
+                                       groups="stock.group_tracking_owner"/>
+                                <field name="theoretical_qty" readonly="1" groups="stock.group_stock_manager"/>
+                                <field name="product_qty" string="Real Quantity" readonly="1"/>
+                                <field name="state" invisible="1"/>
+                                <field name="remark"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='reset_real_qty']" position="attributes">
+                    <attribute name="confirm">Are you sure, you want to set Real Quantity to 0 (Zero) for all product?</attribute>
+                    <attribute name="groups">br_stock.allow_set_quantities_to_0</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="br_inventory_tree_view" model="ir.ui.view">
+            <field name="name">stock.inventory.tree.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="stock_count_type"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="create_uid" string="Created By"/>
+                    <field name="pic_id"/>
+                    <field name="inventory_action_id"/>
+                    <field name="validate_by"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="stock_inventory_line_tree2_inherit" model="ir.ui.view">
+            <field name="name">stock.inventory.line.tree2.inherit</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="inherit_id" ref="br_stock.stock_inventory_line_tree2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_qty']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="br_view_inventory_tree_summary" model="ir.ui.view">
+            <field name="name">stock.inventory.tree.summary</field>
+            <field name="model">stock.inventory</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="create_uid" string="Created By"/>
+                    <field name="pic_id"/>
+                    <field name="validate_by"/>
+                    <field name="reviewer_id"/>
+                    <field name="ice_cream_qty"/>
+                    <field name="ice_cream_value"/>
+                    <field name="packaging_qty"/>
+                    <field name="packaging_value"/>
+                    <field name="cake_qty"/>
+                    <field name="cake_value"/>
+                    <field name="others_qty"/>
+                    <field name="others_value"/>
+                    <field name="last_inventory_date"/>
+                    <field name="inventory_action_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="stock.action_inventory_form" model="ir.actions.act_window">
+            <field name="context">{'readonly_by_pass': ['location_id', 'manage_expirydate', 'product_qty']}</field>
+        </record>
+
+        <record id="action_stock_inventory_summary_official" model="ir.actions.act_window">
+            <field name="name">Official Count Summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.inventory</field>
+            <field name="domain">[('stock_count_type', '=', 'official')]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="br_view_inventory_tree_summary"/>
+        </record>
+
+        <record id="action_stock_inventory_summary_unofficial" model="ir.actions.act_window">
+            <field name="name">Unofficial Count Summary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.inventory</field>
+            <field name="domain">['|', ('stock_count_type', '=', 'unofficial'), ('is_from_unofficial', '=', True)]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="br_view_inventory_tree_summary"/>
+        </record>
+
+        <menuitem id="menu_stock_inventory_summary_official"
+                  action="action_stock_inventory_summary_official"
+                  sequence="31"
+                  parent="stock.menu_stock_inventory_control"
+                  groups="stock.group_stock_manager"
+                  name="Official Count Summary"/>
+
+        <menuitem id="menu_stock_inventory_summary_unofficial"
+                  action="action_stock_inventory_summary_unofficial"
+                  sequence="32"
+                  parent="stock.menu_stock_inventory_control"
+                  groups="stock.group_stock_manager"
+                  name="Unofficial Count Summary"/>
+
+        <!--  add picking to wave action -->
+        <record model="ir.actions.act_window" id="picking_to_wave_act">
+            <field name="name">Review Adjustment</field>
+            <field name="res_model">stock.inventory.adjustment.review</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="inventory_adjustment_review_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <act_window id="action_inventory_adjustment_review"
+                    multi="True"
+                    key2="client_action_multi" name="Review Adjustment"
+                    res_model="stock.inventory.adjustment.review" src_model="stock.inventory"
+                    view_mode="form" target="new" view_type="form"/>
+
+        <!--Stock Inventory Action-->
+        <record model="ir.ui.view" id="stock_inventory_action_form">
+            <field name="name">stock.inventory.action.form</field>
+            <field name="model">stock.inventory.action</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="send_requests" type="object" string="Run" class="oe_stat_button oe_inline" icon="fa-cogs"/>
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group></group>
+                        </group>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_inventory_action_tree">
+            <field name="name">stock.inventory.action.tree</field>
+            <field name="model">stock.inventory.action</field>
+            <field name="arch" type="xml">
+                <tree string="Action" create="true" edit="true" editable="bottom">
+                    <field name="name" required="1"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="act_stock_inventory_action">
+            <field name="name">Stock Inventory Action</field>
+            <field name="res_model">stock.inventory.action</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_stock_inventory_action"
+                  action="act_stock_inventory_action"
+                  sequence="33"
+                  parent="stock.menu_stock_inventory_control"
+                  groups="stock.group_stock_manager"
+                  name="Inventory Action"/>
+    </data>
+</openerp>

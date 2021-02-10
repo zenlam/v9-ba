@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Menu Form View: Third Party -->
+        <record id="br_product_menu_form_view_inherit_third_party" model="ir.ui.view">
+            <field name="name">br.product.menu.form.view.inherit.third.party</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="br_product.br_product_menu_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="third_party" string="Third Party">
+                        <group name="sync_button">
+                            <button name="sync_data_all" type="object"
+                                    string="Sync All" icon="fa-refresh"
+                                    confirm="Are you sure to sync the menu data to all third party?"/>
+                        </group>
+                        <group name="third_party_list">
+                            <field name="third_party_sync_ids" nolabel="1">
+                                <tree name="Third Party" editable="bottom">
+                                    <field name="third_party_id" options='{"no_open": True, "no_create":True}'/>
+                                    <field name="sync_id"/>
+                                    <button name="sync_data" type="object"
+                                            string="Sync" class="oe_highlight"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

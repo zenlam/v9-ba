@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+                id="action_print_gto_log_report"
+                string="Compilation GTO Report"
+                model="log.gto.report"
+                report_type="qweb-pdf"
+                file="br_mall_integration_report.compilation_gto"
+                name="br_mall_integration_report.compilation_gto"
+                multi="True"
+        />
+
+        <record id="action_print_gto_log_report" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="br_mall_integration_report.paperformat_gto_compilation"/>
+        </record>
+
+        <template id="compilation_gto">
+            <t t-call="report.html_container">
+                <div class="page">
+                    <div t-foreach="docs" t-as="doc" style="page-break-inside:avoid;">
+                        <div t-if="doc.file">
+                            <t t-esc="doc.result"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>

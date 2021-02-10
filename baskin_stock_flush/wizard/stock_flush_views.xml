@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Stock Flush Location Creation Form -->
+        <record id="view_stock_flush_location_creation" model="ir.ui.view">
+            <field name="name">stock.flush.location.creation.wizard</field>
+            <field name="model">stock.flush.location.creation</field>
+            <field name="arch" type="xml">
+                <form string="Create Flush Location">
+                    <group>
+                        <span>Note: This will overwrite the current flush location of the warehouses.</span>
+                    </group>
+                    <group>
+                        <field name="flush_location_name"/>
+                    </group>
+                    <footer>
+                        <button string='Create' name="create_flush_location" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <!-- Action Flush Location Creation -->
+        <act_window
+            id="action_stock_flush_location_creation"
+            name="Create Flush Location"
+            res_model="stock.flush.location.creation"
+            src_model="stock.warehouse"
+            view_mode="form"
+            multi="True"
+            target="new"
+            key2="client_action_multi"
+            groups="br_stock.allow_move_stocks_in_location"
+        />
+
+        <!-- Stock Flush Operation Form -->
+        <record id="view_stock_flush_operation_form" model="ir.ui.view">
+            <field name="name">stock.flush.operation.wizard</field>
+            <field name="model">stock.flush.operation</field>
+            <field name="arch" type="xml">
+                <form string="Flush Quants">
+                    <group>
+                        <span>Note: This action is not reversible. Kindly ensure the stock in this warehouse stock location is not reserved for any move.
+                        You may check the flush availability of warehouses by selecting the warehouses. All warehouses must be selected in order to perform flushing.</span>
+                    </group>
+                    <group>
+                        <field name="select_all"/>
+                        <field name="warehouse_ids" widget="many2many_tags" options='{"no_open": True, "no_create":True}'/>
+                        <field name="flush_date"/>
+                    </group>
+                    <footer>
+                        <button string="Check Validity" name="action_check_picking_validity" type="object" class="btn-primary"/>
+                        <button string='Flush' name="action_flush" type="object" class="btn-primary" groups="br_stock.allow_move_stocks_in_location"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <!-- Action Stock Flush Operation -->
+        <record id="action_stock_flush_operation" model="ir.actions.act_window">
+            <field name="name">Stock Flush Operation</field>
+            <field name="res_model">stock.flush.operation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_stock_flush_operation_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Menuitem Stock Flush Operation -->
+        <menuitem
+            id="stock_flush_operation_menu"
+            name="Warehouse Flushing"
+            action="action_stock_flush_operation"
+            parent="stock.menu_warehouse_config"/>
+
+    </data>
+</openerp>

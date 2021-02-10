@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_account_asset_asset_entry_log_form_view" model="ir.ui.view">
+            <field name="name">Account Asset Depreciation Log Form View</field>
+            <field name="model">br.account.asset.asset.entry.log</field>
+            <field name="arch" type="xml">
+                <form string="Accoutn Asset Depreciation Log Form View" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Name"/>
+                                <field name="date" string="Date"/>
+                                <field name="total_entry" string="Total Depreciation Asset Line"/>
+                            </group>
+                            <group>
+                                <field name="success_entry" string="Total Success Depreciation Asset Line"/>
+                                <field name="fail_entry" string="Total Failed Depreciation Asset Line"/>
+                            </group>
+                        </group>
+                        <field name="log_line_ids">
+                            <tree string="Log Lines">
+                                <field name="asset_id" string="Asset"/>
+                                <field name="depreciation_date" string="Depreciation Date"/>
+                                <field name="posting_state" string="State"/>
+                                <field name="posted" string="Posted?"/>
+                                <field name="depreciation_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_account_asset_asset_entry_log_tree_view" model="ir.ui.view">
+            <field name="name">Account Asset Depreciation Log Tree View</field>
+            <field name="model">br.account.asset.asset.entry.log</field>
+            <field name="arch" type="xml">
+                <tree string="Depreciation Asset Log" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="total_entry"/>
+                    <field name="success_entry"/>
+                    <field name="fail_entry"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_br_account_asset_asset_entry_log" model="ir.actions.act_window">
+            <field name="name">Depreciation Asset Log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.account.asset.asset.entry.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="baskin_asset_analytic_account.menu_br_account_asset_asset_entry_log_menu"
+                  name="Depreciation Asset Log" action="action_br_account_asset_asset_entry_log"
+                  parent="account.menu_finance_entries" sequence="200"/>
+    </data>
+</openerp>

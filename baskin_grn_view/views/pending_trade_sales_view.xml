@@ -1,0 +1,69 @@
+<openerp>
+	<data>
+		
+		<record id="action_delivery_trade_sale_do" model="ir.actions.act_window">
+            <field name="name">Trade Sales DO</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_stockist','=',True),
+            					  ('dest_location_usage','=','customer'),
+            					  ('is_mega_scoop_picking','=',False)
+            					  ]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_not_done_not_cancel': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>		
+				
+		<menuitem id="menu_delivery_trade_sale_do"
+			name="Trade Sales DO" sequence="10"
+			action="action_delivery_trade_sale_do"
+			parent="menu_pending_trade_sale"
+			/>
+		
+
+		<record id="action_delivery_trade_sale_return" model="ir.actions.act_window">
+            <field name="name">Trade Sales Return</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('location_usage','=','customer'),
+            					  ('dest_location_is_stockist','=',True),
+            					  ('is_mega_scoop_picking','=',False)
+            					  ]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_not_done_not_cancel': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>		
+				
+		<menuitem id="menu_delivery_trade_sale_return"
+			name="Trade Sales Return" sequence="20"
+			action="action_delivery_trade_sale_return"
+			parent="menu_pending_trade_sale"
+			/>		
+	</data>
+</openerp>

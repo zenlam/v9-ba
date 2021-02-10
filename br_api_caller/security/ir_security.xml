@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="0">
+        <record id="access_br_request_config" model="ir.model.access">
+            <field name="name">access_br_request_config</field>
+            <field name="model_id" ref="model_br_request_config"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        <record id="access_br_request_config" model="ir.model.access">
+            <field name="name">access_br_request_config</field>
+            <field name="model_id" ref="model_br_request_config"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        <record id="access_br_request_details" model="ir.model.access">
+            <field name="name">access_br_request_details</field>
+            <field name="model_id" ref="model_br_request_details"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        <record id="access_br_requests_details_header" model="ir.model.access">
+            <field name="name">access_br_request_config</field>
+            <field name="model_id" ref="model_br_request_details_header"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        <record id="access_br_request_log" model="ir.model.access">
+            <field name="name">access_br_request_log</field>
+            <field name="model_id" ref="model_br_request_log"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        <record id="access_br_request_log_details" model="ir.model.access">
+            <field name="name">access_br_request_config</field>
+            <field name="model_id" ref="model_br_request_log_details"/>
+            <field name="group_id" ref="point_of_sale.group_pos_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</openerp>

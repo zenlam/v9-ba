@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <report 
+            id="baskin_account_voucher_report"
+            model="account.voucher"
+            string="General Payment"
+            report_type="qweb-pdf"
+            name="baskin_account_voucher.report_basking_account_voucher"
+            file="baskin_account_voucher.report_basking_account_voucher"
+        />
+
+    </data>
+</openerp>

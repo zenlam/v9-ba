@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	
+        <!-- customer deposit sequence -->
+        <record id="sequence_bank_recon_gssb_payment" model="ir.sequence">
+            <field name="name">Bank Reconcile Sequence (GSSB)</field>
+            <field name="code">bank.recon.seq.gssb</field>
+            <field name="prefix">BR/GSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">2</field>
+        </record>
+
+        <record id="sequence_bank_recon_mssb_payment" model="ir.sequence">
+            <field name="name">Bank Reconcile Sequence (MSSB)</field>
+            <field name="code">bank.recon.seq.mssb</field>
+            <field name="prefix">BR/MSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">2</field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -1,0 +1,46 @@
+#freeze_screen{
+    z-index: 900;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+#freeze_screen .freeze_container{
+    padding: 2px;
+    background: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+#freeze_screen .freeze_input{
+    height: 34px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    float: left;
+}
+#freeze_screen #start_timeout, #freeze_screen .change_cashier{
+    float: left;
+    height: 100%;
+    font-weight: bold;
+    vertical-align: middle;
+    color: #555555;
+    border-radius: 0;
+    border-color: #bfbfbf;
+    transition: all 150ms linear;
+    color: white;
+    background-color: #6EC89B;
+    height: 40px;
+    cursor: pointer;
+}

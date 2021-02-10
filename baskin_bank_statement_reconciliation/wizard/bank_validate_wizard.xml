@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="wizard_bank_validate_view" model="ir.ui.view">
+	        <field name="name">Bank Statement Validate</field>
+	        <field name="model">bank.validate.wizard</field>
+	        <field name="arch" type="xml">
+	            <form string="">
+	                <div style="font-size:22px; bold:True"> 
+	                	You are trying to validate old month record it will affect all future records.
+	                	<br/>
+	                	Due to this action it will update Opening Balance, Closing Balance and Actual Bank Balance for all future records. 
+	                	<br/>
+	                	Are you sure ?
+	                		
+	                	<br/>
+	                	<br/>
+	                	Future record reference which will affects as bellow:
+	                	<field name="future_record_ref" readonly="1"/>
+                	</div>
+                	
+	                <footer>
+	                    <button name="apply" string="Yes" type="object" default_focus="1" class="oe_highlight"/>
+	                    or
+	                    <button string="No" class="oe_highlight" special="cancel"/>
+	                </footer>
+	            </form>
+	        </field>
+	    </record>
+    </data>
+</openerp>

@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_payment_form_inherit" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                </xpath>
+                <field name="payment_type" position="after">
+                    <field name="payment_via"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_payment_tree_inherit" model="ir.ui.view">
+            <field name="name">account.payment.tree.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_payment_customer_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="priority">21</field>
+            <field name="arch" type="xml">
+                <form string="Register Payment">
+                    <header>
+                        <button name="post_entry" class="oe_highlight" string="Validate" type="object" groups="base.group_payment_validation" states="draft"/>
+                        <!-- <button name="button_reload" class="oe_highlight" string="Reload" type="object" states="draft"/> -->
+                        <button name="refresh_entry" class="oe_highlight" states="draft" string="Refresh" type="object" />
+                        <button name="unreconcile_entry" class="oe_highlight" states="posted" string="Cancel Payment" type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="posted,reconciled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries"
+                                    string="Journal Items" type="object"
+                                    groups="account.group_account_manager"
+                                    attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_line_ids" invisible="1"/>
+                            <button class="oe_stat_button" name="button_invoices"
+                                    string="Invoices" type="object"
+                                    attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                            <field name="has_invoices" invisible="1"/>
+                        </div>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                                <field name="payment_via" invisible="1"/>
+                                <field name="bulk_payment" invisible="1"/>
+                                <field name="partner_type" nolabel="1" widget="selection" string="" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" nolabel="1" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}" context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                <field name="journal_id" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'show_invoices': show_invoices, 'other_currency_id': other_currency_id}" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="destination_journal_id" widget="selection" attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string=" " widget="radio" attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="show_other_currency" invisible="1"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}" widget="monetary" options="{'currency_field': 'currency_id', 'currency_field': 'currency_id'}"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                                </div>
+                                <label for="other_currency_paid_amount" attrs="{'invisible': [('show_other_currency', '=', False)]}"/>
+                                <div name="amount_div" class="o_row" attrs="{'invisible': [('show_other_currency', '=', False)]}">
+                                    <field name="other_currency_paid_amount" attrs="{'required': [('show_other_currency', '=', True)]}" widget="monetary" options="{'currency_field': 'other_currency_id'}"/>
+                                </div>
+                                <field name="creator_remarks" attrs="{'required': [('line_dr_ids', '!=', [])]}"/>
+                                <field name="authorizer_remarks" attrs="{'invisible': [('bulk_payment', '=', False)]}"/>
+                            </group>
+                            <group>
+                                <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="communication" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1" string="Inv No / Ref"/>
+                                <field name="account_analytic_id" required="1"/>
+                                <field name="memo"/>
+                                <field name="payment_mode" />
+                                <field name="cheque_no" attrs="{'required': [('payment_mode', '=', 'cheque')]}"/>
+                                <label for="show_invoices" />
+                                <div name="other_currency_div" class="o_row">
+                                    <field name="show_invoices"/>
+                                    <field name="other_currency_id" options="{'no_create': True, 'no_open': True}" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" context="{'from_other_currency': True}"/>
+                                </div>
+                                <field name="exchange_rate" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" />
+                                <field name="direct_exchange_rate" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" />
+                                <field name="conversion_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                <label string=""/>
+                                <button name="button_reload" string="Reload Invoice" type="object" states="draft" class="btn-danger btn"/>
+                            </group>
+                        </group>
+                        <label string="Warning - Open Outstanding Refund!!!" style="color:red; font-size:22px;" attrs="{'invisible': [ ('line_dr_ids', '=', [])]}"/>
+                        <notebook>
+                            <page string="Payment Information">
+                                <field name="is_same_currency" invisible="1"/>
+                                <label for="line_cr_ids" />
+                                <field name="line_cr_ids" class="display_table">
+                                    <tree string="Open Customer Journal Entries" editable="bottom" colors="gray:amount==0;blue:amount!=0" create="false">
+                                        <field name="show_invoices" invisible="1"/>
+                                        <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id': parent.partner_id}" domain="[('account_id.internal_type','in',('receivable','payable')), ('reconcile_id','=', False), ('partner_id','=',parent.partner_id)]" readonly="1"/>
+                                        <field name="account_id" domain="[('type','=','receivable')]" readonly="1"/>
+                                        <field name="date_original"/>
+                                        <field name="date_due" />
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="foreign_amount" attrs="{'invisible': [('show_invoices', '=', 'base')]}" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1" sum="Total Foreign"/>
+                                        <field name="foreign_unreconciled" attrs="{'invisible': [('show_invoices', '=', 'base')]}" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1" sum="Total Open"/>
+                                        <field name="amount_original" readonly="1" sum="Total Original" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="amount_unreconciled" readonly="1" sum="Total Open" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="reconcile"/>
+                                        <field name="is_same_currency" invisible="1"/>
+                                        <field name="amount" sum="Total Allocation"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary" 
+                                               context="{'from_amount': True}" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="amount_foregin" sum="Total Allocation" widget="monetary" class="monetary_in_tree"
+                                               options="{'currency_field': 'currency_id'}"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               attrs="{'readonly': [('show_invoices', '=', 'base')], 'invisible': [('show_invoices', '=', 'base')]}"
+                                               context="{'from_amount': True}"/>
+                                        <field name="backend_amount_foregin" invisible="1"/>
+                                        <field name="payment_rate" readonly="1" invisible="1"/>
+                                        <field name="payment_direct_rate" attrs="{'readonly': [('show_invoices', '=', 'base')], 'invisible': [('show_invoices', '=', 'base')]}" />
+                                        <field name="invoice_rate" readonly="1" invisible="1"/>
+                                        <field name="invoice_direct_rate" readonly="1" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                        <field name="diff_rate" invisible="1"/>
+                                        <field name="diff_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                    </tree>
+                                </field>
+                                <label for="line_dr_ids" attrs="{'invisible': [('line_dr_ids', '=', [])]}"/>
+                                <field name="line_dr_ids" class="display_table" attrs="{'invisible': [('line_dr_ids', '=', [])]}">
+                                    <tree string="Open Vendor Journal Entries" colors="gray:amount==0" create="false">
+                                        <field name="show_invoices" invisible="1"/>
+                                        <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}" domain="[('account_id.internal_type','in',('receivable','payable')), , ('reconcile_id',' , False), ('partner_id', '=', parent.partner_id)]" readonly="1"/>
+                                        <field name="account_id" domain="[('type','=','payable')]" readonly="1"/>
+                                        <field name="date_original" />
+                                        <field name="date_due" />
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="foreign_amount" attrs="{'invisible': [('show_invoices', '=', 'base')]}" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Foreign" readonly="1"/>
+                                        <field name="foreign_unreconciled" widget="monetary" options="{'currency_field': 'currency_id', 'currency_field': 'currency_id'}" attrs="{'invisible': [('show_invoices', '=', 'base')]}" sum="Total Open"  readonly="1"/>
+                                        <field name="amount_original" readonly="1" sum="Total Original" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="amount_unreconciled" readonly="1" sum="Total Open" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="reconcile"/>
+                                        <field name="is_same_currency" invisible="1"/>
+                                        <field name="amount"
+                                               sum="Total Allocation" 
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary"
+                                               context="{'from_amount': True}" options="{'currency_field': 'company_currency_id'}"/>
+                                        <field name="amount_foregin" sum="Total Allocation" 
+                                               class="monetary_in_tree"
+                                               options="{'currency_field': 'currency_id'}"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary"
+                                               attrs="{'readonly': [('show_invoices', '=', 'base')], 'invisible': [('show_invoices', '=', 'base')]}"
+                                               context="{'from_amount': True}"/>
+                                        <field name="backend_amount_foregin" invisible="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="payment_rate" readonly="1" invisible="1"/>
+                                        <field name="payment_direct_rate" attrs="{'readonly': [('show_invoices', '=', 'base')], 'invisible': [('show_invoices', '=', 'base')]}" />
+                                        <field name="invoice_rate" readonly="1" invisible="1"/>
+                                        <field name="invoice_direct_rate" readonly="1" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                        <field name="diff_rate" invisible="1"/>
+                                        <field name="diff_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string='Journal Items'>
+                                <group>
+                                    <field name="move_ids" readonly="1" widget="many2many_tags"/>
+                                </group>
+                                <field name="move_line_ids" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- vendor payment tree view -->
+
+        <record id="view_account_bulk_payment_tree" model="ir.ui.view">
+            <field name="name">account.supplier.payment.tree</field>
+            <field name="model">account.payment</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state=='draft'" decoration-muted="state=='reconciled'" edit="false">
+                    <field name="payment_date"/>
+                    <field name="name"/>
+                    <field name="journal_id"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="amount"/>
+                    <field name="other_currency_paid_amount" string="Paid Amount (FC)" />
+                    <field name="other_currency_id" string="Foreign Currency"/>
+                    <field name="company_id"/>
+                    <field name="state"/>
+                    <field name="communication" string="Inv No / Ref"/>
+                    <field name="memo"/>
+                    <field name="account_analytic_id"/>
+                    <field name="payment_mode" />
+                    <field name="cheque_no" />
+                    <field name="creator_remarks"/>
+                    <field name="authorizer_remarks"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="partner_type" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_payment_supplier_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="priority">21</field>
+            <field name="arch" type="xml">
+                <form string="Register Payment">
+                    <header>
+                        <button name="post_entry" class="oe_highlight" string="Validate" type="object" groups="base.group_payment_validation" states="draft"/>
+                        <!-- <button name="refresh_entry" class="oe_highlight" states="draft" string="Refresh" type="object" /> -->
+                        <!-- <button name="button_reload" class="oe_highlight" string="Reload" type="object" states="draft"/> -->
+                        <button name="unreconcile_entry" class="oe_highlight" states="posted" string="Cancel Payment" type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="posted,reconciled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries"
+                                    string="Journal Items" type="object"
+                                    groups="account.group_account_manager"
+                                    attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_line_ids" invisible="1"/>
+                            <button class="oe_stat_button" name="button_invoices"
+                                    string="Invoices" type="object"
+                                    attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                            <field name="has_invoices" invisible="1"/>
+                        </div>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" widget="radio" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                                <field name="payment_via" invisible="1"/>
+                                <field name="bulk_payment" invisible="1"/>
+                                <field name="partner_type" nolabel="1" widget="selection" string="" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" nolabel="1" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}" context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                <field name="journal_id"  context="{'show_invoices': show_invoices, 'other_currency_id': other_currency_id}" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                                <field name="destination_journal_id" widget="selection" attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string=" " widget="radio" attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="show_other_currency" invisible="1"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}" widget="monetary" options="{'currency_field': 'currency_id', 'display_currency': 'currency_id'}" />
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                                </div>
+                                <label for="other_currency_paid_amount" attrs="{'invisible': [('show_other_currency', '=', False)]}"/>
+                                <div name="amount_div" class="o_row" attrs="{'invisible': [('show_other_currency', '=', False)]}">
+                                    <field name="other_currency_paid_amount" attrs="{'required': [('show_other_currency', '=', True)]}" widget="monetary" options="{'currency_field': 'other_currency_id'}"/>
+                                </div> 
+                                <field name="creator_remarks" attrs="{'required': [('line_cr_ids', '!=', [])]}"/>
+                                <field name="authorizer_remarks"/>
+                            </group>
+                            <group>
+                                <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="communication" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1" string="Inv No / Ref" />
+                                <field name="account_analytic_id" required="1"/>
+                                <field name="memo" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                                <field name="payment_mode" />
+                                <field name="cheque_no" attrs="{'required': [('payment_mode', '=', 'cheque')]}"/>
+                                <label for="show_invoices" />
+                                <div name="other_currency_div" class="o_row">
+                                    <field name="show_invoices"/>
+                                    <field name="other_currency_id" options="{'no_create': True, 'no_open': True}" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" context="{'from_other_currency': True}"/>
+                                </div>
+                                <field name="exchange_rate" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" />
+                                <field name="direct_exchange_rate" attrs="{'invisible': [('show_invoices', '=', 'base')], 'required': [('show_invoices', '=', 'foreign')]}" />
+                                <field name="conversion_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                <label string=""/>
+                                <button name="button_reload" string="Reload Invoice" type="object" states="draft" class="btn-danger btn"/>
+                            </group>
+                        </group>
+                        <label string="Warning - Open Outstanding Refund!!!" style="color:red; font-size:22px;" attrs="{'invisible': [('line_cr_ids', '=', [])]}"/>
+                        <notebook>
+                            <page string="Payment Information">
+                                <field name="is_same_currency" invisible="1"/>
+                                <label for="line_dr_ids" />
+                                <field name="line_dr_ids" class="display_table">
+                                    <tree string="Open Vendor Journal Entries" editable="bottom" colors="gray:amount==0;blue:amount!=0" create="false">
+                                        <field name="show_invoices" invisible="1"/>
+                                        <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}" domain="[('account_id.internal_type','in',('receivable','payable')), , ('reconcile_id',' , False), ('partner_id', '=', parent.partner_id)]" readonly="1"/>
+                                        <field name="reference" readonly="1"/>
+                                        <field name="account_id" domain="[('type','=','payable')]" readonly="1"/>
+                                        <field name="date_original" />
+                                        <field name="date_due" />
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="foreign_amount" widget="monetary" options="{'display_currency': 'currency_id', 'currency_field': 'currency_id'}" sum="Total Foreign" readonly="1" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                        <field name="foreign_unreconciled" sum="Total Open" widget="monetary"  options="{'display_currency': 'currency_id', 'currency_field': 'currency_id'}" readonly="1" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                        <field name="amount_original" readonly="1" sum="Total Original" widget="monetary" options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="amount_unreconciled" readonly="1" sum="Total Open" widget="monetary" options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="reconcile"/>
+                                        <field name="is_same_currency" invisible="1"/>
+                                        <field name="show_invoices" invisible="1"/>
+                                        <field name="amount"
+                                               sum="Total Allocation" 
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary"
+                                               context="{'from_amount': True}"
+                                               options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="amount_foregin" sum="Total Allocation" 
+                                               class="monetary_in_tree"
+                                               options="{'currency_field': 'currency_id'}"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary"
+                                               attrs="{'invisible': [('show_invoices', '=', 'base')]}"
+                                               context="{'from_amount': True}"/>
+                                        <field name="backend_amount_foregin" invisible="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="payment_rate" readonly="1" invisible="1"/>
+                                        <field name="payment_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}" />
+                                        <field name="invoice_rate" readonly="1" invisible="1"/>
+                                        <field name="invoice_direct_rate" readonly="1" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                        <field name="diff_rate" invisible="1"/>
+                                        <field name="diff_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                    </tree>
+                                </field>
+                                <label for="line_cr_ids" attrs="{'invisible': [('line_cr_ids', '=', [])]}"/>
+                                <field name="line_cr_ids" attrs="{'invisible': [('line_cr_ids', '=', [])]}" class="display_table">
+                                    <tree string="Open Customer Journal Entries" colors="gray:amount==0" create="false">
+                                        <field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id': parent.partner_id}" domain="[('account_id.internal_type','in',('receivable','payable')), ('reconcile_id','=', False), ('partner_id','=',parent.partner_id)]" readonly="1"/>
+                                        <field name="reference" readonly="1"/>
+                                        <field name="account_id" domain="[('type','=','receivable')]" readonly="1"/>
+                                        <field name="date_original"/>
+                                        <field name="date_due" />
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="foreign_amount" widget="monetary" options="{'currency_field': 'currency_id', 'display_currency': 'currency_id'}" readonly="1" sum="Total Foreign"/>
+                                        <field name="foreign_unreconciled" widget="monetary" options="{'currency_field': 'currency_id', 'display_currency': 'currency_id'}" readonly="1" sum="Total Open"/>
+                                        <field name="amount_original" readonly="1" sum="Total Original" widget="monetary" options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="amount_unreconciled" readonly="1" sum="Total Open" widget="monetary" options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="reconcile"/>
+                                        <field name="is_same_currency" invisible="1"/>
+                                        <field name="show_invoices" invisible="1"/>
+                                        <field name="amount" sum="Total Allocation"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               widget="monetary"
+                                               context="{'from_amount': True}" options="{'currency_field': 'company_currency_id', 'display_currency': 'company_currency_id'}"/>
+                                        <field name="amount_foregin" sum="Total Allocation" widget="monetary" class="monetary_in_tree"
+                                               options="{'currency_field': 'currency_id', 'display_currency': 'currency_id'}"
+                                               on_change="onchange_amount(parent.show_invoices, currency_id, company_currency_id, amount, amount_unreconciled, amount_foregin, foreign_unreconciled, payment_direct_rate, context)"
+                                               attrs="{'invisible': [('show_invoices', '=', 'base')]}"
+                                               context="{'from_amount': True}"/>
+                                        <field name="backend_amount_foregin" invisible="1" widget="monetary" options="{'currency_field': 'currency_id', 'display_currency': 'currency_id'}"/>
+                                        <field name="payment_rate" readonly="1" invisible="1"/>
+                                        <field name="payment_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}" />
+                                        <field name="invoice_rate" readonly="1" invisible="1"/>
+                                        <field name="invoice_direct_rate" readonly="1"/>
+                                        <field name="diff_rate" invisible="1"/>
+                                        <field name="diff_direct_rate" attrs="{'invisible': [('show_invoices', '=', 'base')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string='Journal Items'>
+                                <group>
+                                    <field name="move_ids" readonly="1" widget="many2many_tags"/>
+                                </group>
+                                <field name="move_line_ids" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_bulk_payment_customer" model="ir.actions.act_window">
+            <field name="name">Customer Payment</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_payment_type': 'inbound', 'default_bulk_payment': True, 'default_payment_via': 'bulk', 'readonly_by_pass': ['line_cr_ids', 'line_dr_ids']}</field>
+            <field name="domain">[('partner_type', '=', 'customer'), ('bulk_payment', '=', True), ('payment_via', '=', 'bulk')]</field>
+            <field name="view_id" ref="view_account_bulk_payment_tree"/>
+        </record>
+
+        <record id="action_account_bulk_payment_customer_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_bulk_payment_tree"/>
+            <field name="act_window_id" ref="action_account_bulk_payment_customer"/>
+        </record>
+
+        <record id="action_account_bulk_payment_customer_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_customer_form"/>
+            <field name="act_window_id" ref="action_account_bulk_payment_customer"/>
+        </record>
+
+        <menuitem action="action_account_bulk_payment_customer" id="menu_action_account_bulk_payment_customer" parent="account.menu_finance_receivables" sequence="10" groups="account.group_account_user"/>
+
+        <record id="action_account_bulk_payment_supplier" model="ir.actions.act_window">
+            <field name="name">Vendor Payment</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_payment_type': 'outbound', 'default_bulk_payment': True, 'default_payment_via': 'bulk'}</field>
+            <field name="domain">[('partner_type', '=', 'supplier'), ('bulk_payment', '=', True), ('payment_via', '=', 'bulk')]</field>
+            <field name="view_id" ref="view_account_bulk_payment_tree"/>
+        </record>
+
+        <record id="action_account_bulk_payment_supplier_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_bulk_payment_tree"/>
+            <field name="act_window_id" ref="action_account_bulk_payment_supplier"/>
+        </record>
+
+        <record id="action_account_bulk_payment_supplier_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_supplier_form"/>
+            <field name="act_window_id" ref="action_account_bulk_payment_supplier"/>
+        </record>
+
+        <menuitem action="action_account_bulk_payment_supplier" id="menu_action_action_account_bulk_payment_supplier" parent="account.menu_finance_payables" sequence="10" groups="account.group_account_user"/>
+
+        <record id="account.action_account_payments" model="ir.actions.act_window">
+            <field name="domain">[('partner_type', '=', 'customer'), ('bulk_payment', '=', False), ('payment_via', '=', 'normal')]</field>
+        </record>
+        
+        <record id="account.action_account_payments_payable" model="ir.actions.act_window">
+            <field name="domain">[('partner_type', '=', 'supplier'), ('bulk_payment', '=', False), ('payment_via', '=', 'normal')]</field>
+        </record>
+
+        <!-- deposit -->
+        <record id="view_account_payment_deposit_tree" model="ir.ui.view">
+            <field name="name">account.payment.tree</field>
+            <field name="model">account.payment</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state=='draft'" decoration-muted="state=='reconciled'" edit="false">
+                    <field name="payment_date"/>
+                    <field name="name" string="Payment No"/>
+                    <field name="journal_id"/>
+                    <field name="payment_method_id" invisible="1"/>
+                    <field name="partner_id" string="Customer"/>
+                    <field name="amount" string="Payment Amount"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                    <field name="memo"/>
+                    <field name="communication" string="Inv No / Ref"/>
+                    <field name="account_analytic_id"/>
+                    <field name="payment_mode"/>
+                    <field name="cheque_no"/>
+                    <field name="move_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="partner_type" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_payment_deposit_supplier_tree" model="ir.ui.view">
+            <field name="name">account.payment.tree</field>
+            <field name="model">account.payment</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state=='draft'" decoration-muted="state=='reconciled'" edit="false">
+                    <field name="payment_date"/>
+                    <field name="name" string="Payment No"/>
+                    <field name="journal_id"/>
+                    <field name="payment_method_id" invisible="1"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="amount" string="Payment Amount"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                    <field name="memo"/>
+                    <field name="communication" string="Inv No / Ref"/>
+                    <field name="account_analytic_id"/>
+                    <field name="payment_mode"/>
+                    <field name="cheque_no"/>
+                    <field name="move_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="partner_type" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_payment_deposit_form" model="ir.ui.view">
+            <field name="name">account.payment.deposit.form</field>
+            <field name="model">account.payment</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <form string="Register Payment" version="7">
+                    <header>
+                        <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object" groups="base.group_deposite_payment_validation"/>
+                        <button name="unreconcile_entry" class="oe_highlight" states="posted" string="Cancel" type="object" groups="base.group_deposite_payment_validation"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries"
+                                    string="Journal Items" type="object"
+                                    groups="account.group_account_manager"
+                                    attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                            <field name="move_line_ids" invisible="1"/>
+                            <button class="oe_stat_button" name="button_invoices"
+                                    string="Invoices" type="object"
+                                    attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/>
+                            <field name="has_invoices" invisible="1"/>
+                        </div>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" widget="radio" invisible="1"/>
+                                <field name="payment_via"/>
+                                <field name="partner_type" nolabel="1" widget="selection" string="" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" nolabel="1" attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))], 'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))], 'readonly': [('state', '!=', 'draft')]}" context="{'default_is_company': True, 'default_supplier': payment_type == 'outbound', 'default_customer': payment_type == 'inbound'}"/>
+                                <field name="journal_id" widget="selection" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'payment_via': payment_via}"/>
+                                <field name="destination_journal_id" widget="selection" attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string=" " widget="radio" attrs="{'invisible': [('hide_payment_method', '=', True)], 'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}" invisible="1"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="communication" attrs="{'readonly': [('state', '!=', 'draft')]}" string="Inv No / Ref" required="True"/>
+                                <field name="account_analytic_id" required="1"/>
+                                <field name="memo" required="1"/>
+                                <field name="payment_mode"/>
+                                <field name="cheque_no" attrs="{'required': [('payment_mode', '=', 'cheque')]}"/>
+                                <field name="move_id" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_payments_deposit" model="ir.actions.act_window">
+            <field name="name">Customer Deposit / Adv Payment</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="context">{'default_payment_type': 'inbound', 'default_payment_via': 'deposit', 'no_normal_bulk': 1}</field>
+            <field name="domain">[('bulk_payment', '=', False), ('partner_type', '=', 'customer'), ('payment_via', 'in', ('deposit', 'adv_payment'))]</field>
+            <field name="view_id" ref="view_account_payment_deposit_tree"/>
+        </record>
+
+        <record id="action_account_payments_deposit_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_payment_deposit_tree"/>
+            <field name="act_window_id" ref="action_account_payments_deposit"/>
+        </record>
+
+        <record id="action_account_payments_deposit_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_deposit_form"/>
+            <field name="act_window_id" ref="action_account_payments_deposit"/>
+        </record>
+        
+        <!-- supplier deposit -->
+
+        <record id="action_account_payments_payable_deposit" model="ir.actions.act_window">
+            <field name="name">Vendor Deposit / Adv Payment</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="context">{'default_payment_type': 'outbound', 'default_payment_via': 'deposit', 'no_normal_bulk': 1}</field>
+            <field name="domain">[('bulk_payment', '=', False), ('partner_type', '=', 'supplier'), ('payment_via', 'in', ('deposit', 'adv_payment'))]</field>
+            <field name="view_id" ref="view_account_payment_deposit_supplier_tree"/>
+        </record>
+
+        <record id="action_account_payments_payable_deposit_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_payment_deposit_supplier_tree"/>
+            <field name="act_window_id" ref="action_account_payments_payable_deposit"/>
+        </record>
+
+        <record id="action_account_payments_payable_deposit_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_payment_deposit_form"/>
+            <field name="act_window_id" ref="action_account_payments_payable_deposit"/>
+        </record>
+
+        <menuitem action="action_account_payments_deposit" id="menu_action_account_payments_deposit" parent="account.menu_finance_receivables" sequence="21" groups="account.group_account_user"/>
+        <menuitem action="action_account_payments_payable_deposit" id="menu_action_account_payments_payable_deposit" parent="account.menu_finance_payables" sequence="21" groups="account.group_account_user"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_stock_quant_tree" model="ir.ui.view">
+            <field name="name">br.view.stock.quant.tree.inherit</field>
+            <field name="model">stock.quant</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_tree"/>
+            <field name="arch" type="xml">
+                        <xpath expr="//field[@name='product_uom_id']" position="after">
+                            <field name="qty_l2" string="Quantity"/>
+                            <field name="uom_l2_id" string="Unit of Measure L2" groups="product.group_uom"/>
+                            <field name="qty_l3" string="Quantity"/>
+                            <field name="uom_l3_id" string="Unit of Measure L3" groups="product.group_uom"/>
+                            <field name="qty_l4" string="Quantity"/>
+                            <field name="uom_l4_id" string="Unit of Measure L4" groups="product.group_uom"/>
+                        </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock.quantsact">
+            <field name="name">Quants</field>
+            <field name="res_model">stock.quant</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_internal_loc': 1}</field>
+            <field name="help">This analysis gives you a fast overview on the current stock level of your products and their current inventory value.</field>
+        </record>
+
+    </data>
+</openerp>

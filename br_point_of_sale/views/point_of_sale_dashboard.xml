@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_pos_config_kanban" model="ir.ui.view">
+            <field name="name">pos.config.kanban.view</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_kanban"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//a[@type='action'][2]" position="attributes">-->
+                    <!--<attribute name="class">o_invisible</attribute>-->
+                <!--</xpath>-->
+                <!--<xpath expr="//a[@type='action'][3]/../.." position="attributes">-->
+                    <!--<attribute name="class">o_invisible</attribute>-->
+                <!--</xpath>-->
+
+                <xpath expr="//a[@type='edit']/../.." position="attributes">
+                    <attribute name="class">o_invisible</attribute>
+                </xpath>
+                <xpath expr="//button[@name='open_existing_session_cb_close']" position="replace">
+                    <button t-if="record.current_session_state.raw_value === 'opened'" class="btn btn-default" name="button_signout_confirm" type="object">Sign Out</button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

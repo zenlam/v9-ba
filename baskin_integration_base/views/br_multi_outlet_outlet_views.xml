@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Outlet Form View: Third Party -->
+        <record id="view_br_outlet_form_inherit_third_party" model="ir.ui.view">
+            <field name="name">view.br.outlet.form.inherit.third.party</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="inherit_id" ref="br_multi_outlet.view_br_outlet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="outlet_facility" string="Facility">
+                        <group name="facility_list">
+                            <group>
+                                <field name="facility_ids" string="Facilities Available"
+                                   widget="many2many_tags" options='{"no_create": True}'/>
+                            </group>
+                        </group>
+                    </page>
+                    <page name="third_party" string="Third Party">
+                        <group name="sync_button">
+                            <button name="sync_data_all" type="object"
+                                    string="Sync All" icon="fa-refresh"
+                                    confirm="Are you sure to sync the outlet data to all third party?"/>
+                        </group>
+                        <group name="third_party_list">
+                            <field name="third_party_sync_ids" nolabel="1">
+                                <tree name="Third Party" editable="bottom">
+                                    <field name="third_party_id" options='{"no_open": True, "no_create":True}'/>
+                                    <field name="sync_id"/>
+                                    <button name="sync_data" type="object"
+                                            string="Sync" class="oe_highlight"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='state_id']" position="after">
+                    <field name="outlet_coord" string="Coordinates" required="1"/>
+                </xpath>
+                <xpath expr="//field[@name='close_hour']/.." position="after">
+                    <group name="opening_hour" string="Opening Hours">
+                        <field name="outlet_weekday_opening" required="1"/>
+                        <field name="outlet_weekend_opening" required="1"/>
+                        <field name="outlet_holiday_opening" required="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

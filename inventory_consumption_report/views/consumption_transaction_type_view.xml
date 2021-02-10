@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_consumption_transaction_type_tree" model="ir.ui.view">
+            <field name="name">consumption.transaction.type.tree</field>
+            <field name="model">consumption.transaction.type</field>
+            <field name="arch" type="xml">
+                <tree string="Transaction Type" editable="top">
+                    <field name="name" />
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+    	
+    	<record id="action_consumption_transaction_type_form" model="ir.actions.act_window">
+            <field name="name">Consumption Transaction Type</field>
+            <field name="res_model">consumption.transaction.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+    	<menuitem
+    		name=""
+            action="action_consumption_transaction_type_form"
+            id="menu_action_consumption_transaction_type_form"
+            parent="stock.menu_stock_config_settings" sequence="10"/>
+    	
+	</data>
+</openerp>

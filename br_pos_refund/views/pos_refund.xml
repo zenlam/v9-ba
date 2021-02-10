@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_pos_refund_view_form">
+            <field name="name">pos.order</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='refund']" position="replace">
+                    <!--Conditions fields-->
+                    <field name="is_refund" invisible="1"/>
+                    <field name="is_refunded" invisible="1"/>
+                    <field name="is_session_closed" invisible="1"/>
+
+                    <!--Buttons-->
+                    <button name="confirm_refund" string="Cancel Receipt" type="object"
+                            attrs="{'invisible':['|', '|', '|', ('is_session_closed', '=', True), ('state','=', 'draft'), ('is_refund', '=', True), ('is_refunded', '=', True)]}"/>
+
+                    <button name="confirm_refund" string="Cancel Receipt" type="object"
+                            attrs="{'invisible':['|', '|', ('is_refund', '=', True), ('is_refunded', '=', True), ('state', '!=', 'cancellation_approved')]}"/>
+
+                    <button name="action_cancellation_requested" string="Request Cancel" type="object"
+                            groups="point_of_sale.group_pos_manager"
+                            attrs="{'invisible':['|', '|', '|' , ('is_refund', '=', True), ('is_refunded', '=', True), ('is_session_closed', '=', False), ('state', 'in', ('cancellation_requested', 'cancellation_approved'))]}"/>
+
+                    <button name="action_approve_cancel_request" string="Approve Cancel Request" type="object"
+                            groups="br_pos_refund.group_approve_receipt_cancellation_manager"
+                            attrs="{'invisible':[('state', '!=', 'cancellation_requested')]}"/>
+
+                    <button name="action_refuse_cancel_request" string="Refuse Cancel Request" type="object"
+                            groups="br_pos_refund.group_approve_receipt_cancellation_manager"
+                            attrs="{'invisible':[('state', '!=', 'cancellation_requested')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_pos_order_cancel_request">
+            <field name="name">Receipt Cancellation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', 'in', ('cancellation_requested', 'cancellation_approved'))]</field>
+        </record>
+
+        <menuitem
+            parent="point_of_sale.menu_point_of_sale"
+            action="action_pos_order_cancel_request"
+            id="menu_pos_order_cancel_request"
+            sequence="4"
+            groups="point_of_sale.group_pos_manager"/>
+
+        <!--Refund form-->
+        <record model="ir.ui.view" id="br_pos_confirm_refund_view_popup">
+            <field name="name">br.confirm.refund.wizard</field>
+            <field name="model">br.confirm.refund.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Confirm Refund" version="7">
+                    <field name="pos_order_id" invisible="1"/>
+                    <div>
+                        Do you want to cancel this receipt ?
+                    </div>
+                    <group>
+                        <field name="remarks"/>
+                    </group>
+                    <footer>
+                        <button string='Confirm' name="refund" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Refund request form-->
+        <record model="ir.ui.view" id="br_pos_confirm_refund_request_view_popup">
+            <field name="name">br.confirm.refund.request.wizard</field>
+            <field name="model">br.confirm.refund.request.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Confirm Refund" version="7">
+
+                    <div>
+                        Please write the remarks for the cancellation.
+                    </div>
+                    <group>
+                        <field name="remarks"/>
+                    </group>
+                    <footer>
+                        <button string='Request Cancel' name="request_cancel" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_confirm_refund_popup_action" model="ir.actions.act_window">
+            <field name="name">Confirm receipt cancellation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.confirm.refund.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

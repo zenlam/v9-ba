@@ -1,0 +1,109 @@
+.pos input[type="search"] {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pos input[type="radio"],
+.pos input[type="checkbox"] {
+    margin: 4px 0 0;
+    margin-top: 1px \9;
+    line-height: normal;
+}
+
+.pos input[type="file"] {
+    display: block;
+}
+
+.pos input[type="range"] {
+    display: block;
+    width: 100%;
+}
+
+.pos select[multiple],
+.pos select[size] {
+    height: auto;
+}
+
+.pos input[type="file"]:focus,
+.pos input[type="radio"]:focus,
+.pos [type="checkbox"]:focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
+.pos output {
+    display: block;
+    padding-top: 7px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+}
+
+.pos .form-control {
+    display: block;
+    text-align: right;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 20px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.pos .form-control:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.pos .form-control::-moz-placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+.pos .form-control:-ms-input-placeholder {
+    color: #999;
+}
+
+.pos .form-control::-webkit-input-placeholder {
+    color: #999;
+}
+
+.pos .form-control[disabled],
+.pos .form-control[readonly],
+.pos fieldset[disabled] .form-control {
+    background-color: #eee;
+    opacity: 1;
+}
+
+.pos .form-control[disabled],
+.pos fieldset[disabled] .form-control {
+    cursor: not-allowed;
+}
+
+.pos textarea.form-control {
+    height: auto;
+}
+
+.pos input[type="search"] {
+    -webkit-appearance: none;
+}
+
+.pos .form-group {
+    margin-bottom: 15px;
+}
+
+
+

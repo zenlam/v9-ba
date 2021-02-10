@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="view_br_stock_move_transfer_form" model="ir.ui.view">
+            <field name="name">view.br.stock.move.transfer.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="before">
+                    <field name="request_line_id" invisible="1"/>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="br_view_move_form_add_reason" model="ir.ui.view">
+            <field name="name">br.stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='move_dest_id']" position="after">
+            		<field name="remark_id" attrs="{'readonly': [('state', '=', 'done')]}"/>
+            	</xpath>
+            </field>
+        </record>
+        <record id="br_view_picking_form_transfer_inherit" model="ir.ui.view">
+            <field name="name">Stock Picking Form Inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pack_operation_product_ids']" position="after">
+                    <field name="requested_pack_operation_product_ids" options="{'reload_on_button': True}" attrs="{'invisible': [('request_id', '=', False)]}" context="{'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_supplier_id': partner_id}">
+                        <tree editable="bottom" create="false" decoration-muted="result_package_id" decoration-danger="qty_done&gt;product_qty" decoration-success="qty_done==product_qty and state!='done' and not result_package_id">
+                            <field name="package_id" groups="stock.group_tracking_lot" invisible="1"/>
+                            <field name="product_id" on_change="product_id_change(product_id, product_uom_id, product_qty)" required="1" attrs="{'readonly': [('fresh_record', '=', False)]}"/>
+                            <field name="fresh_record" invisible="1"/>
+                            <field name="product_uom_id" attrs="{'readonly': [('fresh_record', '=', False)]}" groups="product.group_uom" context="{'product_id': product_id, 'supplier_id': parent.partner_id}"/>
+                            <field name="lots_visible" invisible="1"/>
+                            <field name="owner_id" groups="stock.group_tracking_owner"/>
+                            <field name="location_id" domain="[('id', 'child_of', parent.location_id)]" invisible="1"/>
+                            <field name="location_dest_id" domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                            <field name="from_loc" groups="stock.group_locations,stock.group_tracking_lot"/>
+                            <field name="to_loc" groups="stock.group_locations,stock.group_tracking_lot"/>
+                            <field name="result_package_id" groups="stock.group_tracking_lot" context="{'location_id': location_dest_id}" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <field name="product_qty" readonly="1" attrs="{'required': [('product_id', '!=', False)]}"/>
+                            <field name="vendor_count" invisible="1"/>
+                            <field name="vendor_id" attrs="{'required': [('vendor_count', '!=', 0)]}" context="{'product_vendor_id': product_id, 'filter_on_inventory': True}"/>
+                            <field name="qty_done" attrs="{'readonly': [('lots_visible', '=', True)]}"/>
+                            <button name="split_lot" string="Lot Split" type="object" icon="fa-list" groups="stock.group_production_lot"
+                                    attrs="{'invisible': ['|', ('lots_visible', '=', False), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done', 'processed', 'transit', 'undelivered'])]}"/>
+                            <button name="show_details2" string="Modify" type="object" icon="fa-pencil" groups="stock.group_locations"
+                                    attrs="{'invisible': [('state', 'not in', ['confirmed','assigned','waiting','partially_available'])]}"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//field[@name='pack_operation_product_ids']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('request_id', '!=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='show_details']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state', 'not in', ['confirmed','assigned','waiting','partially_available'])]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_lines']" position="after">
+                    <field name="requested_move_lines" attrs="{'invisible': [('request_id', '=', False)], 'readonly': ['|', ('request_id', '=', False), ('state', 'not in', ('draft', 'confirmed', 'waiting'))]}" create="false" options="{'no_create': True}" mode="tree,kanban"
+                           context="{'no_create': True, 'no_delete': True, 'address_in_id': partner_id, 'form_view_ref':'stock.view_move_picking_form', 'tree_view_ref':'stock.view_move_picking_tree', 'default_picking_type_id': picking_type_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}"
+
+                    />
+                </xpath>
+                <xpath expr="//field[@name='min_date']" position="after">
+                    <field name="hide_mark_validate_button" invisible="1"/>
+                    <field name="show_cancel_button" invisible="1"/>
+                    <field name="expected_date" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='min_date']" position="after">
+                    <field name="received_date" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                </xpath>
+                <xpath expr="//button[@name='do_new_transfer']" position="after">
+                    <!--Condition fields-->
+                    <field name="request_id" invisible="1"/>
+                    <field name="picking_orig_id" invisible="1"/>
+                    <field name="allow_dispute" invisible="1"/>
+
+                    <!--Buttons-->
+                    <button name="do_new_transit" string="Validate"
+                            groups="stock.group_stock_user" type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|', '|', ('request_id', '=', False), ('state', 'not in', ('partially_available', 'assigned')), ('hide_mark_validate_button', '=', True)]}"/>
+                    <button name="do_process_transfer_done"
+                            attrs="{'invisible': [('state', '!=', 'transit')]}"
+                            string="Manually Receive" groups="stock.group_stock_user" type="object"
+                            class="oe_highlight"/>
+                    <button name="do_transit"
+                            attrs="{'invisible': ['|', ('state', '!=', 'processed'), ('hide_mark_validate_button', '=', True)]}"
+                            string="Transit" groups="stock.group_stock_user" type="object"
+                            class="oe_highlight"/>
+                    <button name="raise_dispute" groups="base.group_user" type="object" class="oe_highlight" string="Raise Issue"
+                            attrs="{'invisible': ['|', '|', '|', ('picking_orig_id', '!=', False), ('state', '!=', 'done'), ('request_id', '=', False), ('allow_dispute', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('hide_mark_validate_button', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_assign']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('hide_mark_validate_button', '=', True)]}</attribute>
+                </xpath>
+                <!--TODO: is there other way to allow more states without override state attribute ?-->
+<!--                <xpath expr="//button[@name='action_cancel']" position="attributes">-->
+<!--                    <attribute name="states">confirmed,draft,waiting</attribute>-->
+<!--                </xpath>-->
+                <xpath expr="//button[@name='action_cancel']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_cancel_button', '=', False)]}</attribute>
+                    <attribute name="states"/>
+                </xpath>
+                <xpath expr="//button[@name='do_unreserve']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible': ['|', '|', ('quant_reserved_exist', '=', False), ('state', '=', 'transit'), ('hide_mark_validate_button', '=', True)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='pack_operation_product_ids']/tree/button[@name='split_lot']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('lots_visible', '=', False), ('state', 'not in', ['confirmed', 'assigned', 'waiting', 'partially_available','done', 'processed', 'transit', 'undelivered'])]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="request_id" string="Request Form Link" attrs="{'invisible': [('request_id', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='received_date']" position="after">
+                    <field name="date_done" attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                </xpath>
+                 <xpath expr="//page[1]/button[@name='do_prepare_partial']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('recompute_pack_op', '=', False), ('state', 'in', ('transit', 'processed', 'done'))]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_lines_related']" position="after">
+                    <field name="damaged_moved_lines_related" options="{'reload_on_button': True}"
+                           attrs="{'invisible': [('to_damage_location', '=', False)], 'readonly': ['|', ('to_damage_location', '=', False), ('state', 'not in', ('draft', 'confirmed', 'waiting'))]}"
+                           context="{'default_is_damage_move': to_damage_location, 'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_supplier_id': partner_id}">
+                        <tree string="Stock Moves" editable="bottom">
+                            <field name="origin" readonly="True"/>
+                            <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id,partner_id)"/>
+                            <field name="name" invisible="1"/>
+                            <field name="product_uom_qty" on_change="onchange_quantity(product_id, product_uom_qty, product_uom)"/>
+                            <field name="request_id" invisible="1"/>
+                            <field name="account_analytic_id" required="1"/>
+                            <field name="product_uom" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/>
+                            <button name="%(stock.move_scrap)d"
+                                    string="Scrap Products" type="action"
+                                    icon="terp-gtk-jump-to-ltr" context="{'scrap': True}"
+                                    states="draft,waiting,confirmed,assigned"
+                                    groups="stock.group_stock_user"/>
+                            <field name="is_damage_move" invisible="1"/>
+                            <field name="remark_id" attrs="{'required': [('is_damage_move', '=', True)]}"/>
+                            <field name="location_id"/>
+                            <field name="location_dest_id"/>
+                            <field name="request_ordered_qty" readonly="1" invisible="context.get('request_id', False)"/>
+                            <field name="request_expected_date" readonly="1" invisible="context.get('request_id', False)"/>
+                            <field name="request_date_order" readonly="1" invisible="context.get('request_id', False)"/>
+                            <field name="availability" invisible="1"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//field[@name='move_lines']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('to_damage_location', '=', True), ('state', 'not in', ('draft', 'confirmed', 'waiting'))], 'readonly': [('to_damage_location', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_picking_move_tree_inherit" model="ir.ui.view">
+            <field name="name">Stock Move Tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="request_line_id" invisible="1"/>
+                    <field name="request_ordered_qty" readonly="1" invisible="context.get('request_id', False)"/>
+                    <field name="request_expected_date" readonly="1" invisible="context.get('request_id', False)"/>
+                    <field name="request_date_order" readonly="1" invisible="context.get('request_id', False)"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_transfer_tree" model="ir.ui.view">
+            <field name="name">Stock Picking To Transfer tree</field>
+            <field name="model">stock.picking</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <tree default_order="id DESC" create="false" edit="false" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-danger="state not in ('cancel', 'done') and min_date &lt; current_date" string="Picking list">
+                    <field name="id" invisible="1"/>
+                    <field name="request_id"/>
+                    <field name="name"/>
+                    <field name="location_dest_id"/>
+                    <field name="date_order"/>
+                    <field name="expected_date"/>
+                    <field name="min_date"/>
+                    <field name="outlet_id"/>
+                    <field name="outlet_area_id"/>
+                    <field name="outlet_area_mng_id"/>
+                    <field name="outlet_route_id"/>
+                    <field name="driver"/>
+                    <field name="vehicle"/>
+                    <field name="state"/>
+                    <field name="date" invisible="1"/>
+                    <field name="group_id" invisible="1"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="picking_type_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="br_view_picking_internal_search" model="ir.ui.view">
+            <field name="name">stock.picking.internal.search</field>
+            <field name="model">stock.picking</field>
+            <field name="arch" type="xml">
+                <search string="Picking Lists">
+                    <field name="name" string="Picking List" filter_domain="['|',('name','ilike', self),('origin','ilike',self)]"/>
+                    <field name="driver" string="Driver"/>
+                    <separator/>
+                    <filter name="schedule_expected_diff" string="Delivery Date &lt;&gt; Schedule Date" domain="[('schedule_expected_diff','!=', 0)]"/>
+                    <filter name="schedule_gt_expected" string="Delivery Date &gt; Schedule Date" domain="[('schedule_expected_diff','&gt;', 0)]"/>
+                    <filter name="schedule_lt_expected" string="Delivery Date &lt; Schedule Date" domain="[('schedule_expected_diff','&lt;', 0)]"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]" help="Draft Moves"/>
+                    <filter name="available" string="Ready" domain="[('state','in',('assigned', 'partially_available'))]" help="Assigned Moves"/>
+                    <filter name="waiting" string="Waiting Availability" domain="[('state','in', ('confirmed', 'waiting'))]" help="Waiting Moves"/>
+                    <filter name="confirmed" string="Confirmed" domain="[('state','in', ('confirmed', 'waiting', 'assigned'))]" help="Confirmed Moves"/>
+                    <filter name="done" string="Done" domain="[('state','=','done')]" help="Pickings already processed"/>
+                    <separator/>
+                    <filter name="late" string="Late" domain="[('min_date','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Pickings that are late on scheduled time"/>
+                    <separator/>
+                    <filter name="backorder" string="Backorders" domain="[('backorder_id','&lt;&gt;', False)]" help="Remaining parts of picking partially processed"/>
+                    <field name="partner_id" filter_domain="[('partner_id','child_of',self)]"/>
+                    <field name="product_id"/>
+                    <field name="picking_type_id"/>
+                    <field name="group_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Driver" context="{'group_by':'driver'}"/>
+                        <filter string="Vehicle" context="{'group_by':'vehicle'}"/>
+                        <filter string="Origin Warehouse" context="{'group_by':'warehouse_id'}"/>
+                        <filter string="Destination Warehouse" context="{'group_by':'dest_warehouse_id'}"/>
+                        <filter string="Route" context="{'group_by':'outlet_route_id'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Order Date" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Expected Date" domain="[]" context="{'group_by':'min_date'}"/>
+                        <filter string="Origin" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter name="picking_type" string="Picking Type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Procurement Group" domain="[]" context="{'group_by':'group_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_picking_transfer_tree_all" model="ir.actions.act_window">
+            <field name="name">Warehouse Processing</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="domain">[('request_id', '!=', False)]</field>
+            <field name="context">{'contact_display': 'partner_address'}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediately or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="br_stock_picking_transfer_menu"
+                  name="Warehouse Processing"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="20" action="action_picking_transfer_tree_all"
+                  groups="stock.group_stock_manager"/>
+        <!--Stock transfer views-->
+
+
+        <record id="br_action_processed_picking_tree" model="ir.actions.act_window">
+            <field name="name">Processed transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('state', '=', 'processed'), ('transfer_direction', 'not in', ('outlet_customer', 'warehouse_customer', 'unknown'))]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+        <menuitem id="br_menu_processed_picking_tree"
+                  name="Processed Transfers"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="30" action="br_action_processed_picking_tree"
+                  groups="stock.group_stock_manager"/>
+
+        <record id="br_action_auto_transit_failed_picking_tree" model="ir.actions.act_window">
+            <field name="name">Exception transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('auto_transit_failed', '=', True), ('state', '=', 'transit')]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+        <menuitem id="br_menu_auto_transit_failed_tree"
+                  name="Exception transfers"
+                  parent="br_stock_request.menu_outlet_ordering_mngt"
+                  sequence="40" action="br_action_auto_transit_failed_picking_tree"
+                  groups="stock.group_stock_manager"/>
+
+        <record id="br_action_outlet_picking_tree" model="ir.actions.act_window">
+            <field name="name">Outlet - Outlet</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('transfer_direction', '=', 'outlet_outlet')]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <record id="br_action_warehouse_picking_tree" model="ir.actions.act_window">
+            <field name="name">Outlet - Warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('transfer_direction', 'in', ('outlet_warehouse', ))]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <record id="br_action_warehouse_warehouse_picking_tree" model="ir.actions.act_window">
+            <field name="name">Warehouse - Warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('transfer_direction', '=', 'warehouse_warehouse')]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <record id="br_action_tradesales_picking_tree" model="ir.actions.act_window">
+            <field name="name">Trade Sales Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('transfer_direction', '=', 'warehouse_customer')]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_dispute_picking_transfer_tree_all" model="ir.actions.act_window">
+            <field name="name">Dispute Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="domain">[('is_dispute_picking', '=', True), ('state', 'not in', ('done', 'cancel'))]</field>
+            <field name="context">{'contact_display': 'partner_address'}</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+            <field name="view_id" ref="view_picking_transfer_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new transfer.
+                </p>
+                <p>
+                    You can either do it immediately or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+                </p>
+            </field>
+        </record>
+
+        <record id="stock.action_picking_tree_all" model="ir.actions.act_window">
+            <field name="name">Stock Operations</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="search_view_id" ref="br_view_picking_internal_search"/>
+        </record>
+
+        <!--Update sequence of inventory control menu to 20-->
+        <menuitem id="stock.menu_stock_inventory_control" name="Inventory Control" parent="stock.menu_stock_root" sequence="10"/>
+
+        <!--Dispute & unfulfilled menus-->
+        <menuitem id="br_stock_request.menu_dispute_and_unfulfilled_request" name="Dispute &amp; Unfulfilled" parent="stock.menu_stock_root" sequence="4"/>
+
+        <menuitem id="br_stock_request_transfer_line_menu"
+                  name="Dispute Products"
+                  parent="br_stock_request.menu_dispute_and_unfulfilled_request"
+                  sequence="10" action="action_br_stock_request_transfer_line"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_stock_picking_dispute_transfer_menu"
+                  name="Dispute Transfers"
+                  parent="br_stock_request.menu_dispute_and_unfulfilled_request"
+                  sequence="15" action="action_dispute_picking_transfer_tree_all"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_unfulfilled_stock_request_transfer_line_menu"
+                  name="Unfulfilled"
+                  parent="br_stock_request.menu_dispute_and_unfulfilled_request"
+                  sequence="20" action="action_unfulfilled_br_stock_request_transfer_line"
+                  groups="stock.group_stock_manager"/>
+
+        <!--Stock Transfer menus-->
+        <menuitem id="br_stock_request.menu_stock_transfers" name="Stock Transfers" parent="stock.menu_stock_root" sequence="5"/>
+
+        <menuitem id="br_menu_outlet_picking_tree"
+                  name="Outlet - Outlet"
+                  parent="br_stock_request.menu_stock_transfers"
+                  sequence="35" action="br_action_outlet_picking_tree"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_menu_warehouse_picking_tree"
+                  name="Outlet - Warehouse"
+                  parent="br_stock_request.menu_stock_transfers"
+                  sequence="40" action="br_action_warehouse_picking_tree"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_menu_warehouse_warehouse_picking_tree"
+                  name="Warehouse - Warehouse"
+                  parent="br_stock_request.menu_stock_transfers"
+                  sequence="43" action="br_action_warehouse_warehouse_picking_tree"
+                  groups="stock.group_stock_manager"/>
+
+        <menuitem id="br_menu_tradesales_picking_tree"
+                  name="Trade Sales Transfers"
+                  parent="br_stock_request.menu_stock_transfers"
+                  sequence="45" action="br_action_tradesales_picking_tree"
+                  groups="stock.group_stock_manager"/>
+    </data>
+</openerp>

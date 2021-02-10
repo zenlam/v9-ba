@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <record id="base.group_payment_validation" model="res.groups">
+            <field name="name">Vendor / Customer Payment Validation</field>
+            <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+        </record>
+
+        <record id="base.group_deposite_payment_validation" model="res.groups">
+		    <field name="name">Deposit / Adv Payment Validation</field>
+		    <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+		</record>
+
+    </data>
+</openerp>

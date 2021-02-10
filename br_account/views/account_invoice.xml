@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_invoice_form" model="ir.ui.view">
+            <field name="name">Invoice Form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                    <attribute name="context">{'type': type, 'journal_id': journal_id, 'default_invoice_id': id, 'partner_id': partner_id, 'ANALYTIC': True}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='move_name']" position="replace"/>
+                <xpath expr="//field[@name='number']" position="replace">
+                    <field name="move_name" readonly="1" class="oe_inline" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

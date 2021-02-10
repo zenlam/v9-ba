@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="barcode_voucher" model="barcode.rule">
+            <field name="name">Discount Voucher</field>
+            <field name="barcode_nomenclature_id" ref="barcodes.default_barcode_nomenclature"/>
+            <field name="sequence">82</field>
+            <field name="type">discount_voucher</field>
+            <field name="encoding">any</field>
+            <field name="pattern">.*</field>
+        </record>
+    </data>
+</openerp>

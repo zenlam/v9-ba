@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_br_stock_move_form" model="ir.ui.view">
+            <field name="name">view.br.stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom_qty']" position="after">
+                    <field name="account_analytic_id" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_br_stock_move_tree" model="ir.ui.view">
+            <field name="name">view.br.stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_uom_qty']" position="after">
+                    <field name="account_analytic_id" required="1"/>
+                </xpath>
+                <xpath expr="//field[@name='product_uom_qty']" position="after">
+                    <field name="request_id" invisible="1"/>
+                </xpath>
+<!--                <xpath expr="//field[@name='product_uom_qty']" position="attributes">-->
+<!--                    <attribute name="attrs">{'readonly': [('request_id','!=',False)]}</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='product_uom']" position="attributes">-->
+<!--                    <attribute name="attrs">{'readonly': [('request_id','!=',False)]}</attribute>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='account_analytic_id']" position="attributes">-->
+<!--                    <attribute name="attrs">{'readonly': [('request_id','!=',False)]}</attribute>-->
+<!--                </xpath>-->
+            </field>
+        </record>
+
+        <record id="br_view_analytic_uom_inventory_form" model="ir.ui.view">
+            <field name="name">br.view.analytic.uom.inventory.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_ids']/tree/field[@name='product_uom']" position="after">
+                    <field name="account_analytic_id" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.menu" id="stock.menu_action_move_form2">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <menuitem id="stock.menu_routes_config" name="Transfer Path" parent="stock.menu_stock_config_settings" sequence="2" groups="stock.group_adv_location"/>
+        <menuitem id="stock.menu_stock_routes" name="Transfer Path" parent="stock.menu_routes_config" action="stock.action_routes_form" sequence="1" />
+
+    </data>
+</openerp>

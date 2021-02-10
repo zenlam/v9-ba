@@ -1,0 +1,14 @@
+<openerp>
+	<data>
+		<record id="br_view_picking_type_form_need_reason" model="ir.ui.view">
+            <field name="name">Picking Type Form Inherit</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.view_picking_type_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='barcode_nomenclature_id']" position="after">
+                    <field name="need_reverse_transfer_reason"/>
+                </xpath>
+            </field>
+        </record>
+	</data>
+</openerp>

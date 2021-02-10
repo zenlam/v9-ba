@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Discount List Code: Code Listing Tree View Inherit -->
+        <record id="baskin_code_listing_tree_view_inherit" model="ir.ui.view">
+            <field name="name">Baskin Code Listing Tree Inherit</field>
+            <field name="model">br.voucher.listing</field>
+            <field name="inherit_id" ref="br_discount.br_voucher_listing_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='c_uid']" position="after">
+                    <field name="third_party_id"/>
+                    <field name="member_id"/>
+                    <field name="free_deal"/>
+                    <field name="flexible_end_date"/>
+                    <field name="validity_days"/>
+                    <field name="shared_voucher"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+        <record model="ir.sequence" id="inventory_adjustment_sequence">
+            <field name="name">Inventory Adjustment Sequence</field>
+            <field name="prefix"></field>
+            <field name="padding">0</field>
+        </record>
+	</data>
+</openerp>

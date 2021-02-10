@@ -1,0 +1,17 @@
+<openerp>
+	<data>
+		<record model="ir.rule" id="gl_consolidation_config_rule">
+	        <field name="name">Gl consolidation config multi company</field>
+	        <field name="model_id" search="[('model','=','gl.consolidation.config')]" model="ir.model"/>
+	        <field name="global" eval="True"/>
+	        <field name="domain_force">['|',('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+	    </record>
+	    
+	    <record model="ir.rule" id="analytic_group_rule">
+	        <field name="name">Analytic Group multi company</field>
+	        <field name="model_id" search="[('model','=','analytic.group')]" model="ir.model"/>
+	        <field name="global" eval="True"/>
+	        <field name="domain_force">['|',('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+	    </record>
+	</data>
+</openerp>

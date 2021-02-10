@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+        <template id="report_stock_count">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                        <div class="page">
+                            <div class="oe_structure"/>
+							<style>
+		                    table {
+		                        width: 100%;
+		                        font-family: Arial !important;
+		                        color: black !important;
+		                        font-size:22px !important;
+		                    }
+		                    td {
+		                        padding-right: 5px;
+		                        padding-left: 5px;
+		                    }
+		                    span {
+		                        font-family: Arial !important;
+		                        color: black !important;
+		                        font-size:14px !important;
+		                    }
+		                    .td_header {
+		                        font-weight: bold;
+		                        text-align: center;
+		                    }
+		                    .td_right {
+		                        text-align: right
+		                    }
+		                    .td_center {
+		                        text-align: center
+		                    }
+		
+		                    .border_dotted, .border_dotted td {
+		                        border: 1px dotted black;
+		                    }
+		
+		                    .span_italic {
+		                        font-style: italic;
+		                    }
+							.text-bold {
+								font-weight: bold;	
+							}
+							.f-left{
+								float: left;
+							}
+							.qty-box{
+								float: left;
+								border : 1px solid; 
+								width:55%;
+								height:25px; 
+								text-align: right;
+							}
+							.uom-box{
+								float: right;
+								width:35%;
+								font-size:22px !important
+							}
+								
+		                </style>                            
+                            <div class="text-center text-bold" style="font-size:22px !important;">
+                                STOCK COUNT TEMPLATE
+                            </div>
+                            <table class="">
+								<thead>
+									<tr>
+									  <th style="width:5%;">#</th>
+									  <th style="width:19%;">Product</th>
+									  <th style="width:19%;">UomL1</th>
+									  <th style="width:19%;">UomL2</th>
+									  <th style="width:19%;">UomL3</th>
+									  <th style="width:19%;">UomL4</th>
+									</tr>
+								</thead>
+							</table>
+							<table class="">
+								<t t-set="i" t-value="1"/>
+								<tbody>
+									<t t-set="group_name" t-value="test"/>
+									<t t-foreach="doc.inventory_id.line_ids if doc.inventory_id.stock_count_type == 'official' else doc.inventory_id.line_unofficial_ids" t-as="line">
+										<t t-if="line.group_name in [x.name for x in doc.group_name_ids] or doc.all_group">
+											<t t-if="group_name != line.group_name">
+												<tr>
+													<td style="width:10%;"></td>
+													
+													<td  class="text-bold" style="width:90%;padding-top:10px;text-decoration: underline;padding-left: 30%;">
+														<t t-esc="line.group_name"/>
+														<t t-set="group_name" t-value="line.group_name"/>
+													</td>
+												</tr>
+											</t>
+											<tr>
+												<td class="text-bold" style="width:10%;padding-top:10px;"><t t-esc="i"/></td>
+												<t t-if="line.is_total_count">
+													<td colspan="5" class="text-bold" style="width:90%;padding-top:10px;"><t t-esc="line.group_name"/></td>
+												</t>
+												<t t-if="not line.is_total_count">
+													<td colspan="5" class="text-bold" style="width:90%;padding-top:10px;">
+														<t t-esc="line.product_id and line.product_id.name"/> 
+														<t t-if="line.br_supplier_id"> - </t>
+														<t t-esc="line.br_supplier_id and line.br_supplier_id.name or ''"/>
+													</td>
+												</t>
+											</tr>
+											<tr>
+												<td colspan="6" >
+													
+												<div class="f-left" style="margin-left:12%;width:22%">
+													<div class="qty-box"/> 
+													<div t-esc="line.product_uom_id and line.product_uom_id.name or 'N/A'" class="uom-box"/>
+												</div>
+												<div class="f-left" style="width:22%">
+													<div class="qty-box"/> 
+													<div t-esc="line.br_uom_l2 and line.br_uom_l2.name or 'N/A'" class="uom-box"/>
+												</div>
+												<div class="f-left" style="width:22%">
+													<div class="qty-box"/> 
+													<div t-esc="line.br_uom_l3 and line.br_uom_l3.name or 'N/A'" class="uom-box"/>
+												</div>
+												<div class="f-left" style="width:22%">
+													<div class="qty-box"/> 
+													<div t-esc="line.br_uom_l4 and line.br_uom_l4.name or 'N/A'" class="uom-box"/>
+												</div>
+												</td>
+											</tr>
+											<t t-set="i" t-value="i+1"/>
+										</t>
+									</t>
+								</tbody>
+							</table>
+
+                            
+                            <div class="oe_structure"/>
+                        </div>
+                </t>
+            </t>
+        </template>
+        
+        <record id="br_paperformat_stock_count_receipt" model="report.paperformat">
+            <field name="name">Baskin Stock Count Receipt</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">330</field>
+            <field name="page_width">90</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">5</field>
+            <field name="dpi">130</field>
+        </record>
+		
+		<report
+            string="Stock Count Receipt" 
+            id="action_stock_count_receipt" 
+            model="stock.count.receipt.wizard" 
+            report_type="qweb-pdf"
+            name="baskin_stock_count_receipt.report_stock_count" 
+            file="baskin_stock_count_receipt.report_stock_count" 
+			paperformat="br_paperformat_stock_count_receipt"
+			menu="False" 
+        />
+	</data>
+</openerp>

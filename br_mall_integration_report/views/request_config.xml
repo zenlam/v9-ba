@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_request_config_inherit">
+            <field name="name">Br Request Config Inherit</field>
+            <field name="model">br.request.config</field>
+            <field name="inherit_id" ref="br_api_caller.br_request_config_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="outlet_ids"/>
+                    <field name="period"/>
+                </xpath>
+            </field>
+        </record>
+         <!--Menus-->
+        <menuitem id="br_mall_api_integeration_menu" name="Api" parent="br_mall_intergration_parent_menu" sequence="10"/>
+        <menuitem id="br_request_config_menu" name="API Config" parent="br_mall_api_integeration_menu" sequence="0" action="br_api_caller.br_request_config_action"/>
+        <menuitem id="request_log_menu" name="API Log" parent="br_mall_api_integeration_menu" action="br_api_caller.br_request_log_action" sequence="200"/>
+    </data>
+</openerp>

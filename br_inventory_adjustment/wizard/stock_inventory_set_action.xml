@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="inventory_set_action_form">
+			<field name="name">stock.inventory.set.action.form</field>
+			<field name="model">stock.inventory.set.action</field>
+			<field name="arch" type="xml">
+				<form string="Set Action">
+					<separator string="Select an action"/>
+					<field name="action_id" class="oe_inline" required="1" domain="[('active', '=', True)]"/>
+					<br/>
+					<footer>
+						<button name="set_action" type="object" string="Confirm" class="btn-primary"/>
+						<button string="Cancel" class="btn-default" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+	</data>
+</openerp>

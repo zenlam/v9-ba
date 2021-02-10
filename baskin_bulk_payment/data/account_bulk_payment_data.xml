@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+    	<record id="sequence_payment_bulk_customer_invoice" model="ir.sequence">
+            <field name="name">Payments Customer Bulk Invoices Sequence</field>
+            <field name="code">account.payment.bulk.customer.invoice</field>
+            <field name="prefix">Bulk/CUST.IN/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="sequence_payment_bulk_customer_refund" model="ir.sequence">
+            <field name="name">Payments Customer Bulk Refunds Sequence</field>
+            <field name="code">account.payment.bulk.customer.refund</field>
+            <field name="prefix">Bulk/CUST.OUT/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="sequence_payment_bulk_supplier_invoice" model="ir.sequence">
+            <field name="name">Payments Supplier Bulk Invoices Sequence</field>
+            <field name="code">account.payment.bulk.supplier.invoice</field>
+            <field name="prefix">VPV/GSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="sequence_payment_bulk_supplier_refund" model="ir.sequence">
+            <field name="name">Payments supplier refunds sequence</field>
+            <field name="code">account.payment.bulk.supplier.refund</field>
+            <field name="prefix">Bulk/SUPP.IN/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- deposit vendor sequence -->
+        <record id="sequence_deposit_vendor_gssb_payment" model="ir.sequence">
+            <field name="name">Vendor Deposit Payment Sequence (GSSB)</field>
+            <field name="code">vendor.deposit.payment.gssb</field>
+            <field name="prefix">DPV/GSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="sequence_deposit_vendor_mssb_payment" model="ir.sequence">
+            <field name="name">Vendor Deposit Payment Sequence (MSSB)</field>
+            <field name="code">vendor.deposit.payment.mssb</field>
+            <field name="prefix">DPV/MSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- customer deposit sequence -->
+        <record id="sequence_deposit_customer_gssb_payment" model="ir.sequence">
+            <field name="name">Customer Deposit Payment Sequence (GSSB)</field>
+            <field name="code">customer.deposit.payment.gssb</field>
+            <field name="prefix">DOR/GSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="sequence_deposit_customer_mssb_payment" model="ir.sequence">
+            <field name="name">Customer Deposit Payment Sequence (MSSB)</field>
+            <field name="code">customer.deposit.payment.mssb</field>
+            <field name="prefix">DOR/MSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+    </data>
+
+    <data noupdate="1">
+        <record forcecreate="True" id="decimal_currency_rate" model="decimal.precision">
+            <field name="name">Currency Rate</field>
+            <field name="digits">4</field>
+        </record>
+    </data>
+
+</openerp>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+		<record id="view_account_move_line_filter_month" model="ir.ui.view">
+            <field name="name">Journal Items</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//filter[@name='posted']" position="after">
+            		<filter name="this_last_month" string="This &amp; Last Month" 
+            			domain="[('date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')),('date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01'))]"/>
+            	</xpath>
+            </field>
+        </record>
+        
+        <record id="account.action_account_moves_all_a" model="ir.actions.act_window">
+            <field name="context">{'journal_type':'general','search_default_this_last_month':1}</field>
+        </record>
+        
+        
+        <record id="view_account_move_filter_month" model="ir.ui.view">
+            <field name="name">account.move.select</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_move_filter"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//filter[@name='misc_filter']" position="after">
+            		<separator/>
+            		<filter name="this_last_month" string="This &amp; Last Month" 
+            			domain="[('date','&lt;',(context_today()+relativedelta(months=1)).strftime('%%Y-%%m-01')),('date','&gt;=',(context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01'))]"/>
+            	</xpath>
+            </field>
+        </record>
+        
+        <record id="account.action_move_journal_line" model="ir.actions.act_window">
+            <field name="context">{'search_default_misc_filter':1,'search_default_this_last_month':1}</field>
+        </record>
+
+        <record id="view_account_journal_search_filter_sale" model="ir.ui.view">
+            <field name="name">account.journal.search</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_search"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//filter[1]" position="replace">
+            		<filter name="sale" domain="[('type', '=', 'sale')]" string="Sale"/>
+            	</xpath>
+                <xpath expr="//filter[2]" position="replace">
+            		<filter name="purchase" domain="[('type', '=', 'purchase')]" string="Purchase"/>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="account.open_account_journal_dashboard_kanban" model="ir.actions.act_window">
+            <field name="context">{'search_default_sale':1, 'search_default_purchase':1}</field>
+        </record>
+
+
+
+    </data>
+</openerp>
+        

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record model="ir.ui.view" id="view_warehouse_inherit_inventory">
+            <field name="name">Warehouse</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//notebook" position="inside">
+            		<page string="Gain/Loss/Damage">
+                        <group>
+                            <group>
+                                <field name="gain_src_location_id" domain="[('usage', '=', 'inventory')]"/>
+                                <field name="loss_src_location_id" domain="[('usage', '=', 'internal')]"/>
+                                <field name="damage_src_location_id" domain="[('usage', '=', 'internal')]"/>
+                            </group>
+                            <group>
+                                <field name="gain_dest_location_id" domain="[('usage', '=', 'internal')]"/>
+                                <field name="loss_dest_location_id" domain="[('usage', '=', 'inventory')]"/>
+                                <field name="damage_dest_location_id" domain="[('usage', '=', 'inventory')]"/>
+                            </group>
+                        </group>
+                    </page>
+            	</xpath>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

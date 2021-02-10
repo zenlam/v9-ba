@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="account_excel_report_report_bs_view" model="ir.ui.view">
+            <field name="name">Balance Sheet View</field>
+            <field name="model">accounting.report</field>
+            <field name="inherit_id" ref="account.accounting_report_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='check_report']" position="before">
+                    <button name="check_balance_sheet_report_excel" string="Print Excel" type="object" class="oe_highlight" invisible="not context.get('is_excel_report') or context.get('from_pl_excel')"/>
+                </xpath>
+                <xpath expr="//button[@name='check_report']" position="attributes">
+                    <attribute name="invisible">
+                        context.get('is_excel_report') or context.get('from_pl_excel')
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_from']" position="attributes">
+                    <attribute name="required">
+                        context.get('is_excel_report') or context.get('from_pl_excel')
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_to']" position="attributes">
+                    <attribute name="required">
+                        context.get('is_excel_report') or context.get('from_pl_excel')
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='enable_filter']" position="attributes">
+                    <attribute name="invisible">
+                        context.get('is_excel_report')
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='debit_credit']" position="attributes">
+                    <attribute name="invisible">
+                        context.get('is_excel_report')
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="action_account_excel_report_bs" model="ir.actions.act_window">
+            <field name="name">Balance Sheet</field>
+            <field name="res_model">accounting.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.accounting_report_view"/>
+            <field name="target">new</field>
+            <field name="context" eval="{'default_account_report_id':ref('account.account_financial_report_balancesheet0'), 'is_excel_report': True}"></field>
+        </record>
+        
+        <menuitem
+            id="menu_account_excel_report_bs"
+            name="Balance Sheet"
+            parent="menu_finance_excel_reports"
+            action="action_account_excel_report_bs"
+            sequence="3"/>
+        
+    </data>
+</odoo>

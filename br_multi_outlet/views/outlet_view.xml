@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Add Top menu 'Master Data' item -->
+        <menuitem name="Master Data"
+                  id="menu_master_data"
+                  groups="base.group_user"
+                  sequence="1"/>
+        <menuitem id="br_menu_config_outlets" name="Outlet" parent="point_of_sale.menu_point_config_product" sequence="9"/>
+
+        <!--move Configuration/Point of Sale to Configuration/Outlet/Point of Sale-->
+        <record model="ir.ui.menu" id="point_of_sale.menu_pos_config_pos">
+            <field name="parent_id" ref="br_menu_config_outlets"/>
+            <field name="name">Point of Sale</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <!--<menuitem id="br_outlet_master" name="Outlet Master" parent="menu_master_data" sequence="11" groups="base.group_erp_manager"/>-->
+
+        <record id="view_res_country_state_filter" model="ir.ui.view">
+            <field name="name">res.country.state.select</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <search string="Search State">
+                    <field name="name"
+                       filter_domain="['|',('name','ilike',self),('code','=',self)]"/>
+                    <separator/>
+                    <filter domain="[('country_id.name', '=', 'Singapore')]" string="Singapore" name="country_id" />
+                    <filter domain="[('country_id.name', '=', 'Malaysia')]" string="Malaysia" name="country_id" />
+                    <separator />
+                    <group expand="0" name="group_by" string="Group By">
+                       <filter string="Country" context="{'group_by': 'country_id'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="br_view_country_state_form">
+            <field name="name">br_view_country_state_form</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="id" invisible="True"/>
+                    <field name="parent_id" domain="[('id', '!=', id), ('country_id.name', 'in', ('Singapore', 'Malaysia'))]"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">Area Name</attribute>
+                </xpath>
+                <xpath expr="//field[@name='code']" position="attributes">
+                    <attribute name="string">Area Code</attribute>
+                </xpath>
+                <xpath expr="//field[@name='country_id']" position="replace">
+                     <field name="country_id" options='{"no_open": True}' domain="['|',('name', '=', 'Singapore'),('name', '=', 'Malaysia')]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="br_view_country_state_tree">
+            <field name="name">br_view_country_state_tree</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="parent_id"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">Area Name</attribute>
+                </xpath>
+                <xpath expr="//field[@name='code']" position="attributes">
+                    <attribute name="string">Area Code</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_state_tree" model="ir.actions.act_window">
+            <field name="name">Areas</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.country.state</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_res_country_state_filter"/>
+            <field name="context">{'search_default_country_id': [158,199],'default_country_id': 158}</field>
+            <field name="help">Create and edit areas
+            </field>
+        </record>
+
+        <menuitem action="action_state_tree" id="br_state_tree_view"
+                  name="Area"
+                  parent="br_menu_config_outlets" sequence="4"/>
+
+        <!-- Region-Area manage -->
+        <record id="view_br_country_region_area_form" model="ir.ui.view">
+            <field name="name">br.res.country.region.form</field>
+            <field name="model">br_multi_outlet.region_area</field>
+            <field name="arch" type="xml">
+                <form string="Region">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="id" invisible="True"/>
+                            <field name="parent_id" domain="[('id', '!=', id)]"/>
+                            <field name="code"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_br_country_region_area_tree" model="ir.ui.view">
+            <field name="name">br.res.country.region.tree</field>
+            <field name="model">br_multi_outlet.region_area</field>
+            <field name="arch" type="xml">
+                <tree string="Region-Area">
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_br_country_region_area" model="ir.actions.act_window">
+            <field name="name">Regions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br_multi_outlet.region_area</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create and edit Region-Area
+            </field>
+        </record>
+
+        <menuitem action="action_br_country_region_area" id="br_country_region_area_view"
+                  name="Region"
+                  parent="br_menu_config_outlets" sequence="5"/>
+
+        <!-- Outlets Type -->
+        <record id="view_br_outlet_type_form" model="ir.ui.view">
+            <field name="name">br.outlet_type.form</field>
+            <field name="model">br_multi_outlet.outlet_type</field>
+            <field name="arch" type="xml">
+                <form string="Outlet Type">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="id" invisible="True"/>
+                            <field name="parent_id" domain="[('id', '!=', id)]"/>
+                            <field name="is_active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_br_outlet_type_tree" model="ir.ui.view">
+            <field name="name">br.outlet_type.tree</field>
+            <field name="model">br_multi_outlet.outlet_type</field>
+            <field name="arch" type="xml">
+                <tree string="Outlet Type">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="parent_id"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_outlet_type_tree" model="ir.actions.act_window">
+            <field name="name">Outlet Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br_multi_outlet.outlet_type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create and edit type Outlet
+            </field>
+        </record>
+
+        <menuitem action="action_outlet_type_tree" id="br_outlet_type_tree_view"
+                  parent="br_menu_config_outlets" sequence="3"/>
+
+
+        <!-- end new session Point Of Sale -->
+        <!-- Outlets Manage -->
+        <record id="view_br_outlet_tree" model="ir.ui.view">
+            <field name="name">view.br.outlet.tree</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="arch" type="xml">
+                <tree string="Outlets">
+                    <field name="name" />
+                    <field name="asset_type" />
+                    <field name="location_type" />
+                    <field name="state_id"/>
+		            <field name="region_area_id"/>
+		            <field name="analytic_account_id"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_br_outlet_form" model="ir.ui.view">
+            <field name="name">view.br.outlet.form</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="arch" type="xml">
+                <form string="Outlet">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="outlet_number"/>
+                                <field name="analytic_account_id"/>
+                                <field name="outlet_type"/>
+                            </group>
+                            <group>
+                                <field name="pricelist_id" groups="product.group_sale_pricelist" />
+                                <field name="warehouse_id" groups="stock.group_locations" />
+                                <field name="fiscal_position_ids" widget="many2many_tags" />
+                                <field name="outlet_tags" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Information">
+                                <group>
+                                    <group string="General Information">
+                                        <field name="state_id" domain="['|',('country_id.name', '=', 'Singapore'),('country_id.name', '=', 'Malaysia')]"/>
+                                        <field name="region_area_id"/>
+                                        <field name="asset_type" domain="[('is_active','=',True),('type','=', 'asset_type')]"/>
+                                        <field name="location_type" domain="[('is_active','=',True),('type','=', 'location_type')]"/>
+                                        <field name="route_id" domain="[('active', '=', True)]"/>
+                                    </group>
+                                    <group string="Contact Information" >
+                                        <field name="outlet_phone" placeholder="e.g. +32.81.81.37.00" />
+                                        <field name="outlet_mobile" />
+                                        <field name="outlet_fax" />
+                                        <field name="outlet_email"  placeholder='example@domain.vn...' widget="email" />
+                                    </group>
+                                    <group string="Address">
+                                        <label for="outlet_street1" string="Address"/>
+                                        <div>
+                                            <field name="outlet_name" placeholder="Name..."/>
+                                            <field name="outlet_street1" placeholder="Street..." />
+                                            <field name="outlet_street2" />
+                                            <div class="address_format">
+                                                <field name="outlet_city" placeholder="City" style="width: 40%%"/>
+                                                <field name="outlet_zip" placeholder="ZIP" style="width: 18%%" />
+                                            </div>
+                                            <field name="outlet_country" placeholder="Country" class="oe_no_button"  domain="['|',('code', '=', 'MY'),('code','=','SG')]"/>
+                                        </div>
+                                        <field name="other_address" string="Shipping to Other Address" />
+                                    </group>
+                                    <group string="Shipping Address" attrs="{'invisible': [('other_address', '=', False)]}">
+                                        <label for="outlet_street1_ship" string="Address"/>
+                                        <div>
+                                            <field name="outlet_name_ship" placeholder="Name..."/>
+                                            <field name="outlet_street1_ship" placeholder="Street..."  />
+                                            <field name="outlet_street2_ship" />
+                                            <div class="address_format">
+                                                <field name="outlet_city_ship" placeholder="City" style="width: 40%%" />
+                                                <field name="outlet_state_ship" class="oe_no_button" placeholder="State" style="width: 35%%" />
+                                                <field name="outlet_zip_ship" placeholder="ZIP" style="width: 18%%" />
+                                            </div>
+                                            <field name="outlet_country_ship" placeholder="Country"  domain="['|',('code', '=', 'MY'),('code','=','SG')]"/>
+                                        </div>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Status">
+                                <group>
+                                    <group>
+                                        <field name="status" string="Status"/>
+                                        <field name="open_date"/>
+                                        <field name="close_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                                        <field name="open_hour" widget="float_time" class="oe_inline"/>
+                                        <field name="close_hour" widget="float_time" class="oe_inline"/>
+                                    </group>
+                                </group>
+                                <separator string="Remark"/>
+                                <field name="note" placeholder="Internal notes..."/>
+                            </page>
+                            <page string="Users">
+                                <group>
+                                    <group>
+                                        <field name="user_ids" string="Users" widget="many2many_tags"/>
+                                        <field name="region_manager"/>
+                                        <field name="area_manager"/>
+                                    </group>
+                                    <group>
+                                        <field name="oultet_pic1"/>
+                                        <field name="oultet_pic2"/>
+                                        <field name="oultet_pic3"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="History">
+                                     <field name="history_ids" create="False" readonly="1">
+                                         <tree string="History Lines">
+                                            <field name="create_date"/>
+                                            <field name="state_id"/>
+                                            <field name="region_area_id"/>
+                                            <field name="asset_type"/>
+                                            <field name="location_type"/>
+                                            <field name="region_manager"/>
+                                            <field name="area_manager"/>
+                                            <field name="oultet_pic1"/>
+                                            <field name="oultet_pic2"/>
+                                            <field name="oultet_pic3"/>
+                                            <field name="outlet_type"/>
+                                            <field name="status"/>
+                                         </tree>
+                                    </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_br_outlet_search" model="ir.ui.view">
+            <field name="name">br.outlet.search</field>
+            <field name="model">br_multi_outlet.outlet</field>
+            <field name="arch" type="xml">
+                <search string="Outlet">
+                    <field name="name"  filter_domain="[('name','ilike', self)]" string="Name"/>
+                    <field name="status" filter_domain="[('status', '=', self)]" string="Status"/>
+                    <filter string="Open" domain="[('status','=','open')]" name="open_outlet_filter"/>
+                    <filter string="Closed" domain="[('status','=','closed')]" name="closed_outlet_filter"/>
+                    <filter string="Temp. Closed" domain="[('status','=','temporary_closed')]" name="temp_closed_outlet_filter"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Type 1" domain="[]" context="{'group_by':'asset_type'}"/>
+                        <filter string="Type 2" domain="[]" context="{'group_by':'location_type'}"/>
+                        <filter string="State" domain="[]" context="{'group_by':'state_id'}"/>
+                        <filter string="Region-Area" domain="[]" context="{'group_by':'region_area_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_outlet_tree" model="ir.actions.act_window">
+            <field name="name">Outlets</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br_multi_outlet.outlet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_br_outlet_search"/>
+            <field name="help">Create and edit Outlet</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem action="action_outlet_tree" id="br_outlet_master_view" name="Outlet" parent="br_menu_config_outlets" sequence="1"/>
+
+        <record id="br_outlet_route_form_view" model="ir.ui.view">
+            <field name="name">Outlet Route</field>
+            <field name="model">br.outlet.route</field>
+            <field name="arch" type="xml">
+                <form string="Outlet Routes">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                       options='{"terminology": "active"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                            <field name="outlet_ids" widget="many2many_tags" domain="[('route_id', '=', False)]" options="{'not_delete': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_outlet_route_action" model="ir.actions.act_window">
+            <field name="name">Route</field>
+            <field name="res_model">br.outlet.route</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click here to create a new route.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="br_outlet_route_action" id="br_outlet_route_menu" name="Route" parent="br_multi_outlet.br_menu_config_outlets" sequence="10" groups="point_of_sale.group_pos_manager"/>
+    </data>
+</openerp>

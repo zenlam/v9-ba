@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_account_journal_form_inherit" model="ir.ui.view">
+            <field name="name">account.journal.form.inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+            	<field name="sequence_id" position="after">
+                    <field name="active_in_general_payment" attrs="{'invisible': [('type','not in',('bank', 'cash'))]}"/>
+                    <field name="active_in_general_receipt" attrs="{'invisible': [('type','not in',('bank', 'cash'))]}"/>
+            	</field>
+            </field>
+        </record>
+
+        <record id="view_account_journal_tree_inherit" model="ir.ui.view">
+            <field name="name">account.journal.tree.inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_bank_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="active_in_general_payment"/>
+                    <field name="active_in_general_receipt"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

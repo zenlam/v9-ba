@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+    	<record id="sequence_baskin_account_voucher" model="ir.sequence">
+            <field name="name">Baskin Account Voucher</field>
+            <field name="code">baskin.account.voucher</field>
+            <field name="prefix">PAY/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">6</field>
+        </record>
+
+        <!-- baskin account voucher gssb sequecne -->
+
+        <record id="sequence_general_payment_gssb" model="ir.sequence">
+            <field name="name">General Payment Sequence (GSSB)</field>
+            <field name="code">general.payment.gssb</field>
+            <field name="prefix">GPV/GSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- baskin account voucher mssb sequecne -->
+
+        <record id="sequence_general_payment_mssb" model="ir.sequence">
+            <field name="name">General Payment Sequence (MSSB)</field>
+            <field name="code">general.payment.mssb</field>
+            <field name="prefix">GPV/MSSB/%(range_year)s/</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field eval="True" name="use_date_range"/>
+            <field eval="False" name="company_id"/>
+            <field name="padding">4</field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+        <record id="view_wizard_gst_report" model="ir.ui.view">
+            <field name="name">GST 03</field>
+            <field name="model">wizard.gst.report</field>
+            <field name="arch" type="xml">
+                <form string="GST 03">
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print" string="Print" type="object" class="oe_highlight"/>or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_wizard_gst_report" model="ir.actions.act_window">
+            <field name="name">GST 03</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.gst.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            icon="STOCK_PRINT"
+            name="GST 03 Report"
+            parent="account.account_account_menu"
+            action="action_wizard_gst_report"
+            id="menu_wizard_gst_report"
+           />
+
+        <menuitem
+            icon="STOCK_PRINT"
+            name="GST 03 Report"
+            parent="menu_finance_gst_03_report"
+            action="action_wizard_gst_report"
+            id="menu_wizard_gst_report_gst"
+           />
+
+	</data>
+</openerp>

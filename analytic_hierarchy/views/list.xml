@@ -1,0 +1,24 @@
+<openerp>
+    <data>
+        <record id="analytic.view_account_analytic_account_list" model="ir.ui.view">
+            <field name="name">account.analytic.account.list</field>
+            <field name="model">account.analytic.account</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Analytic Accounts">
+                    <field name="display_name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="account_type" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="total_debit"/>
+                    <field name="total_credit"/>
+                    <field name="total_balance"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

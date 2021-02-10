@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_sales_order_report_form_view" model="ir.ui.view">
+            <field name="name">Sales Report New</field>
+            <field name="model">br.sales.report</field>
+            <field name="arch" type="xml">
+                <form string="Form">
+                        <group>
+                            <group>
+                                <field name="start_date" required="True"/>
+                                <field name="end_date" required="True"/>
+                                
+                            </group>
+                            <group>
+                                <field name="report_type"/>
+                                <field name="trans_type" attrs="{'readonly': [('report_type', '=', 'outlet_day')]}"/>
+                            </group>
+                            <group>
+                                <field name="outlet_ids" widget="many2many_tags" context="{'active_model': 'br_multi_outlet.outlet'}"/>
+                                <field name="user_id" invisible="True"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="action_print" string="Print" class="oe_highlight oe_right" type="object"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_br_sales_order_report" model="ir.actions.act_window">
+            <field name="name">Sales Report New</field>
+            <field name="res_model">br.sales.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem parent="point_of_sale.menu_point_rep" id="br_sales_order_report_menu"
+                  name="Sales Report by Order"
+                  action="action_br_sales_order_report"/>
+
+        <report id="report_br_sales_order_report"
+                model="br.sales.report"
+                string="Sales Report New"
+                report_type="xlsx"
+                name="br_sales_report.br_sales_order_report"
+                file="br_sales_report.br_sales_order_report"
+                attachment_use="False"
+        />
+    </data>
+</openerp>

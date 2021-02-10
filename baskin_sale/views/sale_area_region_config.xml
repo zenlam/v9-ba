@@ -1,0 +1,153 @@
+<openerp>
+	<data>
+		<record id="view_order_form_show_reporting" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_crm.sale_view_inherit123"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//group[@name='technical']" position="replace">
+                    <group string="Reporting" name="technical">
+						<field name="origin"/>
+						<field name="campaign_id"/>
+						<field name="medium_id"/>
+                    	<field name="source_id" string="Business Type"/>
+                    	<field name="opportunity_id" help="Log in the chatter from which opportunity the order originates"/>
+						<field name="state_id"/>
+						<field name="area_id"/>
+					</group>
+                </xpath>
+				<xpath expr="//field[@name='team_id']" position="attributes">
+					<attribute name="string">Channel</attribute>
+				</xpath>
+            </field>
+        </record>
+
+            <!--Area Form View-->
+		<record id="customer_area_form_view" model="ir.ui.view">
+            <field name="name">Customer Area Form View</field>
+            <field name="model">customer.area</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Customer Area Form">
+                    <group>
+                        <field name="name"/>
+                        <field name="state_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!--Area Tree View-->
+		<record id="customer_area_tree_view" model="ir.ui.view">
+            <field name="name">Customer Area Tree View</field>
+            <field name="model">customer.area</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Customer Area Tree">
+                    <field name="name"/>
+                    <field name="state_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Region Form View-->
+		<record id="customer_region_form_view" model="ir.ui.view">
+            <field name="name">Customer Region Form View</field>
+            <field name="model">customer.region</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Customer Region Form">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!--Region Tree View-->
+		<record id="customer_region_tree_view" model="ir.ui.view">
+            <field name="name">Customer Region Tree View</field>
+            <field name="model">customer.region</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Customer Region Tree">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Area Action-->
+		<record id="customer_area_action" model="ir.actions.act_window">
+            <field name="name">Areas</field>
+            <field name="res_model">customer.area</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!--Region Action-->
+		<record id="customer_region_action" model="ir.actions.act_window">
+            <field name="name">Regions</field>
+            <field name="res_model">customer.region</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+		<menuitem
+			name="Area"
+            action="customer_area_action"
+            id="menu_sale_customer_area"
+            parent="base.menu_sale_config"
+			sequence="30"/>
+
+		<menuitem
+			name="Region"
+            action="customer_region_action"
+            id="menu_sale_customer_region"
+            parent="base.menu_sale_config"
+			sequence="40"/>
+
+        <menuitem
+			name="State"
+            action="br_multi_outlet.action_state_tree"
+            id="menu_sale_customer_state"
+            parent="base.menu_sale_config"
+			sequence="35"/>
+
+        <!--Add region_id to res.country.state tree/form view -->
+		<record model="ir.ui.view" id="br_view_country_state_form_inherit">
+            <field name="name">br_view_country_state_form_inherit</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="before">
+                     <field name="region_id" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="br_view_country_state_tree_inherit">
+            <field name="name">br_view_country_state_tree_inherit</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="before">
+                     <field name="region_id" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Add fields to partner form-->
+        <record id="view_partner_country_required_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='website']" position="after">
+                    <field name="area_id" attrs="{'invisible': [('state_id', '=', False)]}" domain="[('state_id', '=', state_id)]"/>
+                </xpath>
+            </field>
+        </record>
+	</data>
+</openerp>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Full Outlet Data Sync Form View -->
+    <record id="full_outlet_data_sync_form_view" model="ir.ui.view">
+        <field name="name">full.outlet.data.sync.form</field>
+        <field name="model">full.outlet.data.sync</field>
+        <field name="arch" type="xml">
+            <form string="Outlet Data Sync">
+                    Click Confirm to Sync the outlet data to all third parties.
+                <footer>
+                    <button string='Confirm' name="action_sync" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Full Promotion Data Sync Form View -->
+    <record id="full_promotion_data_sync_form_view" model="ir.ui.view">
+        <field name="name">full.promotion.data.sync.form</field>
+        <field name="model">full.promotion.data.sync</field>
+        <field name="arch" type="xml">
+            <form string="Promotion Data Sync">
+                    Click Confirm to Sync the promotion data to the third party.
+                <footer>
+                    <button string='Confirm' name="action_sync" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Full Outlet Data Sync Window Action -->
+    <record id="action_full_outlet_data_sync" model="ir.actions.act_window">
+        <field name="name">Outlet Sync</field>
+        <field name="res_model">full.outlet.data.sync</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="baskin_integration_base.full_outlet_data_sync_form_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Full Promotion Data Sync Window Action -->
+    <record id="action_full_promotion_data_sync" model="ir.actions.act_window">
+        <field name="name">Promotion Sync</field>
+        <field name="res_model">full.promotion.data.sync</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="baskin_integration_base.full_promotion_data_sync_form_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menuitem Full Data Sync -->
+    <menuitem
+            id="full_data_sync_menu"
+            name="Master Data Sync"
+            sequence="50"
+            parent="baskin_integration_base.third_party_menu"/>
+
+    <!-- Menuitem Full Outlet Data Sync -->
+    <menuitem
+            id="full_outlet_data_sync_menu"
+            name="Outlet Sync"
+            action="baskin_integration_base.action_full_outlet_data_sync"
+            parent="baskin_integration_base.full_data_sync_menu"/>
+
+    <!-- Menuitem Full Promotion Data Sync -->
+    <menuitem
+            id="full_promotion_data_sync_menu"
+            name="Promotion Sync"
+            action="baskin_integration_base.action_full_promotion_data_sync"
+            parent="baskin_integration_base.full_data_sync_menu"/>
+
+</odoo>

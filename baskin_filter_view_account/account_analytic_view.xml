@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_analytic_chart_button_context_view" model="ir.ui.view">
+            <field name="name">Chart of Analytic Accounts</field>
+            <field name="model">account.analytic.chart</field>
+            <field name="inherit_id" ref="analytic.account_analytic_chart_view"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//button[@name='analytic_account_chart_open_window']" position="attributes">
+            		<attribute name="context">{'view_all_analytic': True}</attribute>
+            	</xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

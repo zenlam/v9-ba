@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_account_analytic_line_form_inherit_hide_menu" model="ir.ui.view">
+            <field name="name">account.analytic.line.form.inherit.account</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//form" position='attributes'>
+    	                <attribute name="create">false</attribute>
+    	                <attribute name="edit">false</attribute>
+    	                <attribute name="delete">false</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_line_tree_inherit_hide_menu" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.inherit.account</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//tree" position='attributes'>
+                    	<attribute name="create">false</attribute>
+    	                <attribute name="edit">false</attribute>
+    	                <attribute name="delete">false</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,31 @@
+.page .pos-center-align {
+    text-align: center;
+    font-family: "Lato","Lucida Grande", Helvetica, Verdana, Arial;
+    color: #555555;
+    font-size: 12px;
+}
+
+.page table {
+    width: 100%;
+    border: 0;
+    table-layout: fixed;
+    font-family: "Lato","Lucida Grande", Helvetica, Verdana, Arial;
+    color: #555555;
+    font-size: 12px;
+}
+
+.page .pos-right-align{
+    text-align: right;
+}
+
+
+@media print {
+    * {
+        color: black !important;
+    }
+    body {
+        margin: 0;
+        color: white !important;
+    }
+    .baskin_page
+}

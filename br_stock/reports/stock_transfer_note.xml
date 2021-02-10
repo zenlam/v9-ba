@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <report
+            string="Stock Transfer Note"
+            id="action_stock_transfer_note"
+            model="stock.picking"
+            report_type="xlsx"
+            name="br_stock.stock_transfer_note"
+            file="br_stock.stock_transfer_note"
+        />
+    </data>
+</openerp>

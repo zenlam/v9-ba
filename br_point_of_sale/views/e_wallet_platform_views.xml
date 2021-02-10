@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- E Wallet Platform Tree View -->
+        <record id="e_wallet_platform_tree_view" model="ir.ui.view">
+            <field name="name">e.wallet.platform.tree.view</field>
+            <field name="model">e.wallet.platform</field>
+            <field name="arch" type="xml">
+                <tree string="E Wallet Platform">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- E Wallet Platform Form View -->
+        <record id="e_wallet_platform_form_view" model="ir.ui.view">
+            <field name="name">e.wallet.platform.form.view</field>
+            <field name="model">e.wallet.platform</field>
+            <field name="arch" type="xml">
+                <form string="E Wallet Platform">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="cimb_machine_code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- E Wallet Platform Window Action -->
+        <record id="e_wallet_platform_action" model="ir.actions.act_window">
+            <field name="name">E Wallet Platform</field>
+            <field name="res_model">e.wallet.platform</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="e_wallet_platform_tree_view"/>
+        </record>
+
+        <!-- E Wallet Platform Menuitem -->
+        <menuitem id="e_wallet_platform_menu" name="E Wallet Platform"
+                  action="e_wallet_platform_action"
+                  parent="br_product.br_menu_config_menu_names"
+                  sequence="40"/>
+
+    </data>
+</openerp>

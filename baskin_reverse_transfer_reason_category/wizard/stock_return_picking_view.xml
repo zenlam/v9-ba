@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_stock_return_picking_form_reverse_reason" model="ir.ui.view">
+            <field name="name">Return lines</field>
+            <field name="model">stock.return.picking</field>
+            <field name="inherit_id" ref="stock.view_stock_return_picking_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='location_id']" position="after">
+					<field name="reason_of_reverse" domain="[('type_code','=',picking_code)]" attrs="{'required':[('reason_require','=',True)]}"/>
+					<field name="remarks" attrs="{'invisible':[('need_remarks','=',False)]}"/>
+					<field name="reason_require" invisible="1"/>
+					<field name="picking_code" invisible="1"/>
+					<field name="need_remarks" invisible="1"/>
+            	</xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

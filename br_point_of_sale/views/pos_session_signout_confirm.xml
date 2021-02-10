@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="pos_session_signout_confirm_form">
+            <field name="name">Pos Session Sign Out</field>
+            <field name="model">pos.session.signout.confirm</field>
+            <field name="arch" type="xml">
+                <form string="POS Session Sign Out">
+                    <group>
+                        <div>
+                            <span>Do you want to close this session ?</span>
+                        </div>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Yes" type="object" class="btn btn-primary"/>
+                        <button string="No" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="pos_session_signout_confirm_act">
+            <field name="name">Pos Session Sign Out</field>
+            <field name="res_model">pos.session.signout.confirm</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="pos_session_closing_confirm_form">
+            <field name="name">Pos Session - Closing Confirm</field>
+            <field name="model">pos.session.closing.confirm</field>
+            <field name="arch" type="xml">
+                <form string="POS Session Sign Out">
+                    <group>
+                        <div>
+                            <span>
+                                The closing balance declared does not match with theoretical balance, do you want to confirm this amount anyway?
+                            </span>
+                            <br/>
+                            <br/>
+                            <span>
+                                Select 'Yes' to confirm amount, select 'No' to count again.
+                            </span>
+                        </div>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Yes" type="object" class="btn btn-primary"/>
+                        <button string="No" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="pos_session_closing_confirm_act">
+            <field name="name">Pos Session - Closing Confirm</field>
+            <field name="res_model">pos.session.closing.confirm</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.ui.view" id="view_pos_session_form_inherit">
+            <field name="name">Pos Session Form View Inherit</field>
+            <field name="model">pos.session</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='cashbox_control']" position="replace">
+                    <button name="button_signout_confirm" type="object" string="End of Session" attrs="{'invisible' : ['|', ('cash_control', '=', False),('state', '!=', 'opened')]}" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//header/button[4]" position="replace">
+                    <button name="button_closing_confirm" type="object" string="Validate Closing &amp; Post Entries" attrs="{'invisible' : ['|', ('cash_control', '=', True),('state', '!=', 'opened')]}" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//header/button[5]" position="replace">
+                    <button name="button_closing_confirm" type="object" string="Validate Closing &amp; Post Entries" states="closing_control" class="oe_highlight"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

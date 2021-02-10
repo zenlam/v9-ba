@@ -1,0 +1,28 @@
+<odoo>
+    <record id="update_asset_analytic_account_form" model="ir.ui.view">
+        <field name="name">Set Analytic Account</field>
+        <field name="model">update.asset.account</field>
+        <field name="arch" type="xml">
+            <form string="Set Analytic Account">
+                <group string="Select Dates">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+					<field name="account_analytic_id"/>                    
+                </group>
+                <footer>
+                    <button name="set_analytic_account" type="object" string="Set Analytic Account" class="oe_highlight"/> 
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="update_asset_analytic_account_act"
+        name="Set Analytic Account"
+        src_model="account.asset.asset"
+        res_model="update.asset.account"
+        target="new"
+        view_mode="form"
+        multi="False"
+    />
+</odoo>

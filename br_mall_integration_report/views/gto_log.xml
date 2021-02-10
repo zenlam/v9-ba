@@ -1,0 +1,73 @@
+<openerp>
+    <data>
+        <record model="ir.rule" id="log_gto_report_comp_rule">
+            <field name="name">Inventory multi-company</field>
+            <field name="model_id" ref="model_log_gto_report"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+        <!--Tao menu log info when tranfer file GTO-->
+        <record id="view_log_gto_report" model="ir.ui.view">
+            <field name="name">Log GTO Report</field>
+            <field name="model">log.gto.report</field>
+            <field name="arch" type="xml">
+                <tree string="Log Info">
+                    <field name="file_name" />
+                    <field name="date_transfer" />
+                    <field name="state" />
+                    <field name="info" />
+                    <field name="outlet_ids" />
+                    <field name="file" filename="file_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_log_gto_report_form" model="ir.ui.view">
+            <field name="name">Log GTO Report</field>
+            <field name="model">log.gto.report</field>
+            <field name="arch" type="xml">
+                <form string="Log Info" create="false" edit="false">
+                    <group>
+                        <field name="info"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="outlet_ids"/>
+                            <field name="company_id"/>
+                            <field name="date_transfer"/>
+                        </group>
+                        <group>
+                            <field name="state"/>
+                            <field name="file_name"/>
+                            <field name="file"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="filter_log_gto_report" model="ir.ui.view">
+            <field name="name">Log GTO Report</field>
+            <field name="model">log.gto.report</field>
+            <field name="arch" type="xml">
+                <search string="Search Log">
+                    <field name="file_name"/>
+                    <field name="outlet_ids"/>
+                    <field name="info"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="pr_action_log_gto_report" model="ir.actions.act_window">
+            <field name="name">File Transfer Log</field>
+            <field name="res_model">log.gto.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_log_gto_report"/>
+        </record>
+
+        <menuitem action="pr_action_log_gto_report" name="File Transfer Log"
+                  id="pr_menu_log_gto_report" parent="br_mall_file_transfer_integeration_menu"
+                  sequence="200" />
+    </data>
+</openerp>

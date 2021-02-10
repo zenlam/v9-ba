@@ -1,0 +1,12 @@
+<openerp>
+	<data>
+        <record id="base.group_malaysia" model="res.groups">
+            <field name="name">Malaysia</field>
+            <field name="category_id" ref="base.module_category_usability"/>
+        </record>
+		<record id="base.group_singapor" model="res.groups">
+            <field name="name">Singapore</field>
+            <field name="category_id" ref="base.module_category_usability"/>
+        </record>
+	</data>
+</openerp>

@@ -1,0 +1,1 @@
+import outlet_cash_control_report

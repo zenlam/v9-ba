@@ -1,0 +1,1168 @@
+-- step 1. Delete all the invoices and payments older than date '2018-04-30'
+
+-- 1.1 Delete the invoices and payments
+delete from account_invoice where date_invoice <= '2018-04-xx';
+delete from account_payment where payment_date <= '2018-04-30';
+
+-- 1.2 Keep a list of invoices for step 24
+select id from account_invoice;
+
+-- step 2. Keep the list of journal entry, journal items and analytic entry since the delete cascade constraint has to be dropped due to performance issue.
+
+-- 2.1 list of journal entry
+select move_id from account_invoice
+UNION
+select move_id from account_move_line where payment_id is not null;
+
+-- 2.2 list of journal items and analytic entry
+select t2.id as account_move_line, t3.id as account_analytic_line from account_move t1
+left join account_move_line t2
+on t1.id = t2.move_id 
+left join account_analytic_line t3
+on t2.id = t3.move_id 
+where t1.id in 
+(select move_id from account_invoice
+UNION
+select move_id from account_move_line where payment_id is not null);
+
+-- step 3. Delete the partial reconcile, journal entry, journal items and analytic entry
+
+-- 3.1 delete partial reconcile
+delete from account_partial_reconcile 
+where credit_move_id not in [2.2 list of journal items]
+
+-- 3.2 drop cascade constraint
+ALTER TABLE public.account_move_line DROP CONSTRAINT account_move_line_move_id_fkey;
+ALTER TABLE public.account_analytic_line DROP CONSTRAINT account_analytic_line_move_id_fkey;
+
+-- 3.3 delete journal entry
+delete from account_move where id not in [2.1 list of journal entry];
+
+-- 3.4 delete journal items
+delete from account_move_line where id not in [2.2 list of journal items];
+
+-- 3.5 delete analytic entry
+delete from account_analytic_line where id not in [2.2 list of analytic entry];
+
+-- 3.6 add constraint
+ALTER TABLE public.account_move_line
+    ADD CONSTRAINT account_move_line_move_id_fkey FOREIGN KEY (move_id)
+    REFERENCES public.account_move (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+ALTER TABLE public.account_analytic_line
+    ADD CONSTRAINT account_analytic_line_move_id_fkey FOREIGN KEY (move_id)
+    REFERENCES public.account_move_line (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+-- step 4. Swap invoice posted journal items and analytic entries to new analytic account in analytic default.
+-- make sure all the partners who have journal item, have their default analytic account
+
+-- 4.1 Swap journal items
+UPDATE account_move_line
+SET analytic_account_id = account_analytic_default.analytic_id
+FROM account_analytic_default
+WHERE account_move_line.partner_id = account_analytic_default.partner_id;
+
+-- 4.1.1 Check which journal item does not have a partner
+select id from account_move_line
+where partner_id is null;
+
+-- 4.1.2 Check which partner does not have a default analytic account
+select distinct(t1.partner_id), t2.analytic_id from account_move_line t1
+left join account_analytic_default t2
+on t1.partner_id = t2.partner_id
+where t1.partner_id is not null and
+t2.partner_id is null
+order by t1.partner_id asc 
+
+-- 4.2 Swap analytic entries
+UPDATE account_analytic_line
+SET account_id = account_analytic_default.analytic_id
+FROM account_analytic_default, account_move_line
+WHERE account_analytic_default.partner_id = account_move_line.partner_id
+AND account_move_line.id = account_analytic_line.move_id;
+
+-- step 5. Delete the unwanted analytic account
+
+-- 5.1 drop constraint
+ALTER TABLE public.account_analytic_account DROP CONSTRAINT account_analytic_account_parent_id_fkey;
+ALTER TABLE public.account_analytic_default DROP CONSTRAINT account_analytic_default_analytic_id_fkey;
+ALTER TABLE public.account_analytic_line DROP CONSTRAINT account_analytic_line_account_id_fkey;
+ALTER TABLE public.account_asset_category DROP CONSTRAINT account_asset_category_account_analytic_id_fkey;
+ALTER TABLE public.account_asset_depreciation_line DROP CONSTRAINT account_asset_depreciation_line_account_analytic_id_fkey;
+ALTER TABLE public.account_invoice_line DROP CONSTRAINT account_invoice_line_account_analytic_id_fkey;
+ALTER TABLE public.account_invoice_tax DROP CONSTRAINT account_invoice_tax_account_analytic_id_fkey;
+ALTER TABLE public.account_move_line DROP CONSTRAINT account_move_line_analytic_account_id_fkey;
+ALTER TABLE public.account_move_line_reconcile_writeoff DROP CONSTRAINT account_move_line_reconcile_writeoff_analytic_id_fkey;
+ALTER TABLE public.account_operation_template DROP CONSTRAINT account_operation_template_analytic_account_id_fkey;
+ALTER TABLE public.account_operation_template DROP CONSTRAINT account_operation_template_second_analytic_account_id_fkey;
+ALTER TABLE public.account_payment DROP CONSTRAINT account_payment_account_analytic_id_fkey;
+ALTER TABLE public.account_register_payments DROP CONSTRAINT account_register_payments_account_analytic_id_fkey;
+ALTER TABLE public.account_voucher DROP CONSTRAINT account_voucher_analytic_account_id_fkey;
+ALTER TABLE public.account_voucher_line DROP CONSTRAINT account_voucher_line_account_analytic_id_fkey;
+ALTER TABLE public.br_multi_outlet_outlet DROP CONSTRAINT br_multi_outlet_outlet_analytic_account_id_fkey;
+ALTER TABLE public.procurement_order DROP CONSTRAINT procurement_order_account_analytic_id_fkey;
+ALTER TABLE public.purchase_order_line DROP CONSTRAINT purchase_order_line_account_analytic_id_fkey;
+ALTER TABLE public.purchase_requisition DROP CONSTRAINT purchase_requisition_account_analytic_id_fkey;
+ALTER TABLE public.purchase_requisition_line DROP CONSTRAINT purchase_requisition_line_account_analytic_id_fkey;
+ALTER TABLE public.sale_order DROP CONSTRAINT sale_order_project_id_fkey;
+ALTER TABLE public.stock_inventory DROP CONSTRAINT stock_inventory_account_analytic_id_fkey;
+ALTER TABLE public.stock_inventory_line DROP CONSTRAINT stock_inventory_line_account_analytic_id_fkey;
+ALTER TABLE public.stock_location DROP CONSTRAINT stock_location_br_analytic_account_id_fkey;
+ALTER TABLE public.stock_location DROP CONSTRAINT stock_location_valuation_analytic_account_id_fkey;
+ALTER TABLE public.stock_location_flush DROP CONSTRAINT stock_location_flush_analytic_account_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_account_analytic_id_fkey;
+ALTER TABLE public.update_asset_account DROP CONSTRAINT update_asset_account_account_analytic_id_fkey;
+
+
+-- 5.2 drop account_analytic_account_accounting_report_rel
+delete from account_analytic_account_accounting_report_rel
+where account_analytic_account_id not in (list)
+
+-- 5.3 drop account_analytic_account_analytic_group_rel
+delete from account_analytic_account_analytic_group_rel 
+where account_analytic_account_id not in (list)
+
+-- 5.4 drop account_analytic_account_tag_rel
+delete from account_analytic_account_tag_rel
+where account_id not in (list)
+
+-- 5.5 drop account_analytic_line
+delete from account_analytic_line
+where account_id not in (list)
+
+-- 5.6 drop unused analytic account
+delete from account_analytic_account
+where id not in (list)
+
+-- 5.7 add constraint
+ALTER TABLE account_analytic_account
+	ADD CONSTRAINT account_analytic_account_parent_id_fkey FOREIGN KEY (parent_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_analytic_default
+	ADD CONSTRAINT account_analytic_default_analytic_id_fkey FOREIGN KEY (analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_analytic_line
+	ADD CONSTRAINT account_analytic_line_account_id_fkey FOREIGN KEY (account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT;
+ALTER TABLE account_asset_category
+	ADD CONSTRAINT account_asset_category_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_asset_depreciation_line
+	ADD CONSTRAINT account_asset_depreciation_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_invoice_line
+	ADD CONSTRAINT account_invoice_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_invoice_tax
+	ADD CONSTRAINT account_invoice_tax_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_move_line
+	ADD CONSTRAINT account_move_line_analytic_account_id_fkey FOREIGN KEY (analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_move_line_reconcile_writeoff
+	ADD CONSTRAINT account_move_line_reconcile_writeoff_analytic_id_fkey FOREIGN KEY (analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_operation_template
+	ADD CONSTRAINT account_operation_template_analytic_account_id_fkey FOREIGN KEY (analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_operation_template
+	ADD CONSTRAINT account_operation_template_second_analytic_account_id_fkey FOREIGN KEY (second_analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_payment
+	ADD CONSTRAINT account_payment_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_register_payments
+	ADD CONSTRAINT account_register_payments_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_voucher
+	ADD CONSTRAINT account_voucher_analytic_account_id_fkey FOREIGN KEY (analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_voucher_line
+	ADD CONSTRAINT account_voucher_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE br_multi_outlet_outlet
+	ADD CONSTRAINT br_multi_outlet_outlet_analytic_account_id_fkey FOREIGN KEY (analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE procurement_order
+	ADD CONSTRAINT procurement_order_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE purchase_order_line
+	ADD CONSTRAINT purchase_order_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE purchase_requisition
+	ADD CONSTRAINT purchase_requisition_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE purchase_requisition_line
+	ADD CONSTRAINT purchase_requisition_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE sale_order
+	ADD CONSTRAINT sale_order_project_id_fkey FOREIGN KEY (project_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_inventory
+	ADD CONSTRAINT stock_inventory_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_inventory_line
+	ADD CONSTRAINT stock_inventory_line_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_location
+	ADD CONSTRAINT stock_location_br_analytic_account_id_fkey FOREIGN KEY (br_analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_location
+	ADD CONSTRAINT stock_location_valuation_analytic_account_id_fkey FOREIGN KEY (valuation_analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_location_flush
+	ADD CONSTRAINT stock_location_flush_analytic_account_id_fkey FOREIGN KEY (analytic_account_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE update_asset_account
+	ADD CONSTRAINT update_asset_account_account_analytic_id_fkey FOREIGN KEY (account_analytic_id)
+        REFERENCES public.account_analytic_account (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 6. Delete unused journal
+
+-- step 7. Delete bank statement and bank statement line
+
+-- 7.1 drop constraints
+-- ALTER TABLE public.account_bank_statement_line DROP CONSTRAINT account_bank_statement_line_statement_id_fkey;
+ALTER TABLE public.account_move_line DROP CONSTRAINT account_move_line_statement_id_fkey;
+ALTER TABLE public.pos_session DROP CONSTRAINT pos_session_cash_register_id_fkey;
+ALTER TABLE public.account_move DROP CONSTRAINT account_move_statement_line_id_fkey;
+
+-- 7.2 drop bank statement line
+delete from account_bank_statement_line;
+
+-- 7.3 drop bank statement
+delete from account_bank_statement;
+
+-- 7.4 add constraints
+--ALTER TABLE account_bank_statement_line
+--	ADD CONSTRAINT account_bank_statement_line_statement_id_fkey FOREIGN KEY (statement_id)
+--       REFERENCES public.account_bank_statement (id) MATCH SIMPLE
+--        ON UPDATE NO ACTION
+--        ON DELETE CASCADE;
+ALTER TABLE account_move_line
+	ADD CONSTRAINT account_move_line_statement_id_fkey FOREIGN KEY (statement_id)
+        REFERENCES public.account_bank_statement (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE pos_session
+	ADD CONSTRAINT pos_session_cash_register_id_fkey FOREIGN KEY (cash_register_id)
+        REFERENCES public.account_bank_statement (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE account_move
+	ADD CONSTRAINT account_move_statement_line_id_fkey FOREIGN KEY (statement_line_id)
+        REFERENCES public.account_bank_statement_line (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 8. Delete pos order and receipt cancellation
+-- bank_statement_line and pos_order_line on delete cascade 
+
+-- 8.1 drop account_tax_pos_order_line_rel
+delete from account_tax_pos_order_line_rel;
+
+-- 8.2 drop pos_order_line
+delete from pos_order_line
+
+-- 8.3 drop pos_order
+delete from pos_order;
+
+-- step 9. Delete pos session
+
+-- 9.1 delete pos_session_cash_in
+delete from pos_session_cash_in;
+
+-- 9.2 delete pos_session_cash_out
+delete from pos_session_cash_out;
+
+-- 9.3 delete pos_session
+delete from pos_session;
+
+-- step 10. Swap PO analytic account with default analytic account
+UPDATE purchase_order_line 
+SET account_analytic_id = account_analytic_default.analytic_id
+FROM account_analytic_default
+WHERE purchase_order_line.partner_id = account_analytic_default.partner_id;
+
+-- step 11. Delete purchase requisition data
+-- purchase_requisition_line cascade
+
+-- 11.1 drop constraints
+ALTER TABLE public.procurement_order DROP CONSTRAINT procurement_order_requisition_id_fkey;
+ALTER TABLE public.purchase_order DROP CONSTRAINT purchase_order_requisition_id_fkey;
+
+-- 11.2 delete purchase_requisition_line
+delete from purchase_requisition_line;
+
+-- 11.3 delete purchase_requisition
+delete from purchase_requisition;
+
+-- 11.4 add constraints
+ALTER TABLE procurement_order
+	ADD CONSTRAINT procurement_order_requisition_id_fkey FOREIGN KEY (requisition_id)
+        REFERENCES public.purchase_requisition (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE purchase_order
+	ADD CONSTRAINT purchase_order_requisition_id_fkey FOREIGN KEY (requisition_id)
+        REFERENCES public.purchase_requisition (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 12. Delete lead data
+
+-- 12.1 drop constraints
+ALTER TABLE public.calendar_event DROP CONSTRAINT calendar_event_opportunity_id_fkey;
+ALTER TABLE public.crm_lead_lost DROP CONSTRAINT crm_lead_lost_lead_id_fkey;
+ALTER TABLE public.sale_order DROP CONSTRAINT sale_order_opportunity_id_fkey;
+
+-- 12.2 delete crm_lead_crm_lead2opportunity_partner_mass_rel
+delete from crm_lead_crm_lead2opportunity_partner_mass_rel;
+
+-- 12.3 delete crm_lead_crm_lead2opportunity_partner_rel
+delete from crm_lead_crm_lead2opportunity_partner_rel;
+
+-- 12.4 delete crm_lead_tag_rel
+delete from crm_lead_tag_rel;
+
+-- 12.5 delete merge_opportunity_rel
+delete from merge_opportunity_rel;
+
+-- 12.6 delete crm_lead
+delete from crm_lead;
+
+-- 12.7 add constraints
+ALTER TABLE calendar_event
+	ADD CONSTRAINT calendar_event_opportunity_id_fkey FOREIGN KEY (opportunity_id)
+        REFERENCES public.crm_lead (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE crm_lead_lost
+	ADD CONSTRAINT crm_lead_lost_lead_id_fkey FOREIGN KEY (lead_id)
+        REFERENCES public.crm_lead (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE sale_order
+	ADD CONSTRAINT sale_order_opportunity_id_fkey FOREIGN KEY (opportunity_id)
+        REFERENCES public.crm_lead (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 13. Delete opportunity data
+
+-- 13.1 delete crm_lead_crm_lead2opportunity_partner_rel
+delete from crm_lead_crm_lead2opportunity_partner_rel;
+
+-- 13.2 delete crm_lead2opportunity_partner
+delete from crm_lead2opportunity_partner;
+
+-- step 14. Swap PO analytic account with default analytic account
+UPDATE sale_order
+SET project_id = account_analytic_default.analytic_id
+FROM account_analytic_default
+WHERE sale_order.partner_id = account_analytic_default.partner_id;
+
+-- step 15. Delete stock move data
+-- truncate is preferred since there are millions records
+
+-- 15.1 drop constraints
+ALTER TABLE public.account_move_line DROP CONSTRAINT account_move_line_stock_move_id_fkey;
+ALTER TABLE public.procurement_order DROP CONSTRAINT procurement_order_move_dest_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_move_dest_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_origin_returned_move_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_split_from_fkey;
+ALTER TABLE public.stock_quant DROP CONSTRAINT stock_quant_negative_move_id_fkey;
+ALTER TABLE public.stock_quant DROP CONSTRAINT stock_quant_reservation_id_fkey;
+ALTER TABLE public.stock_return_picking_line DROP CONSTRAINT stock_return_picking_line_move_id_fkey;
+ALTER TABLE public.stock_transfer_dispute_details DROP CONSTRAINT stock_transfer_dispute_details_move_id_fkey;
+ALTER TABLE public.stock_valuation_adjustment_lines DROP CONSTRAINT stock_valuation_adjustment_lines_move_id_fkey;
+
+-- 15.2 delete stock_location_route_move
+delete from stock_location_route_move;
+
+-- 15.3 delete stock_move_operation_link
+delete from stock_move_operation_link;
+
+-- 15.4 delete stock_quant_move_rel
+delete from stock_quant_move_rel;
+
+-- 15.5 delete stock_move
+delete from stock_move;
+
+-- 15.6 add constraints
+ALTER TABLE account_move_line
+	ADD CONSTRAINT account_move_line_stock_move_id_fkey FOREIGN KEY (stock_move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE procurement_order
+	ADD CONSTRAINT procurement_order_move_dest_id_fkey FOREIGN KEY (move_dest_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_move_dest_id_fkey FOREIGN KEY (move_dest_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_origin_returned_move_id_fkey FOREIGN KEY (origin_returned_move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_split_from_fkey FOREIGN KEY (split_from)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_quant
+	ADD CONSTRAINT stock_quant_negative_move_id_fkey FOREIGN KEY (negative_move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_quant
+	ADD CONSTRAINT stock_quant_reservation_id_fkey FOREIGN KEY (reservation_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_return_picking_line
+	ADD CONSTRAINT stock_return_picking_line_move_id_fkey FOREIGN KEY (move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_transfer_dispute_details
+	ADD CONSTRAINT stock_transfer_dispute_details_move_id_fkey FOREIGN KEY (move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_valuation_adjustment_lines
+	ADD CONSTRAINT stock_valuation_adjustment_lines_move_id_fkey FOREIGN KEY (move_id)
+        REFERENCES public.stock_move (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL
+
+-- step 16. Delete stock picking data
+-- truncate is preferred since there are millions records
+
+-- 16.1 drop constraints
+ALTER TABLE public.pos_order DROP CONSTRAINT pos_order_picking_id_fkey;
+ALTER TABLE public.stock_backorder_confirmation DROP CONSTRAINT stock_backorder_confirmation_pick_id_fkey;
+ALTER TABLE public.stock_immediate_transfer DROP CONSTRAINT stock_immediate_transfer_pick_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_picking_id_fkey;
+ALTER TABLE public.stock_pack_operation DROP CONSTRAINT stock_pack_operation_picking_id_fkey;
+ALTER TABLE public.stock_picking DROP CONSTRAINT stock_picking_backorder_id_fkey;
+ALTER TABLE public.stock_transfer_dispute DROP CONSTRAINT stock_transfer_dispute_pick_id_fkey;
+
+-- 16.2 delete stock_landed_cost_stock_picking_rel
+delete from stock_landed_cost_stock_picking_rel;
+
+-- 16.3 delete stock_picking
+delete from stock_picking;
+
+-- 16.4 add constraints
+ALTER TABLE pos_order
+	ADD CONSTRAINT pos_order_picking_id_fkey FOREIGN KEY (picking_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_backorder_confirmation
+	ADD CONSTRAINT stock_backorder_confirmation_pick_id_fkey FOREIGN KEY (pick_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_immediate_transfer
+	ADD CONSTRAINT stock_immediate_transfer_pick_id_fkey FOREIGN KEY (pick_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_picking_id_fkey FOREIGN KEY (picking_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_pack_operation
+	ADD CONSTRAINT stock_pack_operation_picking_id_fkey FOREIGN KEY (picking_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_picking
+	ADD CONSTRAINT stock_picking_backorder_id_fkey FOREIGN KEY (backorder_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_transfer_dispute
+	ADD CONSTRAINT stock_transfer_dispute_pick_id_fkey FOREIGN KEY (pick_id)
+        REFERENCES public.stock_picking (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 17. Delete stock picking wave data
+
+-- 17.1 drop constraints
+ALTER TABLE public.stock_picking DROP CONSTRAINT stock_picking_wave_id_fkey;
+ALTER TABLE public.stock_picking_to_wave DROP CONSTRAINT stock_picking_to_wave_wave_id_fkey;
+
+-- 17.2 delete stock_picking_wave
+delete from stock_picking_wave;
+
+-- 17.3 add constraints
+ALTER TABLE stock_picking
+	ADD CONSTRAINT stock_picking_wave_id_fkey FOREIGN KEY (wave_id)
+        REFERENCES public.stock_picking_wave (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_picking_to_wave
+	ADD CONSTRAINT stock_picking_to_wave_wave_id_fkey FOREIGN KEY (wave_id)
+        REFERENCES public.stock_picking_wave (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 18. Delete transfer request
+
+-- 18.1 drop constraints
+ALTER TABLE public.br_stock_request_transfer_line DROP CONSTRAINT br_stock_request_transfer_line_transfer_id_fkey;
+
+-- 18.2 delete br_stock_request_transfer
+delete from br_stock_request_transfer;
+
+-- 18.3 add constraints
+ALTER TABLE br_stock_request_transfer_line
+CONSTRAINT br_stock_request_transfer_line_transfer_id_fkey FOREIGN KEY (transfer_id)
+        REFERENCES public.br_stock_request_transfer (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 19. Delete inventory adjustment
+
+-- 19.1 drop constraints
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_inventory_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_inventory_line_id_fkey;
+
+-- 19.2 delete inventory adjustment line
+delete from stock_inventory_line;
+
+-- 19.3 delete inventory adjustment
+delete from stock_inventory;
+
+-- 19.4 add constraints
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_inventory_id_fkey FOREIGN KEY (inventory_id)
+        REFERENCES public.stock_inventory (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_inventory_line_id_fkey FOREIGN KEY (inventory_line_id)
+        REFERENCES public.stock_inventory_line (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 20. Delete packages
+
+-- 20.1 drop constraints
+ALTER TABLE public.stock_inventory DROP CONSTRAINT stock_inventory_package_id_fkey;
+ALTER TABLE public.stock_inventory_line DROP CONSTRAINT stock_inventory_line_package_id_fkey;
+ALTER TABLE public.stock_quant DROP CONSTRAINT stock_quant_package_id_fkey;
+ALTER TABLE public.stock_quant_package DROP CONSTRAINT stock_quant_package_parent_id_fkey;
+ALTER TABLE public.stock_pack_operation_lot DROP CONSTRAINT stock_pack_operation_lot_operation_id_fkey;
+
+-- 20.2 delete stock_move_operation_link
+delete from stock_move_operation_link;
+
+-- 20.3 delete stock_pack_operation
+delete from stock_pack_operation;
+
+-- 20.4 delete stock_quant_package
+delete from stock_quant_package;
+
+-- 20.5 add constraints
+ALTER TABLE stock_inventory
+	ADD CONSTRAINT stock_inventory_package_id_fkey FOREIGN KEY (package_id)
+        REFERENCES public.stock_quant_package (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_inventory_line
+	ADD CONSTRAINT stock_inventory_line_package_id_fkey FOREIGN KEY (package_id)
+        REFERENCES public.stock_quant_package (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_quant
+	ADD CONSTRAINT stock_quant_package_id_fkey FOREIGN KEY (package_id)
+        REFERENCES public.stock_quant_package (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_quant_package
+	ADD CONSTRAINT stock_quant_package_parent_id_fkey FOREIGN KEY (parent_id)
+        REFERENCES public.stock_quant_package (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE RESTRICT;
+ALTER TABLE stock_pack_operation_lot
+	ADD CONSTRAINT stock_pack_operation_lot_operation_id_fkey FOREIGN KEY (operation_id)
+        REFERENCES public.stock_pack_operation (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 21. Delete location
+
+-- 21.1 drop constraints
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_push_rule_id_fkey;
+ALTER TABLE public.pos_config DROP CONSTRAINT pos_config_stock_location_id_fkey;
+ALTER TABLE public.pos_order DROP CONSTRAINT pos_order_location_id_fkey;
+ALTER TABLE public.procurement_order DROP CONSTRAINT procurement_order_location_id_fkey;
+ALTER TABLE public.procurement_rule DROP CONSTRAINT procurement_rule_location_id_fkey;
+ALTER TABLE public.procurement_rule DROP CONSTRAINT procurement_rule_location_src_id_fkey;
+ALTER TABLE public.res_company DROP CONSTRAINT res_company_internal_transit_location_id_fkey;
+ALTER TABLE public.stock_change_product_qty DROP CONSTRAINT stock_change_product_qty_location_id_fkey;
+ALTER TABLE public.stock_fixed_putaway_strat DROP CONSTRAINT stock_fixed_putaway_strat_fixed_location_id_fkey;
+ALTER TABLE public.stock_inventory DROP CONSTRAINT stock_inventory_br_loss_inventory_id_fkey;
+ALTER TABLE public.stock_inventory DROP CONSTRAINT stock_inventory_location_id_fkey;
+ALTER TABLE public.stock_inventory_line DROP CONSTRAINT stock_inventory_line_br_loss_inventory_id_fkey;
+ALTER TABLE public.stock_inventory_line DROP CONSTRAINT stock_inventory_line_location_id_fkey;
+ALTER TABLE public.stock_location_flush DROP CONSTRAINT stock_location_flush_location_dest_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_location_dest_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_location_id_fkey;
+ALTER TABLE public.stock_move_scrap DROP CONSTRAINT stock_move_scrap_location_id_fkey;
+ALTER TABLE public.stock_pack_operation DROP CONSTRAINT stock_pack_operation_location_dest_id_fkey;
+ALTER TABLE public.stock_pack_operation DROP CONSTRAINT stock_pack_operation_location_id_fkey;
+ALTER TABLE public.stock_picking DROP CONSTRAINT stock_picking_location_dest_id_fkey;
+ALTER TABLE public.stock_picking DROP CONSTRAINT stock_picking_location_id_fkey;
+ALTER TABLE public.stock_picking_type DROP CONSTRAINT stock_picking_type_default_location_dest_id_fkey;
+ALTER TABLE public.stock_picking_type DROP CONSTRAINT stock_picking_type_default_location_src_id_fkey;
+ALTER TABLE public.stock_quant_package DROP CONSTRAINT stock_quant_package_location_id_fkey;
+ALTER TABLE public.stock_return_picking DROP CONSTRAINT stock_return_picking_location_id_fkey;
+ALTER TABLE public.stock_return_picking DROP CONSTRAINT stock_return_picking_original_location_id_fkey;
+ALTER TABLE public.stock_return_picking DROP CONSTRAINT stock_return_picking_parent_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_damage_dest_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_damage_src_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_gain_dest_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_gain_src_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_loss_dest_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_loss_src_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_lot_stock_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_view_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_wh_input_stock_loc_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_wh_output_stock_loc_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_wh_pack_stock_loc_id_fkey;
+ALTER TABLE public.stock_warehouse_orderpoint DROP CONSTRAINT stock_warehouse_orderpoint_location_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_wh_qc_stock_loc_id_fkey;
+
+-- 21.2 delete inventory_closing_balance_report_stock_location_rel
+delete from inventory_closing_balance_report_stock_location_rel
+where stock_location_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)));
+
+-- 21.3 delete inventory_details_report_stock_location_rel
+delete from inventory_details_report_stock_location_rel
+where stock_location_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)));
+
+-- 21.4 delete stock_location_path
+delete from stock_location_path
+where location_dest_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)))
+OR location_from_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)));
+
+-- 21.5 delete stock_quant
+delete from stock_quant
+where location_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)));
+
+-- 21.6 delete stock_warehouse_orderpoint
+delete from stock_warehouse_orderpoint
+where location_id in (
+select id from stock_location 
+where location_id = (select id from stock_location 
+where complete_name = 'Physical Locations/WBC/Output')
+OR (usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3)));
+
+-- 21.7 delete stock_location child
+delete from stock_location 
+where location_id in (
+select id from stock_location 
+where usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3));
+
+-- 21.8 delete parent location is WBC/Output
+delete from stock_location
+where location_id in (
+select id from stock_location
+where complete_name = 'Physical Locations/WBC/Output');
+
+-- 21.9 delete stock_location
+delete from stock_location 
+where id in (
+select id from stock_location 
+where usage ='transit' 
+and complete_name not like '%Interstore Transit%'  
+and (company_id=1 OR company_id=3));
+
+-- 21.10 add constraints
+ATLER TABLE stock_move
+	ADDCONSTRAINT stock_move_push_rule_id_fkey FOREIGN KEY (push_rule_id)
+        REFERENCES public.stock_location_path (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE pos_config
+	ADD CONSTRAINT pos_config_stock_location_id_fkey FOREIGN KEY (stock_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE pos_order
+	ADD CONSTRAINT pos_order_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE procurement_order
+	ADD CONSTRAINT procurement_order_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE procurement_rule
+	ADD CONSTRAINT procurement_rule_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE procurement_rule
+	ADD CONSTRAINT procurement_rule_location_src_id_fkey FOREIGN KEY (location_src_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE res_company
+	ADD CONSTRAINT res_company_internal_transit_location_id_fkey FOREIGN KEY (internal_transit_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_change_product_qty
+	ADD CONSTRAINT stock_change_product_qty_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_fixed_putaway_strat
+	ADD CONSTRAINT stock_fixed_putaway_strat_fixed_location_id_fkey FOREIGN KEY (fixed_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_inventory
+	ADD CONSTRAINT stock_inventory_br_loss_inventory_id_fkey FOREIGN KEY (br_loss_inventory_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_inventory
+	ADD CONSTRAINT stock_inventory_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_inventory_line
+	ADD CONSTRAINT stock_inventory_line_br_loss_inventory_id_fkey FOREIGN KEY (br_loss_inventory_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_inventory_line
+	ADD CONSTRAINT stock_inventory_line_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_location_flush
+	ADD CONSTRAINT stock_location_flush_location_dest_id_fkey FOREIGN KEY (location_dest_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_move
+	ADD CONSTRAINT stock_move_location_dest_id_fkey FOREIGN KEY (location_dest_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_move
+	ADD CONSTRAINT stock_move_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_move_scrap
+	ADD CONSTRAINT stock_move_scrap_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_pack_operation
+	ADD CONSTRAINT stock_pack_operation_location_dest_id_fkey FOREIGN KEY (location_dest_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_pack_operation
+	ADD CONSTRAINT stock_pack_operation_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_picking
+	ADD CONSTRAINT stock_picking_location_dest_id_fkey FOREIGN KEY (location_dest_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_picking
+	ADD CONSTRAINT stock_picking_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_picking_type
+	ADD CONSTRAINT stock_picking_type_default_location_dest_id_fkey FOREIGN KEY (default_location_dest_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_picking_type
+	ADD CONSTRAINT stock_picking_type_default_location_src_id_fkey FOREIGN KEY (default_location_src_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_quant_package
+	ADD CONSTRAINT stock_quant_package_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_return_picking
+	ADD CONSTRAINT stock_return_picking_location_id_fkey FOREIGN KEY (location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_return_picking
+	ADD CONSTRAINT stock_return_picking_original_location_id_fkey FOREIGN KEY (original_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_return_picking
+	ADD CONSTRAINT stock_return_picking_parent_location_id_fkey FOREIGN KEY (parent_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_view_location_id_fkey FOREIGN KEY (view_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_wh_input_stock_loc_id_fkey FOREIGN KEY (wh_input_stock_loc_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_wh_output_stock_loc_id_fkey FOREIGN KEY (wh_output_stock_loc_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_wh_pack_stock_loc_id_fkey FOREIGN KEY (wh_pack_stock_loc_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_wh_qc_stock_loc_id_fkey FOREIGN KEY (wh_qc_stock_loc_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_loss_dest_location_id_fkey FOREIGN KEY (loss_dest_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_loss_src_location_id_fkey FOREIGN KEY (loss_src_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_lot_stock_id_fkey FOREIGN KEY (lot_stock_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_gain_dest_location_id_fkey FOREIGN KEY (gain_dest_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_gain_src_location_id_fkey FOREIGN KEY (gain_src_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_damage_dest_location_id_fkey FOREIGN KEY (damage_dest_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ATLER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_damage_src_location_id_fkey FOREIGN KEY (damage_src_location_id)
+        REFERENCES public.stock_location (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+
+-- step 22. Delete procurement exception
+
+-- 22.1 drop constraints
+ALTER TABLE public.purchase_requisition DROP CONSTRAINT purchase_requisition_procurement_id_fkey;
+ALTER TABLE public.stock_move DROP CONSTRAINT stock_move_procurement_id_fkey;
+
+-- 22.2 delete stock_location_route_procurement
+delete from stock_location_route_procurement
+where procurement_id in (
+select id from procurement_order 
+where state = 'exception'
+);
+
+-- 22.3 delete procurement_order
+delete from procurement_order 
+where state = 'exception'
+
+-- 22.4 add constraints
+ALTER TABLE purchase_requisition
+	ADD CONSTRAINT purchase_requisition_procurement_id_fkey FOREIGN KEY (procurement_id)
+        REFERENCES public.procurement_order (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_move
+	ADD CONSTRAINT stock_move_procurement_id_fkey FOREIGN KEY (procurement_id)
+        REFERENCES public.procurement_order (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+-- step 23. Assign sequence number to partner
+UPDATE res_partner t1
+SET sequence_no = CONCAT('PARTNER/',LPAD(t.rownum::text,6,'0'))
+from
+(select id , row_number() over (ORDER BY id) as rownum
+  from res_partner
+  order by id) t
+  where t.id = t1.id;
+
+-- step 24. Update invoice state to 'Open'
+update account_invoice 
+set state = 'open'
+where id in [ 1.2 list of invoices ]
+
+-- step 25. Delete connector 
+
+-- 25.1 delete queue_job_queue_requeue_job_rel
+delete from queue_job_queue_requeue_job_rel;
+
+-- 25.2 delete queue_job
+delete from queue_job;
+
+-- step 26. Delete route
+
+-- 26.1 drop constraints
+ALTER TABLE public.procurement_rule DROP CONSTRAINT procurement_rule_route_id_fkey;
+ALTER TABLE public.sale_order_line DROP CONSTRAINT sale_order_line_route_id_fkey;
+ALTER TABLE public.stock_location_path DROP CONSTRAINT stock_location_path_route_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_crossdock_route_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_delivery_route_id_fkey;
+ALTER TABLE public.stock_warehouse DROP CONSTRAINT stock_warehouse_reception_route_id_fkey;
+
+
+-- 26.2 delete make_procurement_stock_location_route_rel
+delete from make_procurement_stock_location_route_rel
+where stock_location_route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.3 delete stock_location_route_categ
+delete from stock_location_route_categ
+where route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.4 delete stock_location_route_move
+delete from stock_location_route_move
+where route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.5 delete stock_location_route_procurement
+delete from stock_location_route_procurement
+where route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.5 delete stock_route_product
+delete from stock_route_product
+where route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.6 delete stock_route_warehouse
+delete from stock_route_warehouse
+where route_id in (
+select id from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR% );
+
+-- 26.7 delete stock_location_route
+delete from stock_location_route 
+where name like 'WIG%'
+OR name like 'WBC%'
+OR name like 'PSPCC%'
+OR name like '%Internal Transit%'
+OR name like 'WHC%'
+OR name like 'WHQ%'
+OR name like 'GTR%';
+
+-- 26.8 add constraints
+ALTER TABLE procurement_rule
+	ADD CONSTRAINT procurement_rule_route_id_fkey FOREIGN KEY (route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE sale_order_line
+	ADD CONSTRAINT sale_order_line_route_id_fkey FOREIGN KEY (route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_location_path
+	ADD CONSTRAINT stock_location_path_route_id_fkey FOREIGN KEY (route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_crossdock_route_id_fkey FOREIGN KEY (crossdock_route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_delivery_route_id_fkey FOREIGN KEY (delivery_route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+ALTER TABLE stock_warehouse
+	ADD CONSTRAINT stock_warehouse_reception_route_id_fkey FOREIGN KEY (reception_route_id)
+        REFERENCES public.stock_location_route (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE SET NULL;
+
+
+
+ 
+
+
+

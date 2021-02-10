@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_analytic_location_form_inherit" model="ir.ui.view">
+            <field name="name">br.view.analytic.location.form.inherit</field>
+            <field name="model">stock.location</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location_id']" position="after">
+                    <label for="br_analytic_account_id" class="oe_edit_only"/>
+                    <h1><field name="br_analytic_account_id"/></h1>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

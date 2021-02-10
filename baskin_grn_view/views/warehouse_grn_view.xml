@@ -1,0 +1,98 @@
+<openerp>
+	<data>
+		
+		<record id="baskin_view_picking_internal_search" model="ir.ui.view">
+            <field name="name">stock.picking.internal.search</field>
+            <field name="model">stock.picking</field>
+            <field name="arch" type="xml">
+                <search string="Picking Lists">
+                    <field name="name" string="Picking List" filter_domain="['|',('name','ilike', self),('origin','ilike',self)]"/>
+                    <field name="driver" string="Driver"/>
+                    <separator/>
+                    <filter name="schedule_expected_diff" string="Delivery Date &lt;&gt; Schedule Date" domain="[('schedule_expected_diff','!=', 0)]"/>
+                    <filter name="schedule_gt_expected" string="Delivery Date &gt; Schedule Date" domain="[('schedule_expected_diff','&gt;', 0)]"/>
+                    <filter name="schedule_lt_expected" string="Delivery Date &lt; Schedule Date" domain="[('schedule_expected_diff','&lt;', 0)]"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state','=','draft')]" help="Draft Moves"/>
+                    <filter name="available" string="Ready" domain="[('state','in',('assigned', 'partially_available'))]" help="Assigned Moves"/>
+                    <filter name="only_available" string="Available" domain="[('state','=','assigned')]" help="Assigned Moves"/>
+                    <filter name="waiting" string="Waiting Availability" domain="[('state','in', ('confirmed', 'waiting'))]" help="Waiting Moves"/>
+                    <filter name="confirmed" string="Confirmed" domain="[('state','in', ('confirmed', 'waiting', 'assigned'))]" help="Confirmed Moves"/>
+                    <filter name="done" string="Done" domain="[('state','=','done')]" help="Pickings already processed"/>
+                    <filter name="not_done_not_cancel" string="Not Done/Cancel" domain="[('state','not in',['done','cancel'])]" />
+                    <filter name="not_transit_done_cancel" string="Not Transit/Done/Cancel" domain="[('state','not in',['done','cancel','transit'])]" />
+                	<filter name="waiting_partial" string="Waiting Availability or Partial" domain="[('state','in',['confirmed','partially_available'])]" />
+                	<filter name="processing" string="Processing" domain="[('state','in',['draft','confirmed','partially_available','assigned'])]" />
+                	<filter name="processed" string="Processed" domain="[('state','=','processed')]" />
+                	<separator/>
+                    <filter name="late" string="Late" domain="[('min_date','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Pickings that are late on scheduled time"/>
+                    <separator/>
+                    <filter name="deliv_today_and_before" string="Delivery Today and Before" domain="[('min_date','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)) )]" />
+                	<separator/>
+                    <filter name="deliv_yesterday_and_before" string="Delivery Yesterday and Before" domain="[('min_date','&lt;=', datetime.datetime.combine(context_today()-relativedelta(days=1), datetime.time(23,59,59)) )]" />
+                	<separator/>
+                    <filter name="deliv_tomorrow" string="Delivery Tomorrow" 
+                    domain="[('min_date','&gt;=', datetime.datetime.combine(context_today()+relativedelta(days=1), datetime.time(0,0,0)) ),
+							 ('min_date','&lt;=', datetime.datetime.combine(context_today()+relativedelta(days=1), datetime.time(23,59,59)) )]" />
+                	<separator/>
+                	
+                    <filter name="deliv_2_3day" string="Delivery 2-3D later" 
+                    domain="[('min_date','&gt;=', datetime.datetime.combine(context_today()+relativedelta(days=2), datetime.time(0,0,0)) ),
+							 ('min_date','&lt;=', datetime.datetime.combine(context_today()+relativedelta(days=3), datetime.time(23,59,59)) )]" />
+                	<separator/>
+                	<filter name="backorder" string="Backorders" domain="[('backorder_id','&lt;&gt;', False)]" help="Remaining parts of picking partially processed"/>
+                    <field name="partner_id" filter_domain="[('partner_id','child_of',self)]"/>
+                    <field name="product_id"/>
+                    <field name="picking_type_id"/>
+                    <field name="group_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Driver" context="{'group_by':'driver'}"/>
+                        <filter string="Vehicle" context="{'group_by':'vehicle'}"/>
+                        <filter string="Source Location Area Manager" name="group_src_location_area_manager" context="{'group_by':'src_location_outlet_area_manager'}"/>
+                        <filter string="Origin Warehouse" context="{'group_by':'warehouse_id'}"/>
+                        <filter string="Destination Warehouse" context="{'group_by':'dest_warehouse_id'}"/>
+                         <filter string="Source Location" name="group_src_location" context="{'group_by':'location_id'}"/>
+                     	<filter string="Destination Location" name="group_dest_location" context="{'group_by':'location_dest_id'}"/>
+                        <filter string="Route" context="{'group_by':'outlet_route_id'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Order Date" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Expected Date" domain="[]" context="{'group_by':'min_date'}"/>
+                        <filter string="Origin" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter name="picking_type" string="Picking Type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Procurement Group" domain="[]" context="{'group_by':'group_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+		
+		<record id="action_warehouse_grn" model="ir.actions.act_window">
+            <field name="name">Warehouse GRN</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('location_usage','=','supplier'),
+            	('dest_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna'])]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_group_dest_location' : 1,
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_only_available': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_warehouse_grn" 
+			name="Warehouse GRN" sequence="10" 
+			action="action_warehouse_grn"
+			parent="menu_logistics_ops_check"/>
+	</data>
+</openerp>

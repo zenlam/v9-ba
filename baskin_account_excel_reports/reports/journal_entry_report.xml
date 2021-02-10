@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_journal_entry">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <style>
+                            .div-hr{
+                                background-color: black;
+                                height: 2px;
+                            }
+                            th{
+                                background-color: #D3D3D3;
+                                color:black;
+                            }
+                            .header_table tr { height: 20px; }
+                            td{
+                                font-family:sans-serif;
+                                font-size: small;
+                                color: black;
+                            }
+                            div{
+                                font-family:sans-serif;
+                                font-size: small;
+                                color: black;
+                            }
+                        </style>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <strong><span style="font-size:25px;" t-field="doc.name"/></strong>
+                            </div>
+                        </div>
+                        <div class="row col-xs-12" style="margin-top:20px;">
+                            <div style="float: left;width:50%;" >
+                                <table class="header_table">
+                                    <tr>
+                                        <td>Journal
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.journal_id and doc.journal_id.name or ''"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Company
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.company_id and doc.company_id.name or ''"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Partner
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.partner_id and doc.partner_id.name or ''"/>
+                                        </td>
+                                    </tr>   
+                                    <tr>
+                                        <td>Asset
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.asset_id and doc.asset_id.name or ''"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="float: left;width:50%;">
+                                <table class="header_table">
+                                    <tr>
+                                        <td>Date
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.date" t-field-options='{"format": "MM/dd/yyyy"}'/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Inv No / Ref
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.ref "/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Imported On
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.imported_on" t-field-options='{"format": "MM/dd/yyyy"}'/>
+                                        </td>
+                                    </tr>   
+                                    <tr>
+                                        <td>Internal Remarks
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.internal_remarks"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Memo
+                                        </td>
+                                        <td>
+                                            <span t-esc="doc.memo"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row col-xs-12" style="margin-top:20px;">
+                            <table style="" class="table table-condensed">
+                                <thead>
+                                    <th style="width:13%;">Partner</th>
+                                    <th>Account</th>
+                                    <th>Label</th>
+                                    <th>Product</th>
+                                    <th>Analytic Account</th>
+                                    <th>Forex Amount</th>
+                                    <th>Forex Currency</th>
+                                    <th>
+                                        <t t-if="doc.company_id.is_golden_scoop">
+                                            Debit(RM)
+                                        </t>
+                                        <t t-if="doc.company_id.is_mega_scoop">
+                                            Debit(SGD)
+                                        </t>
+                                    </th>
+                                    <th>
+                                        <t t-if="doc.company_id.is_golden_scoop">
+                                            Credit(RM)
+                                        </t>
+                                        <t t-if="doc.company_id.is_mega_scoop">
+                                            Credit(SGD)
+                                        </t>
+                                    </th>
+                                </thead>
+
+                                <tr>
+                                    <td>
+                                        Grand Total
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <t t-esc="'{:,.2f}'.format(sum(l.debit for l in doc.line_ids)) " />
+                                    </td>
+                                    <td>
+                                        <t t-esc="'{:,.2f}'.format(sum(l.credit for l in doc.line_ids)) " />
+                                    </td>
+                                </tr>
+
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="line.partner_id and line.partner_id.name or ''"/>
+                                        </td>
+                                        <td style="display:block;word-wrap:break-word;">
+                                            <span t-esc="line.account_id.code+'-'+line.account_id.name or ''"/>
+                                        </td>
+                                        <td style="display:block;word-wrap:break-word;">
+                                            <span t-esc="line.name"/>
+                                        </td>
+                                        <td style="display:block;word-wrap:break-word;">
+                                            <span t-esc="line.product_id and line.product_id.name or ''"/>
+                                        </td>
+                                        <td style="display:block;word-wrap:break-word;">
+                                            <span t-esc="line.analytic_account_id and line.analytic_account_id.name or ''"/>
+                                        </td>
+                                        <td class="align-right">
+                                            <span t-esc="line.amount_currency"/>
+                                        </td>
+                                        <td class="align-right">
+                                            <span t-esc="line.currency_id and line.currency_id.name or ''"/>
+                                        </td>
+                                        <td class="align-right">
+                                            <span t-esc="'{:,.2f}'.format(line.debit)" />
+                                        </td>
+                                        <td class="align-right">
+                                            <span t-esc="'{:,.2f}'.format(line.credit)" />
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+                        
+
+                        <div class="row col-xs-12" style="margin-top:20px;page-break-inside: avoid;">
+
+                            <div style="float: left;width:30%;font-family:sans-serif;">
+                                Prepared by:
+                                <br/>
+                                <div style="width:100%;height:60px;border-bottom:1px solid;"></div>
+                                <br/>
+                                Date:
+                                <br/>
+                                Name:
+
+                            </div>
+                            <div style="float: left;width:5%;">&amp;nbsp;</div>
+                            <div style="float: left;width:30%;">
+                                Checked by:
+                                <br/>
+                                <div style="width:100%;height:60px;border-bottom:1px solid;"></div>
+                                <br/>
+                                Date:
+                                <br/>
+                                Name:
+                            </div>
+                            <div style="float: left;width:5%;">&amp;nbsp;</div>
+                            <div style="float: left;width:30%;">
+                                Approved by:
+                                <br/>
+                                <div style="width:100%;height:60px;border-bottom:1px solid;"></div>
+                                <br/>
+                                Date:
+                                <br/>
+                                Name:
+                            </div>
+                        </div>
+            
+                    </div>
+                    <div class="oe_structure"/>
+                    <div class="footer" style="text-align:center;">
+                        <span>Page </span><span class="page" /> of <span class="topage" />
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <record id="br_paperformat_journal_entry" model="report.paperformat">
+            <field name="name">Baskin journal entry</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">80</field>
+        </record>
+
+        <report
+            id="action_report_account_journal_entry"
+            string="Journal Entry"
+            model="account.move"
+            report_type="qweb-pdf"
+            name="baskin_account_excel_reports.report_journal_entry"
+            file="baskin_account_excel_reports.report_journal_entry"
+            paperformat="br_paperformat_journal_entry" 
+        />
+
+    </data>
+</openerp>

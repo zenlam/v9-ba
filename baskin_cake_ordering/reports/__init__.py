@@ -1,0 +1,2 @@
+import cake_ordering_view
+import stock_move_report_view

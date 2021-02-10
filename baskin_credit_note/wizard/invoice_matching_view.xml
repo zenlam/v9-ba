@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_invoice_matching" model="ir.ui.view">
+            <field name="name">invoice.matching.form</field>
+            <field name="model">invoice.matching</field>
+            <field name="arch" type="xml">
+                <form string="Invoice Matching">
+                 	<field name="invoice_allocation_ids">
+                 		<tree editable="bottom">
+                 			<field name="invoice_id"/>
+                 			<field name="date_invoice"/>
+                 			<field name="number"/>
+                 			<field name="invoice_amount"/>
+                 			<field name="amount_due"/>
+                 			<field name="product_id"/>
+                 			<field name="reason"/>
+                 			<field name="refund_amount_allocation"/>
+                 		</tree>
+                 	</field>
+                    <footer>
+                        <button string='Refund &amp; Reconcile' name="invoice_refund_reconcile" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_invoice_matching" model="ir.actions.act_window">
+            <field name="name">Invoice Matching</field>
+            <field name="res_model">invoice.matching</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_invoice_matching"/>
+           <field name="target">new</field>
+        </record>
+        
+        <!--<record id="action_bulk_refund_invoice" model="ir.actions.server">
+            <field name="name">Create Bulk Refund</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">action = self.action_bulk_refund_invoice(cr, uid, context.get('active_ids'), context=context)</field>
+        </record>
+		
+        <record model="ir.values" id="action_action_bulk_refund_invoice_value">
+            <field name="model_id" ref="account.model_account_invoice" />
+            <field name="name">Create Bulk Refund</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,' +str(ref('action_bulk_refund_invoice'))" />
+            <field name="key">action</field>
+            <field name="model">account.invoice</field>
+        </record>-->
+
+    </data>
+</openerp>

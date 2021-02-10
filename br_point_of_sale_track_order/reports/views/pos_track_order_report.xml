@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_track_order_report_form" model="ir.ui.view">
+            <field name="name">Fidelity Report</field>
+            <field name="model">pos.track.order.report</field>
+            <field name="arch" type="xml">
+                <form string="Confirm">
+                    <group>
+                        <group>
+                            <field name="area_ids" widget="many2many_tags"/>
+                            <field name="region_ids" widget="many2many_tags"/>
+                            <field name="outlet_ids" widget="many2many_tags" context="{'active_model': 'br_multi_outlet.outlet'}"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="report_type" required="1"/>
+                            <field name="break_down_by" attrs="{'invisible':[('report_type', '=', 'detailed')], 'required': [('report_type', '=', 'summary')]}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="xlsx_export" string="Generate Report" type="object"
+                                class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel" type="object"
+                                class="oe_link"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="track_order_report_action" model="ir.actions.act_window">
+            <field name="name">Fidelity Report</field>
+            <field name="res_model">pos.track.order.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="br_point_of_sale_track_order.view_track_order_report_form"/>
+        </record>
+
+        <menuitem id="track_order_report_menu" action="track_order_report_action"
+                  parent="point_of_sale.menu_point_rep" sequence="420" />
+
+    </data>
+</openerp>

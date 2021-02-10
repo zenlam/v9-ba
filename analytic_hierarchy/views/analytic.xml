@@ -1,0 +1,48 @@
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="analytic_hierarchy_form_view">
+            <field name="name">analytic.hierarchy</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="parent_id" context="{'view_all_analytic': True}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="analytic_hierarchy_tree_view" model="ir.ui.view">
+            <field name="name">analytic.hierarchy</field>
+            <field name="model">account.analytic.account</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Analytic Accounts">
+                    <field name="display_name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="total_debit"/>
+                    <field name="total_credit"/>
+                    <field name="total_balance"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="analytic_hierarchy_action" model="ir.actions.act_window">
+            <field name="name">Analytic Accounts</field>
+            <field name="res_model">account.analytic.account</field>
+            <field name="view_id" ref="analytic_hierarchy_tree_view"/>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'view_all_analytic': True}</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+        </record>
+        <act_window
+            id="action_analytic_account_form"
+            name="Analytic Accounts"
+            domain="[('id', '=', active_id)]"
+            res_model="account.analytic.account"
+            src_model="account.analytic.account"
+            key2="tree_but_open"/>
+
+        <menuitem id="analytic_hierarchy" parent="account.menu_finance_entries" action="analytic_hierarchy_action" name="Analytic Accounts Hierarchy" sequence="31" groups="analytic.group_analytic_accounting"/>
+    </data>
+</openerp>

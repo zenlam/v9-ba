@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <template id="baskin_report_receipt_document">
+         <div class="page" style="text-align: center; font-size: 18px; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';">
+            <div style="text-align: center; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                <t t-if="o.user_id.company_id.logo_web">
+                    <div class="company_logo"><img t-att-src="'data:image/png;base64,'+o.user_id.company_id.logo_web" width="170%"/></div>
+                </t>
+                <t t-set="amount_tax" t-value="o.amount_tax"/>
+                <t t-set="amount_untaxed" t-value="o.amount_untaxed"/>
+                <t t-set="tax_adjustment" t-value="o.tax_adjustment"/>
+                <t t-set="amount_total" t-value="o.amount_total"/>
+                <div>
+                    <span t-esc="o.outlet_id.name"/><br/>
+                    <span t-esc="o.user_id.company_id.name"/>
+                    <t t-if="o.user_id.company_id.company_registry">
+                        (<span t-esc="o.user_id.company_id.company_registry"/>)
+                    </t>
+                    <br/>
+
+                    <t t-if="o.user_id.company_id.street">
+                        <span t-esc="o.user_id.company_id.street"/>
+                    </t>
+                    <t t-if="o.user_id.company_id.street2">
+                        <span t-esc="o.user_id.company_id.street2"/>
+                    </t>
+                    <t t-if="o.user_id.company_id.city">
+                        <span t-esc="o.user_id.company_id.city"/>
+                    </t>
+                    <br/>
+
+                    <t t-if="o.user_id.company_id.partner_id.country_id and o.user_id.company_id.country_id.name">
+                        <span t-esc="o.user_id.company_id.country_id.name"/>
+                    </t>
+                    <t t-if="o.user_id.company_id.partner_id.zip">
+                        <span t-esc="o.user_id.company_id.partner_id.zip"/>
+                    </t>
+                    <br/>
+                    <span t-if="o.user_id.company_id.vat">
+                        Government Tax Ref. No.: <t t-esc="o.user_id.company_id.vat"/>
+                    </span>
+                    <br/>
+                    <span t-if="o.outlet_id.outlet_phone">
+                        Outlet Tel: <t t-esc="o.outlet_id.outlet_phone"/>
+                    </span>
+                </div>
+            </div>
+            <table style="margin-top: 10px">
+                <colgroup>
+                    <col width="35%"/>
+                    <col width="65%"/>
+                </colgroup>
+                <tr>
+                    <td colspan="2" style="text-align: center; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px; text-bold"><span>Tax Invoice</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;"><span>(RePrint)</span></td>
+                </tr>
+                <tr>
+                    <td width="30%" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Invoice No</td>
+                    <td colspan="2" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">:
+                        <!-- below lines are to have a old data compatibility as we change the pos reference structure -->
+                        <t t-if="len(o.pos_reference.split('-')) == 3"><t t-esc="o.pos_reference"/></t>
+                        <t t-if="len(o.pos_reference.split('-')) == 4"><t t-esc="o.pos_reference.replace('-'+o.pos_reference.split('-')[-1], '' )"/></t>
+                    </td>
+                </tr>
+                <tr t-if="len(o.pos_reference.split('-')) == 4">
+                    <td width="30%" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Ref No</td>
+                    <td colspan="2" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">:
+                        <t t-esc="o.pos_reference.split('-')[-1]"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">POS No</td>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">: <t t-esc="o.session_id.config_id.name"/></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Cashier</td>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">:
+                        <t t-if="o.user_id">
+                                <span t-esc="o.user_id.name"/>
+                        </t>
+                        <br/></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Date &amp; time</td>
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">: <span t-field="o.date_order" t-field-options='{"format": "dd/MM/yyyy HH:mm:SS"}'/> </td>
+                </tr>
+            </table>
+            <br/>
+            <table>
+                <colgroup>
+                    <col width="35%"/>
+                    <col width="8%"/>
+                    <col width="23%"/>
+                    <col width="20%"/>
+                    <col width="7%"/>
+                </colgroup>
+                <tr>
+                    <td class="text-bold" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Description</td>
+                    <td class="text-bold" style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Qty</td>
+                    <td class="text-bold" style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">U.Price</td>
+                    <td class="text-bold" style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;" colspan="2" t-if="o.user_id.company_id.id == 1">
+                        Total(RM)
+                    </td>
+                    <td class="text-bold" style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;" colspan="2" t-if="o.user_id.company_id.id == 3">
+                        Total(SGD)
+                    </td>
+                </tr>
+                <tr class="tr-height"/>
+                <tr t-foreach="o.master_ids" t-as="orderline" t-attf-class="tr-height">
+                    <td style="text-align: left;font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="orderline.product_id.name"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <!-- <t t-esc="orderline.qty"/> -->
+                        <t t-esc="'%.0f'%orderline.qty"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <!-- <t t-esc="orderline.price_unit"/> -->
+                        <t t-esc="'%.2f'%orderline.price_unit"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+<!--                         <t t-esc="'%.2f'%orderline.price_subtotal_incl"/>-->
+<!--                        <t t-esc="'%.2f'%orderline.price_subtotal"/>-->
+                        <t t-esc="'%.2f'%(orderline.qty * orderline.price_unit)"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="orderline.get_taxes_code()"/>
+                    </td>
+                </tr>
+                <tr t-foreach="o.get_line_discount()" t-as="d" t-attf-class="tr-height">
+                    <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="d['product']"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <!-- <t t-esc="d['qty']"/> -->
+                        <t t-esc="'%.0f'%d['qty']"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <!-- <t t-esc="d['price_unit']"/> -->
+                        <t t-esc="'%.2f'%d['price_unit']"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="'%.2f'%d['price_unit']"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="d['tax_code']"/>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <table>
+                <tr>
+                    <td t-if="o.user_id.company_id.id == 1" colspan="2" class="text-bold" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Total (Excl. Service Tax)</td>
+                    <td t-if="o.user_id.company_id.id == 3" colspan="2" class="text-bold" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Total (Excl. GST)</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="'%.2f'%(amount_untaxed - tax_adjustment)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td t-if="o.user_id.company_id.id == 1" colspan="2" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Service Tax</td>
+                    <td t-if="o.user_id.company_id.id == 3" colspan="2" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">GST</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="'%.02f'%(amount_tax + tax_adjustment)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Rounding adj.</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="'%.02f'%(-1 * o.br_get_rounding_payment() + 0)"/>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td t-if="o.user_id.company_id.id == 1" class="text-bold" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Total (Incl. Service Tax)</td>
+                    <td t-if="o.user_id.company_id.id == 3" class="text-bold" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Total (Incl. GST)</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="'%.2f'%(amount_total - o.br_get_rounding_payment())"/>
+                    </td>
+                </tr>
+                <!--<t t-set="cash_change" t-value="false" />-->
+                <t t-foreach="o.statement_ids" t-as="line">
+                    <!--<t t-if="line.journal_id.type == 'cash' and line.amount > 0" >-->
+                        <!--<t t-set="is_cash" t-value="true"/>-->
+                    <!--</t>-->
+                    <tr>
+                        <td t-if="line.amount &gt; 0 and not line.journal_id.is_rounding_method" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="line.journal_id.name"/>
+                    </td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;" t-if="line.amount &gt; 0 and not line.journal_id.is_rounding_method">
+                        <t t-esc="'%.2f'%line.amount"/>
+                    </td>
+
+                    </tr>
+
+                    <tr t-if="line.card_type">
+                        <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Card Type:</td>
+                        <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                            <t t-esc="line.card_type"/>
+                        </td>
+                    </tr>
+                    <tr t-if="line.card_number">
+                        <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Card Number:</td>
+                        <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                            <t t-esc="line.get_masked_card_number()"/>
+                        </td>
+                    </tr>
+                    <tr t-if="line.approval_no">
+                        <td style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">Approval Code:</td>
+                        <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                            <t t-esc="line.approval_no"/>
+                        </td>
+                    </tr>
+                </t>
+                <tr t-foreach="o.statement_ids" t-as="line_1">
+                    <td t-if="line_1.amount &lt; 0 and not line_1.journal_id.is_rounding_method" style="text-align: left; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;">
+                        <t t-esc="line_1.journal_id.name"/>
+                    </td>
+                    <td style="text-align: right;font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;" t-if="line_1.amount &lt; 0 and not line_1.journal_id.is_rounding_method">
+                        <t t-esc="'%.2f'%((-1) *line_1.amount)"/>
+                    </td>
+                </tr>
+
+            </table>
+            <span>------------------------------------------------------</span>
+            <br/>
+            <br/>
+            <table>
+                 <colgroup>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                </colgroup>
+                <tr>
+                    <td style="text-align: center; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;">Tax Summary</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;">Tax Rate</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;" t-if="o.user_id.company_id.id == 1">Sale (RM)</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;" t-if="o.user_id.company_id.id == 3">Sale(SGD)</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;" t-if="o.user_id.company_id.id == 1">Tax (RM)</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;font-weight: bold;" t-if="o.user_id.company_id.id == 3">Tax(SGD)</td>
+                </tr>
+                <t t-set="taxes" t-value="o.get_tax_summary()" />
+                <tr t-foreach="taxes" t-as="tax_id">
+                    <td style="text-align: center; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;"><t t-esc="taxes[tax_id]['tax_code']"/></td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;"><t t-esc="'%.1f'% taxes[tax_id]['tax_rate']"/>%</td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;"><t t-esc="'%.2f'% (taxes[tax_id]['total_w_tax'] - tax_adjustment)"/></td>
+                    <td style="text-align: right; font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';color: #555555;font-size: 18px;"><t t-esc="'%.2f'% (taxes[tax_id]['tax_amount'] + tax_adjustment)"/></td>
+                </tr>
+            </table>
+
+            <table>
+                    <br/>
+                    <div style="text-align:center;font-family: 'Lato','Lucida Grande', 'Helvetica', 'Verdana', 'Arial';font-size: 18px;color: #555555;">
+                        <span> Thank you! Please come again!</span><br/>
+                        <span> www.baskinrobbins.com.my </span><br/>
+                    </div>
+                <!--<tr>-->
+                    <!--<td><br/><div id="barcode"></div></td>-->
+                <!--</tr>-->
+            </table>
+        </div>
+    </template>
+
+    <template id="point_of_sale.report_receipt">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="br_point_of_sale.baskin_report_receipt_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="assets_common" inherit_id="report.assets_common" name="Baskin Report Assets Common">
+        <xpath expr="." position="inside">
+            <link href="/br_point_of_sale/static/src/css/br_reprint_receipt.css" rel="stylesheet"
+                  type="text/css"/>
+            <link href="/br_point_of_sale/static/src/css/br_pos.css" rel="stylesheet"
+              type="text/css"/>
+        </xpath>
+    </template>
+</data>
+</openerp>

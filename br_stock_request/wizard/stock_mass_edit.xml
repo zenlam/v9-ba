@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="stock_mass_edit_form">
+            <field name="name">stock.mass.edit.form</field>
+            <field name="model">stock.mass.edit</field>
+            <field name="arch" type="xml">
+                <form string="Mass Edit">
+                    <group>
+                        <group>
+                            <field name="driver" context="{'default_type': 'driver', 'default_customer': False}"/>
+                            <field name="truck" domain="[('active', '=', True)]"/>
+                        </group>
+                        <group>
+                            <field name="packer" context="{'default_type': 'picker_packer', 'default_customer': False}"/>
+                            <field name="schedule_date"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="edit_pickings" type="object" string="Mass Edit" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock_mass_edit_act">
+            <field name="name">Mass Edit Transfer</field>
+            <field name="res_model">stock.mass.edit</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_mass_edit_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <act_window id="action_mass_edit_stock"
+                    multi="True"
+                    key2="client_action_multi" name="Edit Transfer"
+                    res_model="stock.mass.edit" src_model="stock.picking"
+                    view_mode="form" target="new" view_type="form"/>
+
+    </data>
+</openerp>

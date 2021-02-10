@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="view_stock_production_lot_tree" model="ir.ui.view">
+            <field name="name">view.stock.production.lot</field>
+            <field name="model">stock.production.lot</field>
+            <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="removal_date"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--FIXME: why push this here, this one should be placed in br_stock module-->
+        <record id="view_br_picking_inherit_form2" model="ir.ui.view">
+            <field name="name">view.br.stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="move_lines_related" position="replace">
+                    <field name="move_lines_related" readonly="1" attrs="{'invisible': ['|', ('to_damage_location', '=', True), ('state', 'in', ('draft', 'confirmed', 'waiting'))]}" context="{'address_in_id': partner_id, 'form_view_ref':'stock.view_move_picking_form', 'tree_view_ref':'stock.view_move_picking_tree', 'default_picking_type_id': picking_type_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--upgrade to oddo 9-->
+        <template id="hss_point_of_sale_assets" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <!--Start of Zendesk Chat Script-->
+                <script type="text/javascript">
+                window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+                d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+                _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+                $.src="https://v2.zopim.com/?4opRXNnItVqLGjmilObV6lmo4cP9Uqdn";z.t=+new Date;$.
+                type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+                </script>
+                <!--End of Zendesk Chat Script-->
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/socket_client.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/br_db.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/br_models.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/br_screen.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/br_chrome.js"></script>
+                <script type="text/javascript" src="/br_point_of_sale/static/src/js/br_widgets.js"></script>
+            </xpath>
+            <xpath expr="//link[@id='pos-stylesheet']" position="after">
+                <script type="text/javascript">
+                    var login_number = parseInt("<t t-esc = "request.login_number" />");
+                </script>
+                <link rel="stylesheet" href="/br_point_of_sale/static/src/css/bootstrap.css"/>
+                <link rel="stylesheet" href="/br_point_of_sale/static/src/css/br_pos.css"/>
+            </xpath>
+
+        </template>
+
+        <record id="auto_close_rescue_pos" model="ir.cron">
+            <field name="name">Auto Close POS Rescue Session</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=1) - timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="doall" eval="False"/>
+            <field name="model" eval="'pos.session.closing.confirm'"/>
+            <field name="function" eval="'auto_close_rescue_pos'"/>
+            <field eval="'()'" name="args"/>
+        </record>
+
+        <!--Point of Sale Menu Item-->
+        <record model="ir.ui.menu" id="point_of_sale.menu_point_of_sale">
+            <field name="name">POS</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_point_ofsale">
+            <field name="name">Order</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_pos_session_all">
+            <field name="name">Session</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_point_config_product">
+            <field name="sequence">210</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_report_pos_order_all">
+            <field name="name">Product Sold Analysis</field>
+            <field name="sequence">440</field>
+            <field name="groups_id" eval="[(4, ref('br_base.group_hide_menu'))]"/>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_pos_global_settings">
+            <field name="sequence">25</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_action_account_journal_form_open">
+            <field name="parent_id" ref="br_product.br_menu_config_menu_names"/>
+            <field name="name">Payment Method</field>
+        </record>
+
+        <record model="ir.ui.menu" id="point_of_sale.menu_pos_barcode_nomenclature_all">
+            <field name="name">Barcode Nomenclatures</field>
+            <field name="groups_id" eval="[(4, ref('br_base.group_hide_menu'))]"/>
+        </record>
+    </data>
+</openerp>

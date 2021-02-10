@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_uom_vendor_form" model="ir.ui.view">
+            <field name="name">br.view.uom.vendor.form.inherit</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="after">
+                    <group string="UOM">
+                        <field name="uom_ids" context="{'default_uom_lines':uom_ids, 'default_uom_id': context.get('default_uom_id', False)}">
+                            <tree string="UOM Lines" editable="bottom">
+                                <field name="level_uom"/>
+                                <field name="is_po_default" string="Purchase UOM"/>
+                                <field name="is_distribution"/>
+                                <field name="is_storage"/>
+                                <field name="is_ordering"/>
+                                <field name="name"/>
+                                <!--<field name="category_id" readonly="1"/>-->
+                                <field name="uom_type"/>
+                                <field name="factor_inv" string="Ratio"/>
+                                <field name="product_tmpl_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="packing_size" string="Packing Size"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_uom_vendor_tree" model="ir.ui.view">
+            <field name="name">br.view.uom.vendor.tree.inherit</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price']" position="after">
+                    <field name="product_uom" string="UOM"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="br_view_uom_form" model="ir.ui.view">
+            <field name="name">br.view.uom.form.inherit</field>
+            <field name="model">product.uom</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/group/field[@name='factor_inv']" position="after">
+                    <field name="vendor_id"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="level_uom"/>
+                </xpath>
+                <xpath expr="//group/group/field[@name='rounding']" position="after">
+                    <field name="uom_total_type" widget="radio"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_product_template_form_view_inherit" model="ir.ui.view">
+            <field name="name">br.product.template.form.inherit</field>
+            <field name="model">product.template</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='seller_ids']" position="replace">
+                    <field name="seller_ids" context="{'default_uom_lines':context.get('default_uom_lines', False), 'default_product_tmpl_id': context.get('product_tmpl_id', active_id), 'default_uom_id': uom_id}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

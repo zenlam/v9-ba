@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+		<record id="base.allow_receive_more_quantity" model="res.groups">
+	        <field name="name">Allow Receive More Quantity</field>
+	        <field name="category_id" ref="base.module_category_warehouse_management"/>
+	    </record>
+	</data>
+    <data>
+		<record id="allow_set_quantities_to_0" model="res.groups">
+	        <field name="name">Set quantities to 0</field>
+	        <field name="category_id" ref="base.module_category_warehouse_management"/>
+	    </record>
+	</data>
+    
+    <data>
+		<record id="allow_move_stocks_in_location" model="res.groups">
+	        <field name="name">Move Stocks in Location</field>
+	        <field name="category_id" ref="base.module_category_warehouse_management"/>
+	    </record>
+	</data>
+    <data noupdate="1">
+        <record model="ir.rule" id="stock_location_route_comp_rule">
+            <field name="name">stock_location_route multi-company</field>
+            <field name="model_id" ref="stock.model_stock_location_route"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="access_stock_picking_remark" model="ir.model.access">
+            <field name="name">access_stock_picking_remark</field>
+            <field name="model_id" ref="model_stock_picking_remark"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_stock_user_fleet_vehicle" model="ir.model.access">
+            <field name="name">access_stock_user_fleet_vehicle</field>
+            <field name="model_id" ref="model_br_fleet_vehicle"/>
+            <field name="group_id" ref="stock.group_stock_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_stock_manager_br_fleet_vehicle" model="ir.model.access">
+            <field name="name">access_stock_manager_br_fleet_vehicle</field>
+            <field name="model_id" ref="model_br_fleet_vehicle"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</openerp>

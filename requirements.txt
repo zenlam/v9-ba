@@ -1,0 +1,3 @@
+pysftp==0.2.9
+XlsxWriter==0.9.8
+pyftp==0.1.1

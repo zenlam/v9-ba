@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="report_partner_balance_template">
+	    	<div class="header">
+                <table class="oe_baskin_table_header">
+                	<tr>
+                        <td width="50%">
+                             <strong class="oe_baskin_header"><t t-esc="company.name"/></strong>
+                        </td>
+                        <td width="50%" class="oe_baskin_name">
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <t t-if="company.company_registry">
+                                <t t-esc="company.company_registry"/>
+                                <br/>
+                            </t>
+                            <t t-if="company.street">
+                                <t t-esc="company.street"/>,
+                            </t>
+                            <t t-if="company.street2">
+                                <t t-esc="company.street2"/>
+                                <br/>
+                            </t>
+                            <t t-if="company.city">
+                                <t t-esc="company.city"/>,
+                            </t>
+                            <t t-if="company.state_id">
+                                <t t-esc="company.state_id.name"/>
+                            </t>
+                            <t t-if="company.zip">
+                                <t t-esc="company.zip"/>
+                             </t>
+                            <t t-if="company.country_id">
+                                <t t-esc="company.country_id.name"/>
+                            </t>
+                            <t t-if="company.phone">
+                                Tel : <t t-esc="company.phone"/>
+                                <br/>
+                            </t>
+                            <t t-if="company.fax">
+                                Fax : <t t-esc="company.fax"/>
+                                <br/>
+                            </t>
+                            <t t-if="company.vat and company.id == 1">
+                                SST Reg. No. : <t t-esc="company.vat"/>
+                                <br/>
+                            </t>
+                            <t t-if="company.vat and company.id == 3">
+                                GST Reg. No. : <t t-esc="company.vat"/>
+                                <br/>
+                            </t>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+                
+            </div>
+	        <div class="page">
+	            <div class="row">
+					<table class="oe_top_table" style="color:black;font-size: 14px;">
+	                	<tr>
+							<td width="8%" style="vertical-align: text-top" >
+								<strong>To:</strong>
+							</td>
+	                        <td width="42%">
+	                        	<t t-if="o.name">
+	                                <t t-esc="o.name"/>
+	                                <br/>
+	                            </t>
+	                            <t t-if="o.street">
+	                                <t t-esc="o.street"/>,
+	                            </t>
+	                            <t t-if="o.street2">
+	                                <t t-esc="o.street2"/>
+	                                <br/>
+	                            </t>
+	                            <t t-if="o.city">
+	                                <t t-esc="o.city"/>,
+	                            </t>
+	                            <t t-if="o.state_id.id">
+	                                <t t-esc="o.state_id.name"/>,
+	                            </t>
+	                            <t t-if="o.zip">
+	                                <t t-esc="o.zip"/>
+	                            </t>
+	                            <br/>
+	                            <t t-if="o.phone">
+	                                Phone
+	                                <t t-esc="o.phone"/>
+	                                <br/>
+	                            </t>
+	                        </td>
+	                        <td width="15%">
+	                        </td>
+	                        <td width="35%">
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td colspan="4" style="padding-bottom: 2em"></td>
+	                    </tr>
+	                </table>
+	                <p>
+	                    Document: Customer account statement<br/>
+	                    Print Date: <span t-esc="Date"/><br/>
+	                    <t t-if="o.ref">Customer ref: <span t-field="o.ref"/></t><br/>
+	                    <span style="font-weight: bold;">Statement from <t t-esc="doc_ids.date_from"/> to <t t-esc="doc_ids.date_end"/>.</span>
+	                </p>
+	
+	                <t t-if="Lines[o.id]">
+	                    <span t-field="res_company.overdue_msg"/>
+	                    <table class="table table-condensed" t-foreach="Lines[o.id]" t-as="currency">
+	                        <thead>
+	                            <tr>
+	                                <th>Reference number</th>
+	                                <th class="text-center">Date</th>
+	                                <th class="text-center">Actual Invoice Date</th>
+	                                <th class="text-center">Due Date</th>
+	                                <th>Memo / Description</th>
+									<th>Reference</th>
+	                                <th class="text-right">Debit</th>
+	                                <th class="text-right">Credit</th>
+	                                <th class="text-center">Balance</th>
+	                            </tr>
+	                        </thead>
+	                        <t t-set="init_bal" t-value="0"/>
+                            <t t-if="doc_ids.currency_selection != 'foreign_currency' and initital_balance[o.id].get('base')">
+	                        	<t t-set="init_bal" t-value="initital_balance[o.id]['base'][0]['balance'] or 0"/>
+                            	
+                            </t>
+                            <t t-if="doc_ids.currency_selection == 'foreign_currency' and initital_balance[o.id].get(currency.id)">
+                            	<t t-set="init_bal" t-value="initital_balance[o.id][currency.id][0]['balance_currency'] or 0"/>
+                            	
+                            </t>
+	                        <t t-set="cumulative_total" t-value="init_bal"/>
+	                        <tr>
+	                        	<td colspan="6">
+	                                <strong>Initial Blalance</strong>
+	                            </td>
+	                            <td class="text-right"><span t-esc="init_bal" 
+		                        		 t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/></td>
+	                        </tr>
+	                        <tr t-foreach="Lines[o.id][currency]" t-as="line">
+	                            <td>
+	                                <span t-esc="line['move_id']"/>
+	                            </td>
+	                            <td>
+	                                <span t-esc="line['date']"/>
+	                            </td>
+	                            <td>
+	                                <span t-esc="line['actual_invoice_date']"/>
+	                            </td>
+	                            <td>
+	                                <span t-esc="line['date_maturity']"/>
+	                            </td>
+	                            <td>
+	                                <!--<t t-if="line['name'] != '/'"><span t-esc="line['name']"/></t>
+	                                <span t-esc="line['ref']"/>-->
+	                                <span t-esc="line['invoice_ref']"/>
+	                            </td>
+								<td>
+	                                <span t-esc="line['reference']"/>
+	                            </td>
+	                            <td class="text-right">
+	                                <span t-esc="line['debit']" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+	                            </td>
+	                            <td class="text-right">
+	                                <span t-esc="line['credit']" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+	                            </td>
+	                            <td class="text-right">
+	                            	<t t-if="doc_ids.currency_selection == 'foreign_currency'">
+	                            		<t t-set="cumulative_total" t-value="cumulative_total + line['debit'] - (line['credit'] * -1)"/>
+	                            	</t>
+	                            	<t t-if="doc_ids.currency_selection != 'foreign_currency'">
+	                            		<t t-set="cumulative_total" t-value="cumulative_total + line['debit'] - line['credit']"/>
+	                            	</t>
+	                                
+	                                <span t-esc="cumulative_total" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td colspan="3"></td>
+	                            <td><strong>Sub-Total :</strong></td>
+	                            <td class="text-right"><span t-esc="Totals[o.id][currency]['due']" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/></td>
+	                            <td class="text-right"><span t-esc="Totals[o.id][currency]['paid']" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/></td>
+	                            <td></td>
+	                        </tr>
+	                        <tr>
+	                            <td colspan="3"></td>
+	                            <td><strong>Balance :</strong></td>
+	                            <td class="text-right">
+	                                <span t-esc="cumulative_total" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/>
+	                            </td>
+	                        </tr>
+	                    </table>
+	                </t>
+	                <p t-if="not Lines[o.id]">
+	                    <strong>There is nothing due with this customer.</strong>
+	                </p>
+                	<t t-if="result_aging.get(o.id)">
+		                <t t-foreach="result_aging[o.id]" t-as="currency">
+			                <table class="table table-condensed table-bordered text-center" border="1" style="border-collapse: collapse;">
+			                	<tr>
+									<th class="text-center"><t t-esc="result_aging[o.id][currency]['not_due'][0]"/></th>
+									<t t-foreach="range(4,-1,-1)" t-as="i">
+										<th class="text-center"><t t-esc="result_aging[o.id][currency][i][0]"/></th>
+									</t>
+								</tr>
+								<tr>
+									<td><t t-esc="result_aging[o.id][currency]['not_due'][1]" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/></td>
+									<t t-foreach="range(4,-1,-1)" t-as="i">
+										<td><t t-esc="result_aging[o.id][currency][i][1]" t-esc-options='{"widget": "monetary", "display_currency": "currency"}'/></td>
+									</t>
+								</tr>
+				
+							</table>
+						</t>
+	                </t>
+	            </div>
+	        </div>
+	</template>
+
+	<template id="report_partner_bal">
+	    <t t-call="report.html_container">
+	        <t t-foreach="docs" t-as="o">
+	            <t t-call="baskin_partner_aged_advance_report.report_partner_balance_template"/>
+	        </t>
+	    </t>
+	</template>
+	
+	<report 
+            id="action_report_partner_bal"
+            model="partner.statement.wizard"
+            report_type="qweb-pdf"
+            string="Partner Statement"
+            name="baskin_partner_aged_advance_report.report_partner_bal"
+            file="baskin_partner_aged_advance_report.report_partner_bal"
+            />
+	
+	<record id="br_partner_statement_view" model="ir.ui.view">
+        <field name="name">Partner Balance</field>
+        <field name="model">partner.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Report Options">
+                <group>
+                	<group>
+                		<field name="report_type"/>
+	                    <field name="result_selection"/>
+                		<field name="partner_ids" widget="many2many_tags"/>
+                	</group>
+                	<group>
+                		<field name="date_from"/>
+                		<field name="date_end"/>
+                		<field name="target_move" invisible="1"/>
+                		<field name="currency_selection"/>
+                	</group>
+                </group>
+                <footer>
+                    <button name="print_report" string="Print" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="br_action_partner_balance_view" model="ir.actions.act_window">
+        <field name="name">Partner Balance</field>
+        <field name="res_model">partner.statement.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="br_partner_statement_view"/>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+    </record>
+
+	<menuitem id="menu_partner_statement"
+        name="Partner Statement"
+        action="br_action_partner_balance_view"
+        parent="base.menu_sale_report" sequence="100"/>
+	
+	<menuitem id="menu_account_partner_statement"
+        name="Partner Statement"
+        action="br_action_partner_balance_view"
+        parent="account.menu_finance_reports" sequence="20"/>
+
+
+</odoo>

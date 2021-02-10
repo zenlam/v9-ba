@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_gl_consolidation_config_manager,gl.consolidation.config.manager,model_gl_consolidation_config,account.group_account_manager,1,1,1,1
+access_gl_consolidation_config_user,gl.consolidation.config.user.user,model_gl_consolidation_config,account.group_account_user,1,1,1,0
+
+access_gl_period_manager,gl.period.manager,model_gl_period,account.group_account_manager,1,1,1,1
+access_gl_period_user,gl.period.user,model_gl_period,account.group_account_user,1,1,1,0
+
+access_gl_archive_table_manager,gl_archive_table.manager,model_gl_archive_table,account.group_account_manager,1,1,1,1
+access_gl_archive_table_user,gl_archive_table.user,model_gl_archive_table,account.group_account_user,1,1,1,0
+
+access_gl_consolidation_log_manager,gl_consolidation_log.manager,model_gl_consolidation_log,account.group_account_manager,1,1,1,1
+access_gl_consolidation_log_user,gl_consolidation_log.user,model_gl_consolidation_log,account.group_account_user,1,1,1,0
+
+access_analytic_group_manager,analytic.group.manager,model_analytic_group,account.group_account_manager,1,1,1,1
+access_analytic_group_user,analytic.group.user,model_analytic_group,account.group_account_user,1,1,1,0
+

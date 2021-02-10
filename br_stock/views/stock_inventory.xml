@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_stock_view_inventory_form" model="ir.ui.view">
+            <field name="name">br.view.inventory.form</field>
+            <field name="model">stock.inventory</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/tree" position="replace">
+                    <tree string="Inventory Details" editable="bottom" colors="blue:product_qty != theoretical_qty; red:theoretical_qty &lt; 0"
+                          context="{'default_location_id': location_id, 'default_product_id': product_id, 'default_prod_lot_id': lot_id, 'default_package_id': package_id, 'default_partner_id': partner_id, 'default_analytic_account': account_analytic_id, 'default_loss_location': br_loss_inventory_id}">
+                        <field name="is_loaded" invisible="1"/>
+                        <field name="is_edit_lot" invisible="1"/>
+                        <field name="product_id" attrs="{'readonly': [('is_loaded', '=', True)]}" domain="[('type','in', ('product', 'consu'))]"
+                               on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"
+                               context="{'manage_expirydate': parent.manage_expirydate, 'parent_location_id': parent.location_id}"
+                        />
+                        <field name="vendor_uom_count" invisible="1"/>
+                        <field name="br_supplier_id"
+                               attrs="{'required': [('vendor_uom_count', '!=', 0), ('product_qty', '!=', 0), ('product_id', '!=', False), ('is_loaded', '=', False)], 'readonly': [('is_loaded', '=', True), ('theoretical_qty', '!=', 0)]}"
+                               context="{'filter_on_inventory': True, 'product_vendor_id': product_id, 'prod_lot_id': prod_lot_id}"/>
+                        <field name="account_analytic_id"  attrs="{'readonly': [('is_loaded', '=', True)]}" context="{'default_location_id': context.get('default_location_id',False)}" invisible="1"/>
+                        <field name="prod_lot_id"
+                               attrs="{'readonly': [('is_edit_lot', '=', False)], 'required': [('is_edit_lot', '=', True), ('product_id', '!=', False), ('product_qty', '>', 0)]}"
+                               domain="[('product_id', '=', product_id)]"
+                               string="Expiry Date" context="{'default_product_id': product_id}"
+                               groups="stock.group_production_lot"
+                               options="{'no_create': True}"/>
+                        <field name="location_id" invisible="1" domain="[('id', 'child_of', parent.location_id)]" groups="stock.group_locations" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"/>
+                        <field name="br_loss_inventory_id" domain="[('usage','=','inventory')]" invisible="1" readonly="1"/>
+                        <field name="br_qty_l1" string="Qty L1"/>
+                        <field name="product_standard_uom" invisible="1"/>
+                        <field name="product_uom_id" context="{'supplier_id': br_supplier_id}" groups="product.group_uom" string="UOM L1" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" domain="[('id', '=', product_standard_uom)]"/>
+                        <field name="br_qty_l2" string="Qty L2"/>
+                        <field name="br_uom_l2" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="br_qty_l3" string="Qty L3"/>
+                        <field name="br_uom_l3" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="br_qty_l4" string="Qty L4"/>
+                        <field name="br_uom_l4" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="package_id" invisible="1" domain="['|', ('location_id','=', False), ('location_id', '=', location_id)]" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" groups="stock.group_tracking_lot"/>
+                        <field name="partner_id" invisible="1" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" groups="stock.group_tracking_owner"/>
+                        <field name="theoretical_qty" readonly="1" groups="stock.group_stock_manager"/>
+                        <field name="product_qty" string="Real Quantity"/>
+                        <field name="state" invisible="True"/>
+                        <field name="remark"/>
+                    </tree>
+                </xpath>
+
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                    <attribute name="domain">[('usage', '=', 'internal')]</attribute>
+                </xpath>
+                <!--Replace Buttons -->
+                <xpath expr="//button[@name='prepare_inventory']" position="replace">
+                    <button name="prepare_inventory" states="draft" string="Start Inventory" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//button[@name='prepare_inventory']" position="after">
+                    <button name="action_confirm" string="Confirm" states="waiting" type="object"/>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel_inventory']" position="replace">
+                    <button name="action_cancel_inventory" states="waiting,confirm" string="Cancel Inventory"
+                            type="object" groups="stock.group_stock_manager"/>
+                </xpath>
+                <!--Edit form view-->
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,waiting,confirm,done"/>
+                </xpath>
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="create_uid" readonly="1" string="Created by"/>
+                    <field name="validate_by" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="after">
+                    <field name="br_loss_inventory_id"
+                           domain="[('usage','=','inventory'), ('scrap_location', '=', False)]" readonly="1"/>
+                    <field name="account_analytic_id" required="1" invisible="1"/>
+                    <field name="account_analytic_id_related" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="br_view_stock_inventory_line_form">
+            <field name="name">Inventory Details</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Inventory Details">
+                    <group>
+                        <group>
+                            <field name="theoretical_qty"/>
+                            <field name="package_id"/>
+                            <field name="product_qty"/>
+                            <field name="product_code"/>
+                            <field name="partner_id"/>
+                            <field name="location_name"/>
+                            <field name="location_id"/>
+                            <field name="company_id"/>
+                            <field name="br_supplier_id"/>
+                            <field name="state"/>
+                            <field name="account_analytic_id" required="1"/>
+                            <field name="product_name"/>
+                            <field name="prod_lot_id" string="Expiry Date"/>
+                        </group>
+                        <group>
+                            <field name="inventory_id"/>
+                            <field name="product_id"/>
+                            <field name="br_loss_inventory_id"/>
+
+                            <field name="product_uom_id"/>
+                            <field name="br_qty_l1"/>
+
+                            <field name="br_uom_l2"/>
+                            <field name="br_qty_l2"/>
+
+                            <field name="br_uom_l3"/>
+                            <field name="br_qty_l3"/>
+
+                            <field name="br_uom_l4"/>
+                            <field name="br_qty_l4"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="br_stock_view_inventory_form2" model="ir.ui.view">
+            <field name="name">br.view.inventory.form2</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_title']" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_inventory_line_tree"
+                                class="oe_stat_button"
+                                icon="fa-building-o"
+                                type="object"
+                                help="List view of lines"
+                                states="waiting,confirm">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Details</span>
+                            </div>
+                        </button>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="stock_inventory_line_tree2" model="ir.ui.view">
+            <field name="name">stock.inventory.line.tree2</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="arch" type="xml">
+                <tree string="Inventory Details" editable="bottom" decoration-info="product_qty != theoretical_qty" decoration-danger="theoretical_qty &lt; 0">
+                    <field name="is_loaded" invisible="1"/>
+                        <field name="product_id" attrs="{'readonly': [('is_loaded', '=', True)]}" domain="[('type','=','product')]" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"/>
+                        <field name="vendor_uom_count" invisible="1"/>
+                        <field name="is_edit_lot" invisible="1"/>
+                        <field name="br_supplier_id"
+                               attrs="{'required': [('vendor_uom_count', '!=', 0), ('product_qty', '!=', 0), ('is_loaded', '=', False)], 'readonly': [('is_loaded', '=', True)]}"
+                               context="{'filter_on_inventory': True, 'product_vendor_id': product_id, 'prod_lot_id': prod_lot_id}"/>
+                        <field name="account_analytic_id"  attrs="{'readonly': [('is_loaded', '=', True)]}" context="{'default_location_id': context.get('default_location_id',False)}" invisible="1"/>
+                        <field name="prod_lot_id"
+                               attrs="{'readonly': [('is_edit_lot', '=', False)], 'required': [('is_edit_lot', '=', True), ('product_id', '!=', False), ('product_qty', '>', 0)]}"
+                               domain="[('product_id', '=', product_id)]"
+                               string="Expiry Date" context="{'default_product_id': product_id}"
+                               groups="stock.group_production_lot"
+                               options="{'no_create': True}"/>
+                        <field name="location_id" invisible="1" domain="[('id', 'child_of', parent.location_id)]" groups="stock.group_locations" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)"/>
+                        <field name="br_loss_inventory_id" domain="[('usage','=','inventory')]" invisible="1" readonly="1"/>
+                        <field name="br_qty_l1" string="Qty L1"/>
+                        <field name="product_standard_uom" invisible="1"/>
+                        <field name="product_uom_id" context="{'supplier_id': br_supplier_id}" groups="product.group_uom" string="UOM L1" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" domain="[('id', '=', product_standard_uom)]"/>
+                        <field name="br_qty_l2" string="Qty L2"/>
+                        <field name="br_uom_l2" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="br_qty_l3" string="Qty L3"/>
+                        <field name="br_uom_l3" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="br_qty_l4" string="Qty L4"/>
+                        <field name="br_uom_l4" context="{'product_id':product_id, 'supplier_id': br_supplier_id}"/>
+                        <field name="package_id" invisible="1" domain="['|', ('location_id','=', False), ('location_id', '=', location_id)]" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" groups="stock.group_tracking_lot"/>
+                        <field name="partner_id" invisible="1" on_change="onchange_createline(location_id, product_id, product_uom_id, package_id, prod_lot_id, partner_id)" groups="stock.group_tracking_owner"/>
+                        <field name="theoretical_qty" readonly="1" groups="stock.group_stock_manager"/>
+                        <field name="product_qty" string="Real Quantity"/>
+                        <field name="state" invisible="True"/>
+                        <field name="remark"/>
+                        <field name="inventory_id" invisible="1"/>
+                        <field name="inventory_location_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="stock_inventory_line_search" model="ir.ui.view">
+            <field name="name">stock.inventory.line.search</field>
+            <field name="model">stock.inventory.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Inventory Lines">
+                    <field name="product_id"/>
+                    <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="prod_lot_id" groups="stock.group_production_lot"/>
+                    <field name="package_id" groups="stock.group_tracking_lot"/>
+                    <field name="partner_id" groups="stock.group_tracking_owner"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_inventory_line_tree" model="ir.actions.act_window">
+            <field name="name">Inventory Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.inventory.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock_inventory_line_tree2"/>
+            <field name="domain">[('inventory_id', '=', active_id)]</field>
+        </record>
+    </data>
+</openerp>

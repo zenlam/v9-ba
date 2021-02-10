@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="group_allow_create_edit_pricelist" model="res.groups">
+            <field name="name">Allow to Create/Edit Pricelist</field>
+            <field name="category_id" ref="base.module_category_point_of_sale"/>
+        </record>
+        <record id="access_product_pricelist_create_edit" model="ir.model.access">
+            <field name="name">create.edit.pricelist.access</field>
+            <field name="model_id" ref="product.model_product_pricelist"/>
+            <field name="group_id" ref="br_pricelist.group_allow_create_edit_pricelist"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <!-- removing the create and edit rights for 3 groups -->
+        <!-- because only the user with newly created can create or edit -->
+        <record id="mrp.access_product_pricelist_mrp_manager" model="ir.model.access">
+            <field name="name">mrp.manager.pricelist.access</field>
+            <field name="model_id" ref="product.model_product_pricelist"/>
+            <field name="group_id" ref="mrp.group_mrp_manager"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="stock.access_product_pricelist_stock_manager" model="ir.model.access">
+            <field name="name">stock.manager.pricelist.access</field>
+            <field name="model_id" ref="product.model_product_pricelist"/>
+            <field name="group_id" ref="stock.group_stock_manager"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="sale.access_product_pricelist_sale_manager" model="ir.model.access">
+            <field name="name">sale.manager.pricelist.access</field>
+            <field name="model_id" ref="product.model_product_pricelist"/>
+            <field name="group_id" ref="base.group_sale_manager"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</openerp>

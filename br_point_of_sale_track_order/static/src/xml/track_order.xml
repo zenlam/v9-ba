@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="BrDeleteOrderConfirm">
+        <div class="modal-dialog">
+            <div class="popup popup-confirm">
+                <p class="title"><t t-esc="widget.options.title"/></p>
+                <div class="body">
+                    <t t-esc="widget.options.body"/>
+                    <div style="margin-top: 3px">
+                        <textarea id="delete_order_remark" rows="3" style="width: 90%; margin-top: 1px"></textarea>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="button confirm">
+                        OK
+                    </div>
+                    <div class="button cancel">
+                        Cancel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

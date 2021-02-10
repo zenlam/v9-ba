@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_br_picking_supplier_inherit_form2" model="ir.ui.view">
+            <field name="name">view.br.stock.picking.supplier.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="pack_operation_product_ids" position="attributes">
+                    <attribute name="context">{'default_picking_id': id, 'default_location_id': location_id,
+                        'default_location_dest_id': location_dest_id, 'default_supplier_id': partner_id}
+                    </attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

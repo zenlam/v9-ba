@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- account supplier invoice -->
+        <record id="invoice_supplier_form_inherit_ref" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="reference" position="after">
+                    <field name="is_import"/>
+                </field>
+                <field name="journal_id" position="attributes">
+                    <attribute name="attrs">{'readonly': [('state', '!=', 'draft'),('move_name', '!=', False)]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- account customer invoice -->
+        <record id="invoice_customer_form_inherit_ref" model="ir.ui.view">
+            <field name="name">account.invoice.customer.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_term_id" position="after">
+                    <field name="is_import"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- account journal  -->
+
+        <record id="view_account_journal_form_inherit" model="ir.ui.view">
+            <field name="name">account.journal.form.inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="sequence_id" position="after">
+                    <field name="active_in_journal_entry"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- account move tree view -->
+        <record id="view_move_tree" model="ir.ui.view">
+            <field name="name">account.move.tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <field name="ref" position="attributes">
+                    <attribute name="string">Inv No / Ref</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!--account move line tree view-->
+        <record id="view_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.line.tree.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="product_id"/>
+                </field>
+            </field>
+        </record>
+
+        <!--account move line form view-->
+        <record id="view_move_line_form_inherit_edit_false" model="ir.ui.view">
+            <field name="name">account.move.line.form.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="priority">20</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <field name="quantity" position="after">
+                    <field name="product_id"/>
+                </field>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">false</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--        account move line form view - hide show edit button-->
+        <record id="view_move_line_form_inherit_edit_true" model="ir.ui.view">
+            <field name="name">account.move.line.form.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="priority">25</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('br_base.group_edit_journal_item')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_account_bank_journal_tree_inherit" model="ir.ui.view">
+            <field name="name">br_view_account_bank_journal_tree_inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_bank_journal_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="active_in_journal_entry"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- account move form -->
+
+        <record id="view_move_form_inherit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="priority">21</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="attributes">
+                    <attribute name="domain">[('active_in_journal_entry', '=', True)]</attribute>
+                </field>
+                <field name="ref" position="attributes">
+                    <attribute name="string">Inv No / Ref</attribute>
+                </field>
+                <field name="ref" position="after">
+                    <field name="memo"/>
+                </field>
+                <field name="line_ids" position="attributes">
+                    <attribute name="context">{'line_ids': line_ids, 'journal_id': journal_id, 'memo': memo}</attribute>
+                </field>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='amount_currency']" position="attributes">
+                    <attribute name="string">Forex Amount</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='currency_id']" position="attributes">
+                    <attribute name="string">Forex Currency</attribute>
+                    <attribute name="context">{'forex_currency': True}</attribute>
+                </xpath>
+                <xpath expr ="//field[@name='line_ids']/tree/field[@name='name']" position="after">
+                    <field name="product_id"/>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">false</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_cancel']" position="attributes">
+                    <attribute name="groups">br_base.group_cancel_journal_entry</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_form_hide_show_edit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="priority">26</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('br_base.group_edit_journal_item')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_list_inherit_hide_create" model="ir.ui.view">
+            <field name="name">account.account.list.inherit.hide.create</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_list_inherit_show_create" model="ir.ui.view">
+            <field name="name">account.account.list.inherit.show.create</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_list"/>
+            <field name="groups_id" eval="[(6, 0, [ref('br_base.group_create_edit_coa')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_form_inherit_hide_create_edit" model="ir.ui.view">
+            <field name="name">account.account.list.inherit.hide.create.edit</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">false</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_form_inherit_show_create_edit" model="ir.ui.view">
+            <field name="name">account.account.list.inherit.show.create.edit</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('br_base.group_create_edit_coa')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_move_form_asset_required_inherit" model="ir.ui.view">
+            <field name="name">account.move.asset.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_asset.view_account_move_form_asset_inherit"/>
+            <field name="arch" type="xml">
+                <field name="asset_id" position="attributes">
+                    <attribute name="attrs">{'readonly': 1}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- journal entries -->
+
+        <record id="account.action_move_journal_line" model="ir.actions.act_window">
+            <field name="name">Manual Journal</field>
+            <field name="domain">[('state', '=', 'draft')]</field>
+        </record>
+
+        <record id="action_move_journal_line_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_move_tree"/>
+            <field name="act_window_id" ref="account.action_move_journal_line"/>
+        </record>
+
+        <record id="action_move_journal_line_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_move_form"/>
+            <field name="act_window_id" ref="account.action_move_journal_line"/>
+        </record>
+
+        <record id="account.menu_action_move_journal_line_form" model="ir.ui.menu">
+            <field name="name">Manual Journal</field>
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_edit_journal_item')])]"/>
+        </record>
+
+        <!-- Account.Entry Edition -->
+        <record id="view_move_listing_tree" model="ir.ui.view">
+            <field name="name">account.move.tree</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <tree create="false" edit="false">
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="ref" string="Inv No / Ref"/>
+                    <field name="journal_id"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="state"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_move_listing_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_listing_move_filter" model="ir.ui.view">
+            <field name="name">account.move.select</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <search string="Search Move">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('ref','ilike',self)]" string="Move"/>
+                    <field name="date"/>
+                    <filter string="Unposted" domain="[('state','=','draft')]" help="Unposted Journal Entries"/>
+                    <filter string="Posted" domain="[('state','=','posted')]" help="Posted Journal Entries"/>
+                    <separator/>
+                    <filter string="Sales" domain="[('journal_id.type','=','sale')]" context="{'default_journal_type': 'sale'}"/>
+                    <filter string="Purchases" domain="[('journal_id.type','=','purchase')]" context="{'default_journal_type': 'purchase'}"/>
+                    <filter string="Bank Operations" domain="[('journal_id.type','=','bank')]" context="{'default_journal_type': 'bank'}"/>
+                    <filter string="Cash Operations" domain="[('journal_id.type','=','cash')]" context="{'default_journal_type': 'cash'}"/>
+                    <filter string="Miscellaneous Operations" domain="[('journal_id.type','=','general')]" name="misc_filter" context="{'default_journal_type': 'general'}"/>
+                    <separator/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="dummy_account_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Journal" domain="[]" context="{'group_by':'journal_id'}"/>
+                        <filter string="States" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Date" domain="[]" context="{'group_by':'date'}" help="Journal Entries by Month"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_listing_move_journal_line" model="ir.actions.act_window">
+            <field name="name">Journal Entries Listing</field>
+            <field name="res_model">account.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_move_listing_tree"/>
+            <field name="search_view_id" ref="view_account_listing_move_filter"/>
+            <field name="context">{'search_default_misc_filter':1}</field>
+            <field name="domain">[('state', '=', 'posted')]</field>
+        </record>
+
+        <record id="action_listing_move_journal_line_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_move_listing_tree"/>
+            <field name="act_window_id" ref="action_listing_move_journal_line"/>
+        </record>
+
+        <record id="action_listing_move_journal_line_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_move_listing_form"/>
+            <field name="act_window_id" ref="action_listing_move_journal_line"/>
+        </record>
+
+        <menuitem
+                icon="STOCK_JUSTIFY_FILL"
+                action="action_listing_move_journal_line"
+                id="menu_action_listing_move_journal_line"
+                parent="account.menu_finance_entries"
+                groups="account.group_account_user"
+                sequence="3"/>
+
+        <record id="account_move_cancel_view" model="ir.ui.view">
+            <field name="name">account.move.cancel.form</field>
+            <field name="model">account.move.cancel</field>
+            <field name="arch" type="xml">
+                <form string="Cancel Selected Journal Entries">
+                    <footer>
+                        <button string="Cancel Entries" name="move_cancel" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window id ="action_account_move_cancel"
+                    multi="True"
+                    key2="client_action_multi" name="Cancel Selected Entries"
+                    res_model="account.move.cancel" src_model="account.move"
+                    view_mode="form" target="new" view_type="form"/>
+
+
+        <record id="view_move_line_form_inherit_change_string" model="ir.ui.view">
+            <field name="name">account.move.line.form.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <field name="amount_currency" position="attributes">
+                    <attribute name="string">Forex Amount</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_move_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.line.form.inherit</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <field name="amount_currency" position="attributes">
+                    <attribute name="string">Forex Amount</attribute>
+                </field>
+                <field name="date_maturity" position="after">
+                    <field name="full_reconcile_id"/>
+                    <field name="matched_credit_ids" widget="many2many_tags" string="Matched Credit ids"/>
+                    <field name="matched_debit_ids" widget="many2many_tags" string="Matched Debit ids"/>
+                </field>
+
+                <xpath expr="//field[@name='journal_id']" position="replace"/>
+                <xpath expr="//field[@name='product_id']" position="replace">
+                    <field name="journal_id"/>
+                </xpath>
+
+                <xpath expr="//field[@name='analytic_account_id']" position="replace"/>
+                <xpath expr="//field[@name='reconciled']" position="replace"/>
+                <xpath expr="//field[@name='amount_currency']" position="after">
+                    <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                    <field name="reconciled"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="create_date"/>
+                    <field name="write_date" string="Last Updated on"/>
+                </xpath>
+                <xpath expr="//field[@name='date_maturity']" position="attributes">
+                    <attribute name="string">Due Date</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

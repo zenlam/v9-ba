@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!--weekly Reset GL consolidation table-->
+        <record id="ir_cron_refresh_consolidation_gl_report" model="ir.cron">
+            <field name="name">Reset Gl Consolidation Weekly</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=7) - timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')" />
+            <field eval="True" name="doall" />
+            <field name="model">refresh.consolidation.wizard</field>
+            <field name="function">refresh_gl_consolidation_table</field>
+            <field name="args">()</field>
+        </record>
+
+        
+    </data>
+</openerp>

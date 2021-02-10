@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="invoice_form_inherit_ref" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="domain">[('customer', '=', True), ('company_type', '=', 'company')]</attribute>
+                </field>
+                <field name="date_invoice" position="attributes">
+                    <attribute name="string">Posting Invoice Date</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+            	<field name="date_invoice" position="after">
+                    <field name="actual_invoice_date"/>
+            	</field>
+            	<!-- <xpath expr="//page[2]/group/group/field[@name='name']" position="attributes">
+            		<attribute name="required">1</attribute>
+            	</xpath> -->
+                <field name="date_due" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </field>
+                <field name="payment_term_id" position="attributes">
+                    <attribute name="required">1</attribute>
+                </field>
+                <!-- <field name="payment_term_id" position="after">
+                    <field name="account_analytic_id" />
+                </field> -->
+                <field name="invoice_line_ids" position="attributes">
+                    <attribute name="context">{'type': type, 'journal_id': journal_id, 'default_invoice_id': id, 'partner_id': partner_id}</attribute>
+                </field>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="required">0</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="back_account_analytic_id" invisible="1"/>
+                </xpath>
+
+                <field name="payment_term_id" position="after">
+                    <field name="account_analytic_id" invisible="1"/>
+                </field>
+
+            </field>
+         </record>
+
+        <record id="invoice_supplier_form_inherit_ref" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="domain">[('supplier', '=', True), ('company_type', '=', 'company')]</attribute>
+                </field>
+                <field name="date_invoice" position="attributes">
+                    <attribute name="string">Posting Invoice Date</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+            	<field name="date_invoice" position="after">
+                    <field name="actual_invoice_date" string="Actual Bill Date" required="True"/>
+            	</field>
+                 <field name="date_due" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </field>
+                <field name="payment_term_id" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+                <field name="currency_id" position="after">
+                    <field name="need_gl_reclass"/>
+                    <field name="gl_reclass_done" attrs="{'readonly': [('need_gl_reclass', '=', False)]}"/>
+                </field>
+                <field name="name" position="attributes">
+                    <attribute name="string">Memo</attribute>
+                </field>
+                <field name="origin" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="attrs">{}</attribute>
+                </field>
+                <field name="reference" position="attributes">
+                    <attribute name="required">1</attribute>
+                </field>
+                <field name="reference" position="after">
+                    <field name="account_analytic_id" readonly="1" />
+                </field>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="attributes">
+                    <attribute name="groups">account.group_account_user,account.group_account_invoice</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_invoice_supplier_purchase_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="purchase.view_invoice_supplier_purchase_form"/>
+            <field name="arch" type="xml">
+                <field name="purchase_id" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_supplier_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">
+                    <field name="number" string="Invoice" filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="invoice_line_ids" string="Purchase Order" filter_domain="[('invoice_line_ids.purchase_id.name', 'ilike', self)]"/>
+                    <field name="journal_id" />
+                    <filter name="draft" string="Draft" domain="[('state','in',('draft', 'proforma'))]"/>
+                    <filter name="proforma" string="Proforma" domain="[('state','=','proforma2')]" groups="account.group_proforma_invoices"/>
+                    <filter name="invoices" string="Invoices" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
+                    <filter name="refunds" string="Refunds" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/>
+
+                    <filter name="need_gl" string="Need GL Reclass and Not Done" domain="['&amp;', ('need_gl_reclass','=',True),('gl_reclass_done','!=',True)]"/>
+
+                    <filter name="gl_reclass" string="GL Reclass Done" domain="['&amp;', ('need_gl_reclass','=',True),('gl_reclass_done','=',True)]"/>
+
+                    <separator/>
+                    <filter name="unpaid" string="Not Paid" domain="[('state','=','open')]"/>
+                    <filter name="late" string="Overdue" domain="['&amp;', ('date_due', '&lt;', time.strftime('%%Y-%%m-%%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+                    <separator/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="user_id" string="Salesperson"/>
+                    <field name="date" string="Period"/>
+                    <separator/>
+                    <filter domain="[('user_id','=',uid)]" help="My Invoices"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_partner_id" string="Partner" context="{'group_by':'commercial_partner_id'}"/>
+                        <filter string="Salesperson" context="{'group_by':'user_id'}"/>
+                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
+                        <separator/>
+                        <filter string="Invoice Date" context="{'group_by':'date_invoice'}"/>
+                        <filter string="Due Date" context="{'group_by':'date_due'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="account.action_invoice_tree2" model="ir.actions.act_window">
+            <field name="name">Vendor Bills</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field eval="False" name="view_id"/>
+            <field name="domain">[('type','=','in_invoice')]</field>
+            <field name="context">{'default_type': 'in_invoice', 'type': 'in_invoice', 'journal_type': 'purchase','readonly_by_pass': ['account_analytic_id', 'date_due', 'asset_category_id']}</field>
+            <field name="search_view_id" ref="view_account_supplier_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to record a new vendor bill.
+              </p><p>
+                You can control the invoice from your vendor according to
+                what you purchased or received.
+              </p>
+            </field>
+        </record>
+
+        <!-- <record model="ir.ui.menu" id="account.menu_action_account_payments_receivable">
+		        <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+		    </record>
+        -->
+
+        <record model="ir.ui.menu" id="account.menu_action_account_payments_payable">
+            <field name="groups_id" eval="[(6,0,[ref('br_base.group_hide_menu')])]"/>
+        </record>
+
+        <!-- vendor tree view -->
+        <record id="invoice_supplier_tree_inherit_bulk" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.tree.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="need_gl_reclass" />
+                    <field name="gl_reclass_done" />
+                </field>
+                <field name="reference" position="after">
+                    <field name="name" string="Memo"/>
+                    <field name="account_analytic_id"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_invoice_asset_category_readonly">
+	        <field name="name">account.invoice.supplier.form</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="account_asset.view_invoice_asset_category"/>
+        	<field name="arch" type="xml">
+	        	<xpath expr="//field[@name='asset_category_id']" position="attributes">
+	        		<attribute name="attrs">{'readonly':True}</attribute>
+	        	</xpath>
+	        </field>
+	    </record>
+	    
+	    <record model="ir.ui.view" id="view_invoice_asset_category_editable_group">
+	        <field name="name">account.invoice.supplier.form.group</field>
+	        <field name="model">account.invoice</field>
+	        <field name="inherit_id" ref="account_asset.view_invoice_asset_category"/>
+	        <field name="groups_id" eval="[(6, 0, [
+            	ref('baskin_bulk_payment.group_edit_asset_category_invoice'),
+   	 		])]"/>
+        	<field name="arch" type="xml">
+	        	<xpath expr="//field[@name='asset_category_id']" position="attributes">
+	        		<attribute name="attrs">{'readonly':False}</attribute>
+	        	</xpath>
+	        </field>
+	    </record>
+	    
+    </data>
+</openerp>

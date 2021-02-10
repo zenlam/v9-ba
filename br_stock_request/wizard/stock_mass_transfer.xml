@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="stock_mass_transfer_form">
+            <field name="name">stock.mass.transfer.form</field>
+            <field name="model">stock.mass.transfer</field>
+            <field name="arch" type="xml">
+                <form string="Mass Transfer">
+                    <separator string="Transfer all selected pickings"/>
+                    <footer>
+                        <button name="do_transfer" type="object" string="Mass Transfer" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="stock_mass_transfer_act">
+            <field name="name">Mass Transfer</field>
+            <field name="res_model">stock.mass.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="stock_mass_transfer_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <act_window id="action_mass_transfer_stock"
+                    multi="True"
+                    key2="client_action_multi" name="Mass Transfer"
+                    res_model="stock.mass.transfer" src_model="stock.picking"
+                    view_mode="form" target="new" view_type="form"
+        />
+
+    </data>
+</openerp>

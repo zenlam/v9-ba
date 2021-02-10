@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_view_pos_session_form_inherit" model="ir.ui.view">
+            <field name="name">br_view_pos_session_form</field>
+            <field name="model">pos.session</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='config_id']" position="after">
+                    <field name="picking_id" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='statement_ids']" position="replace">
+                    <field name="statement_ids_related" attrs="{'invisible' : [('state', '=', 'opening_control')]}" >
+                        <tree string="Statements">
+                            <field name="name"/>
+                            <field name="journal_id"/>
+                            <field name="balance_start"/>
+                            <field name="total_entry_encoding"/>
+                            <field name="balance_end_real"/>
+                            <field name="difference"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

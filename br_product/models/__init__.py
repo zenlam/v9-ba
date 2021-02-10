@@ -1,0 +1,7 @@
+import product_category
+import product_menu
+import product_menu_category
+import product_menu_recipe
+import product_supplierinfo
+import res_partner
+import product_template

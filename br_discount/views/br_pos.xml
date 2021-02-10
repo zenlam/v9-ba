@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--upgrade to oddo 9-->
+        <template id="br_discount_assets" inherit_id="br_point_of_sale.hss_point_of_sale_assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/br_discount/static/src/js/br_widgets.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_db.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_models.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_screen.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_chrome.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_promotion.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_popups.js"></script>
+                <script type="text/javascript" src="/br_discount/static/src/js/br_helper.js"></script>
+                <!--<script type="text/javascript" src="/br_discount/static/src/js/br_data.js"></script>-->
+            </xpath>
+
+            <xpath expr="//link[@id='pos-stylesheet']" position="after">
+                <link rel="stylesheet" href="/br_discount/static/src/css/discount.css"/>
+            </xpath>
+
+        </template>
+
+    </data>
+</openerp>

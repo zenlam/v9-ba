@@ -1,0 +1,17 @@
+<openerp>
+	<data>
+		<record id="view_location_form_map_location" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='barcode']" position="after">
+            		<field name="location_mapping_name"/>
+            		<field name="is_production_location"/>
+            		<field name="is_outlet_location"/>
+            		<field name="is_stockist_location"/>
+            	</xpath>
+            </field>
+        </record>
+	</data>
+</openerp>

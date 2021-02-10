@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record id="br_driver_partner_view_action" model="ir.actions.act_window">
+            <field name="name">Driver</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="domain">[('type', '=', 'driver')]</field>
+            <field name="context">{'default_type': 'driver', 'default_customer': False}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+               Odoo helps you easily track all activities related to
+                a customer; discussions, history of business opportunities,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+
+        <record id="br_packer_partner_action" model="ir.actions.act_window">
+            <field name="name">Picker / Packer</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="domain">[('type', '=', 'picker_packer')]</field>
+            <field name="context">{'default_type': 'picker_packer', 'default_customer': False}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+               Odoo helps you easily track all activities related to
+                a customer; discussions, history of business opportunities,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="br_driver_partner_view_action" id="br_driver_partner_menu" name="Driver" parent="stock.menu_stock_config_settings" sequence="70" groups="stock.group_stock_manager"/>
+        <menuitem action="br_packer_partner_action" id="br_packer_partner_menu" name="Picker / Packer" parent="stock.menu_stock_config_settings" sequence="80" groups="stock.group_stock_manager"/>
+    </data>
+</openerp>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_voucher_tree_partner">
+            <field name="name">account.voucher.tree</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Partner</attribute>
+                </field>
+            </field>
+        </record>
+
+         <record id="view_voucher_tree_sale" model="ir.ui.view">
+            <field name="name">account.voucher.tree</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Voucher Entries">
+                    <field name="date" string="Payment Date"/>
+                    <field name="number" string="Payment No"/>
+                    <field name="journal_id" string="Payment Method"/>
+                    <field name="partner_id" string="Partner"/>
+                    <field name="amount" string="Payment Amount" />
+                    <field name="company_id"/>
+                    <field name="state"/>
+                    <field name="name" string="Memo"/>
+                    <field name="reference" string="Inv No/Ref"/>
+                    <field name="analytic_account_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="move_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_sale_receipt_form_inherit_voucher">
+            <field name="name">account.voucher.sale.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Partner</attribute>
+                </field>
+
+                <field name="pay_now" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <button name="proforma_voucher" position="attributes">
+                    <attribute name="groups">base.general_receipt_validation_group</attribute>
+                </button>
+
+                <label for="number" position="replace">
+                    <label for="number" string="General Receipt"/>
+                </label>
+
+                <field name="journal_id" position="replace">
+                </field>
+
+                <field name="account_id" position="replace">
+                </field>
+
+                <field name="pay_now" position="after">
+                    <field
+                        name="journal_id"
+                        domain="[('active_in_general_receipt', '=', True)]"
+                        context="{'from_general_payment': True}"
+                        groups="account.group_account_user,account.group_account_invoice"/>
+                    <field name="reference" string="Inv No/Ref" required="1"/>
+                </field>
+
+                <field name="name" position="attributes">
+                    <attribute name="string">Memo</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+
+                <field name="name" position="after">
+                    <field name="analytic_account_id" required="1"/>
+                    <field name="payment_mode"/>
+                    <field name="cheque_no" attrs="{'required': [('payment_mode', '=', 'cheque')]}"/>
+                </field>
+
+                <field name="date" position="before">
+                    <field name="account_id"/>
+                </field>
+
+                <field name="company_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <field name="date" position="attributes">
+                    <attribute name="string">Payment Date</attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <record id="account_voucher.action_sale_receipt" model="ir.actions.act_window">
+            <field name="name">General Receipt</field>
+             <field name="domain">[('voucher_type','=','sale')]</field>
+        </record>
+
+        <record id="account_voucher.action_sale_receipt_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_voucher_tree_sale"/>
+            <field name="act_window_id" ref="account_voucher.action_sale_receipt"/>
+        </record>
+
+        <record model="ir.ui.menu" id="account_voucher.menu_action_sale_receipt">
+            <field name="name">General Receipt</field>
+        </record>
+
+        <record id="account_voucher.view_voucher_tree_purchase" model="ir.ui.view">
+            <field name="name">account.voucher.tree</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Voucher Entries">
+                    <field name="date" string="Payment Date"/>
+                    <field name="number" string="Payment No"/>
+                    <field name="journal_id" string="Payment Method"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="amount" string="Payment Amount" />
+                    <field name="company_id"/>
+                    <field name="state"/>
+                    <field name="name" string="Memo"/>
+                    <field name="reference" string="Inv No/Ref"/>
+                    <field name="analytic_account_id"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="move_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_voucher.action_purchase_receipt_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_voucher.view_voucher_tree_purchase"/>
+            <field name="act_window_id" ref="account_voucher.action_purchase_receipt"/>
+        </record>
+
+        <record id="view_purchase_receipt_form_inherit_voucher" model="ir.ui.view">
+            <field name="name">account.voucher.purchase.form.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form" />
+            <field name="arch" type="xml">
+
+                <button name="action_cancel_draft" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Vendor</attribute>
+                    <attribute name="domain">[('supplier','=',True), ('company_type', '=', 'company')]</attribute>
+                </field>
+                <button name="proforma_voucher" position="attributes">
+                    <attribute name="groups">base.payment_voucher_validation_group</attribute>
+                </button>
+
+                <label for="number" position="replace">
+                    <label for="number" string="General Payment"/>
+                </label>
+
+                <field name="journal_id" position="replace">
+                </field>
+
+                <field name="account_id" position="replace">
+                </field>
+
+                <field name="currency_id" position="after">
+                    <field name="account_id"/>
+                    <field name="transfer_date" string="Document Date"/>
+                    <field name="analytic_account_id" required="1"/>
+                    <field name="payment_mode"/>
+                    <field name="cheque_no" attrs="{'required': [('payment_mode', '=', 'cheque')]}"/>
+                </field>
+
+                <field name="pay_now" position="after">
+                    <field
+                        name="journal_id"
+                        domain="[('active_in_general_payment', '=', True)]"
+                        context="{'from_general_payment': True}"
+                        groups="account.group_account_user,account.group_account_invoice"/>
+                </field>
+
+                <field name="pay_now" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+                <field name="date" position="attributes">
+                    <attribute name="string">Payment Date</attribute>
+                </field>
+
+                <field name="name" position="attributes">
+                    <attribute name="string">Memo</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+
+                <field name="reference" position="attributes">
+                    <attribute name="string">Inv No/Ref</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+
+                <xpath expr="//page[last()]" position="attributes">
+                    <attribute name="groups"></attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">
+                    <field name="backend_name" invisible="1"/>
+                </xpath>
+
+                <field name="company_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <record id="account_voucher.action_purchase_receipt" model="ir.actions.act_window">
+            <field name="name">General Payment</field>
+            <field name="domain">[('voucher_type','=','purchase')]</field>
+        </record>
+
+        <record model="ir.ui.menu" id="account_voucher.menu_action_purchase_receipt">
+            <field name="name">General Payment</field>
+        </record>
+
+        <record model="ir.ui.menu" id="account.menu_action_account_payments_payable">
+            <field name="name">Payment Voucher</field>
+        </record>
+
+
+
+    </data>
+</openerp>

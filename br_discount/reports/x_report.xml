@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <template id="x_report_template_discount" inherit_id="br_point_of_sale.x_report_template">
+            <xpath expr="//tr[@id='ticket_avg']" position="replace">
+                <tr>
+                    <td>Net Sales Without Redemption</td>
+                    <td class="td_right">
+                        <span t-esc="'{:,.2f}'.format(report_data['sales_wo_redemption'])"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ticket Average With Redemption</td>
+                    <td class="td_right">
+                        <span t-esc="'{:,.2f}'.format(report_data['ticket_avg'])"/>
+                    </td>
+                </tr>
+                <tr id="ticket_avg">
+                    <td>Ticket Average Without Redemption</td>
+                    <td class="td_right">
+                        <span t-esc="'{:,.2f}'.format(report_data['ticket_avg_wo_redemption'])"/>
+                    </td>
+                </tr>
+            </xpath>
+        </template>
+    </data>
+</openerp>

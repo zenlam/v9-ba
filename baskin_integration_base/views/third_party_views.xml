@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Third Party Tree View -->
+        <record id="third_party_tree_view" model="ir.ui.view">
+            <field name="name">third.party.tree.view</field>
+            <field name="model">third.party</field>
+            <field name="arch" type="xml">
+                <tree string="Third Party">
+                    <field name="company_id"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="is_baskin"/>
+                    <field name="has_api"/>
+                    <field name="create_code_api"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Form View -->
+        <record id="third_party_form_view" model="ir.ui.view">
+            <field name="name">third.party.form.view</field>
+            <field name="model">third.party</field>
+            <field name="arch" type="xml">
+                <form string="Third Party">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="company_id"/>
+                            </group>
+                            <group>
+                                <field name="has_api" groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                <field name="api_url" attrs="{'required':[('has_api','=',True)]}"
+                                       groups="baskin_integration_base.group_third_party_technical_setting"/>
+                            </group>
+                        </group>
+                        <group groups="baskin_integration_base.group_third_party_technical_setting">
+                            <group name="platforms" string="Platforms">
+                                <field name="is_baskin"/>
+                            </group>
+                            <group name="api_group" attrs="{'invisible':[('has_api', '=', False)]}">
+                                <group name="data" string="Data Sync">
+                                    <field name="sync_promotion_data"/>
+                                    <field name="sync_outlet_data"/>
+                                    <field name="sync_menu_data"/>
+                                    <field name="sync_member_data"/>
+                                    <field name="sync_order_data"/>
+                                </group>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="promotion" string="Promotions"
+                                  attrs="{'invisible':[('sync_promotion_data','=',False)]}">
+                                <group>
+                                    <div name="button_box">
+                                        <button name="action_view_promotions" type="object"
+                                                class="oe_stat_button" icon="fa-tag">
+                                            <field name="promotion_count" widget="statinfo" string="Promotions"/>
+                                        </button>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="promotion_sync_endpoint"
+                                           string="Endpoint"
+                                           attrs="{'required':[('sync_promotion_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                    <field name="create_code_api"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                    <field name="coupon_code_update_endpoint"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                </group>
+                            </page>
+                            <page name="outlet" string="Outlets"
+                                  attrs="{'invisible':[('sync_outlet_data','=',False)]}">
+                                <group>
+                                    <div name="button_box">
+                                        <button name="action_view_outlets" type="object"
+                                                class="oe_stat_button" icon="fa-home">
+                                            <field name="outlet_count" widget="statinfo" string="Outlets"/>
+                                        </button>
+                                    </div>
+                                </group>
+                                <group>
+                                    <button name="add_all_outlet" type="object" string="Add All Outlets" class="oe_link"/>
+                                </group>
+                                <group>
+                                    <field name="outlet_sync_endpoint"
+                                           string="Endpoint"
+                                           attrs="{'required':[('sync_outlet_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                </group>
+                            </page>
+                            <page name="menu" string="Menus"
+                                  attrs="{'invisible':[('sync_menu_data','=',False)]}">
+                                <group>
+                                    <div name="button_box">
+                                        <button name="action_view_menus" type="object"
+                                                class="oe_stat_button" icon="fa-bars">
+                                            <field name="menu_count" widget="statinfo" string="Menus"/>
+                                        </button>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="menu_sync_endpoint"
+                                           string="Endpoint"
+                                           attrs="{'required':[('sync_menu_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                </group>
+                            </page>
+                            <page name="member" string="Members"
+                                  attrs="{'invisible':[('sync_member_data','=',False)]}">
+                                <group>
+                                    <div name="button_box">
+                                        <button name="action_view_members" type="object"
+                                                class="oe_stat_button" icon="fa-user">
+                                            <field name="member_count" widget="statinfo" string="Members"/>
+                                        </button>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="create_member_api"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                    <field name="member_code_prefix" attrs="{'required':[('sync_member_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                </group>
+                            </page>
+                            <page name="order" string="POS Orders"
+                                  attrs="{'invisible':[('sync_order_data','=',False)]}">
+                                <group>
+                                    <div name="button_box">
+                                        <button name="action_view_orders" type="object"
+                                                class="oe_stat_button" icon="fa-shopping-cart">
+                                            <field name="order_count" widget="statinfo" string="Orders"/>
+                                        </button>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="order_sync_endpoint"
+                                           string="Sync Endpoint"
+                                           attrs="{'required':[('sync_order_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                    <field name="order_cancel_sync_endpoint"
+                                           string="Cancel Endpoint"
+                                           attrs="{'required':[('sync_order_data','=',True)]}"
+                                           groups="baskin_integration_base.group_third_party_technical_setting"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Third Party Search View -->
+        <record id="third_party_search_view" model="ir.ui.view">
+            <field name="name">third.party.search.view</field>
+            <field name="model">third.party</field>
+            <field name="arch" type="xml">
+                <search string="Third Party">
+                    <field name="name" string="Third Party Name"/>
+                    <field name="code" string="Third Party Code"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Third Party Member Tree View -->
+        <record id="third_party_member_tree_view" model="ir.ui.view">
+            <field name="name">third.party.member.tree.view</field>
+            <field name="model">third.party.member</field>
+            <field name="arch" type="xml">
+                <tree string="Third Party Member" create="false" edit="false">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="member_level"/>
+                    <field name="is_opt_out"/>
+                    <field name="third_party_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Member Form View -->
+        <record id="third_party_member_form_view" model="ir.ui.view">
+            <field name="name">third.party.member.form.view</field>
+            <field name="model">third.party.member</field>
+            <field name="arch" type="xml">
+                <form string="Third Party Member" create="false" edit="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="third_party_id"/>
+                            </group>
+                            <group>
+                                <field name="is_opt_out"/>
+                                <field name="member_level"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Third Party Member Search View -->
+        <record id="third_party_member_search_view" model="ir.ui.view">
+            <field name="name">third.party.member.search.view</field>
+            <field name="model">third.party.member</field>
+            <field name="arch" type="xml">
+                <search string="Third Party Member">
+                    <field name="name" string="Member Name"/>
+                    <field name="code" string="Member Code"/>
+                    <field name="third_party_id" string="Third Party"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Third Party Outlet Sync Tree View -->
+        <record id="third_party_outlet_sync_tree_view" model="ir.ui.view">
+            <field name="name">third.party.outlet.sync.tree.view</field>
+            <field name="model">third.party.outlet.sync</field>
+            <field name="arch" type="xml">
+                <tree string="Third Party Outlets" editable="bottom">
+                    <field name="third_party_id" invisible="1"/>
+                    <field name="outlet_id" options='{"no_open": True, "no_create":True}'/>
+                    <field name="sync_id"/>
+                    <button name="sync_data" type="object"
+                            string="Sync" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Menu Sync Tree View -->
+        <record id="third_party_menu_sync_tree_view" model="ir.ui.view">
+            <field name="name">third.party.menu.sync.tree.view</field>
+            <field name="model">third.party.menu.sync</field>
+            <field name="arch" type="xml">
+                <tree string="Third Party Menu" editable="bottom">
+                    <field name="third_party_id" invisible="1"/>
+                    <field name="menu_id" options='{"no_open": True, "no_create":True}'/>
+                    <field name="sync_id"/>
+                    <button name="sync_data" type="object"
+                            string="Sync" class="oe_highlight"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party POS Order Tree View -->
+        <record id="third_party_order_tree_view" model="ir.ui.view">
+            <field name="name">third.party.order.tree.view</field>
+            <field name="model">pos.order</field>
+            <field name="arch" type="xml">
+                <tree string="Orders" create="false" edit="false" default_order="date_order desc">
+                    <field name="date_order"/>
+                    <field name="amount_total"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Promotion Sync Log Tree View -->
+        <record id="third_party_promotion_sync_log_tree_view" model="ir.ui.view">
+            <field name="name">third.party.promotion.sync.log.tree.view</field>
+            <field name="model">third.party.promotion.sync.log</field>
+            <field name="arch" type="xml">
+                <tree string="Promotion Sync Log" create="false" edit="false" delete="false">
+                    <field name="third_party_id"/>
+                    <field name="third_party_code" invisible="1"/>
+                    <field name="rec_id"/>
+                    <field name="rec_name"/>
+                    <field name="sync_datetime"/>
+                    <field name="sync_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Promotion Sync Log Form View -->
+        <record id="third_party_promotion_sync_log_form_view" model="ir.ui.view">
+            <field name="name">third.party.promotion.sync.log.form.view</field>
+            <field name="model">third.party.promotion.sync.log</field>
+            <field name="arch" type="xml">
+                <form string="Promotion Sync Log" create="false" edit="false"  delete="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="rec_name"/>
+                                <field name="rec_id"/>
+                                <field name="third_party_id"/>
+                                <field name="third_party_code" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="sync_status"/>
+                                <field name="sync_datetime"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="sync_info"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Third Party Promotion Sync Log Search View -->
+        <record id="third_party_promotion_sync_log_search_view" model="ir.ui.view">
+            <field name="name">third.party.promotion.sync.log.search.view</field>
+            <field name="model">third.party.promotion.sync.log</field>
+            <field name="arch" type="xml">
+                <search string="Promotion Sync Log">
+                    <field name="rec_name" string="Discount Name"/>
+                    <field name="rec_id" string="Discount ID"/>
+                    <field name="third_party_id" string="Third Party"/>
+                    <filter name="success" string="Success"
+                            domain="[('sync_status','=','success')]"/>
+                    <filter name="fail" string="Fail"
+                            domain="[('sync_status','in',('fail','unreachable'))]"/>
+                    <separator/>
+                    <filter name="today" string="Today"
+                            domain="[('sync_datetime','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59))), ('sync_datetime','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Third Party Outlet Sync Log Tree View -->
+        <record id="third_party_outlet_sync_log_tree_view" model="ir.ui.view">
+            <field name="name">third.party.outlet.sync.log.tree.view</field>
+            <field name="model">third.party.outlet.sync.log</field>
+            <field name="arch" type="xml">
+                <tree string="Outlet Sync Log" create="false" edit="false"  delete="false">
+                    <field name="third_party_id"/>
+                    <field name="third_party_code" invisible="1"/>
+                    <field name="rec_id"/>
+                    <field name="rec_name"/>
+                    <field name="sync_datetime"/>
+                    <field name="sync_status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Third Party Outlet Sync Log Form View -->
+        <record id="third_party_outlet_sync_log_form_view" model="ir.ui.view">
+            <field name="name">third.party.outlet.sync.log.form.view</field>
+            <field name="model">third.party.outlet.sync.log</field>
+            <field name="arch" type="xml">
+                <form string="Outlet Sync Log" create="false" edit="false" delete="false">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="rec_name"/>
+                                <field name="rec_id"/>
+                                <field name="third_party_id"/>
+                                <field name="third_party_code" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="sync_status"/>
+                                <field name="sync_datetime"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="sync_info"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Third Party Outlet Sync Log Search View -->
+        <record id="third_party_outlet_sync_log_search_view" model="ir.ui.view">
+            <field name="name">third.party.outlet.sync.log.search.view</field>
+            <field name="model">third.party.outlet.sync.log</field>
+            <field name="arch" type="xml">
+                <search string="Outlet Sync Log">
+                    <field name="rec_name" string="Outlet Name"/>
+                    <field name="rec_id" string="Outlet Code"/>
+                    <field name="third_party_id" string="Third Party"/>
+                    <filter name="success" string="Success"
+                            domain="[('sync_status','=','success')]"/>
+                    <filter name="fail" string="Fail"
+                            domain="[('sync_status','in',('fail','unreachable'))]"/>
+                    <separator/>
+                    <filter name="today" string="Today"
+                            domain="[('sync_datetime','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59))), ('sync_datetime','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Third Party Window Action -->
+        <record id="third_party_action" model="ir.actions.act_window">
+            <field name="name">Third Party</field>
+            <field name="res_model">third.party</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="third_party_tree_view"/>
+        </record>
+
+        <!-- Third Party Member Window Action -->
+        <record id="third_party_member_action" model="ir.actions.act_window">
+            <field name="name">Third Party Member</field>
+            <field name="res_model">third.party.member</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="third_party_member_tree_view"/>
+        </record>
+
+        <!-- Third Party Outlet Sync Window Action -->
+        <record id="third_party_outlet_sync_action" model="ir.actions.act_window">
+            <field name="name">Third Party Outlet</field>
+            <field name="res_model">third.party.outlet.sync</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="third_party_outlet_sync_tree_view"/>
+        </record>
+
+        <!-- Third Party Menu Sync Window Action -->
+        <record id="third_party_menu_sync_action" model="ir.actions.act_window">
+            <field name="name">Third Party Menu</field>
+            <field name="res_model">third.party.menu.sync</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="third_party_menu_sync_tree_view"/>
+        </record>
+
+        <!-- Third Party Order Window Action -->
+        <record id="third_party_order_action" model="ir.actions.act_window">
+            <field name="name">Third Party Order</field>
+            <field name="res_model">pos.order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="third_party_order_tree_view"/>
+        </record>
+
+        <!-- Third Party Menuitem -->
+        <menuitem id="third_party_menu" name="Third Party"
+                  parent="point_of_sale.menu_point_config_product"
+                  sequence="40"/>
+
+        <!-- Third Party Party Menuitem -->
+        <menuitem id="third_party_party_menu" name="Third Party"
+                  action="third_party_action"
+                  parent="third_party_menu"
+                  sequence="30"/>
+
+        <!-- Third Party Member Menuitem -->
+        <menuitem id="third_party_member_menu" name="Third Party Member"
+                  action="third_party_member_action"
+                  parent="third_party_menu"
+                  sequence="40"/>
+
+        <!-- Third Party API Menuitem -->
+        <menuitem id="third_party_api_menu" name="Third Party API Log"
+                  parent="point_of_sale.menu_point_config_product"
+                  sequence="41"/>
+
+    </data>
+</openerp>

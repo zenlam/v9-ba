@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_sequence_number" model="ir.ui.view">
+        <field name="name">res.company.form.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='account_grp']" position="after">
+                <group name="sequence_setting_grp" string="Partner Sequence Number">
+                    <field name="sequence_number_setting"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="is_golden_scoop"/>
+                <field name="is_mega_scoop"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

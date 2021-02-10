@@ -1,0 +1,270 @@
+<openerp>
+	<data>
+        <!--Change the condition of decoration-danger-->
+        <record model="ir.ui.view" id="view_stock_picking_decoration_tree_inherit">
+            <field name="name">stock.picking.decoration.inherit.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <tree position="attributes">
+                    <attribute name="decoration-danger">state not in ('cancel', 'done') and min_date &lt;= current_date_picking</attribute>
+                </tree>
+            </field>
+        </record>
+
+
+		<!-- Production GRN -->
+		<record id="action_production_grn" model="ir.actions.act_window">
+            <field name="name">Production GRN</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('location_usage','=','supplier'),
+            	('dest_location_is_production','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_not_done_not_cancel': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_production_grn" 
+			name="Production GRN" sequence="10" 
+			action="action_production_grn"
+			parent="menu_production_ops_check"/>
+
+				
+		<!-- Production Processing-->
+		<menuitem id="menu_production_processing" 
+			name="Production Processing" sequence="20" 
+			parent="menu_production_ops_check"/>
+			
+		<record id="action_production_deli_today_past" model="ir.actions.act_window">
+            <field name="name">Delivery Today &amp; Past</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        		
+		<menuitem id="menu_production_deliv_today_past" 
+			name="Delivery Today &amp; Past" sequence="10"
+		 	action="action_production_deli_today_past"
+			parent="menu_production_processing"/>
+			
+		<record id="action_production_deli_tomorrow" model="ir.actions.act_window">
+            <field name="name">Delivery Tomorrow</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_tomorrow': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        		
+		<menuitem id="menu_production_deliv_tomorrow" 
+			name="Delivery Tomorrow" sequence="20"
+		 	action="action_production_deli_tomorrow"
+			parent="menu_production_processing"/>
+
+
+		<record id="action_production_deli_2_3day" model="ir.actions.act_window">
+            <field name="name">Delivery 2-3D later</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_2_3day': 1,
+            		'search_default_processing': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        		
+		<menuitem id="menu_production_deli_2_3day" 
+			name="Delivery 2-3D later" sequence="30"
+		 	action="action_production_deli_2_3day"
+			parent="menu_production_processing"/>	
+			
+				
+				
+				
+		<!-- Production Put In Transit-->
+		
+		<record id="action_production_deli_transit" model="ir.actions.act_window">
+            <field name="name">Production Put in Transit</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True),
+            					  ('to_damage_location','=',False),
+            					  ('dest_location_usage','!=','customer'),
+            					  ('dest_location_is_loss','=',False),
+            					  ('is_dispute_picking','=',False),
+            	]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_today_and_before': 1,
+            		'search_default_processed': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_production_deli_transit" 
+			name="Production Put in Transit" sequence="30"
+		 	action="action_production_deli_transit"
+			parent="menu_production_ops_check"/>
+			
+				
+				
+				
+		<!-- Production Dispute-->
+		
+		<record id="action_production_deli_dispute" model="ir.actions.act_window">
+            <field name="name">Production Dispute</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('is_dispute_picking','=',True),
+            					'|',('src_location_is_production','=',True),
+            						('dest_location_is_production','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_yesterday_and_before': 1,
+            		'search_default_not_done_not_cancel': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_production_deli_dispute" 
+			name="Production Dispute" sequence="40"
+		 	action="action_production_deli_dispute"
+			parent="menu_production_ops_check"/>
+		
+				
+				
+		<!--    Production Waiting Availability-->
+		
+		<record id="action_production_deli_waiting_partial" model="ir.actions.act_window">
+            <field name="name">Production Waiting Availability</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_deliv_yesterday_and_before': 1,
+            		'search_default_waiting_partial': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="view_id" ref="br_stock_request.view_picking_transfer_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+        
+		<menuitem id="menu_production_deli_waiting_partial" 
+			name="Production Waiting Availability" sequence="50"
+		 	action="action_production_deli_waiting_partial"
+			parent="menu_production_ops_check"/>
+
+        <template id="assets_backend" name="production_assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/baskin_grn_view/static/src/js/picking_decoration.js"></script>
+            </xpath>
+        </template>
+						
+	</data>
+</openerp>

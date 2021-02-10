@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+	<t t-extend="PaymentPopOver">
+	    <t t-jquery="button[t-att-payment-id='payment_id']" t-operation="replace"></t>
+	</t>
+
+</templates>

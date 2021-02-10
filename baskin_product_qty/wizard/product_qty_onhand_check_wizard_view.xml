@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_qty_onhand_check_wizard_view" model="ir.ui.view">
+        <field name="name">product.qty.onhand.check.wizard.form</field>
+        <field name="model">product.qty.onhand.check.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Product Qty on Hand Check">
+                <group>
+                    <field name="all_product_category" invisible="1"/>
+                    <field name="product_category_ids" widget="many2many_tags"/>
+                    <field name="product_ids" widget="many2many_tags"
+                           domain="[('categ_id', 'child_of', product_category_ids and product_category_ids[0] and product_category_ids[0][2] or all_product_category[0][2])]"/>
+                    <field name="warehouse_ids" widget="many2many_tags" domain="[('is_main_warehouse', '=', True)]" options="{'no_open': True, 'no_create': True}"/>
+                    <!--<field name="location_ids" widget="many2many_tags" context="{'from_warehouse': warehouse_ids}"/>-->
+                </group>
+                <footer>
+                    <button string='Show' name="show_product" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_qty_onhand_check_wizard" model="ir.actions.act_window">
+        <field name="name">Logs Ops Qty Check</field>
+        <field name="res_model">product.qty.onhand.check.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="product_qty_onhand_check_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_product_qty_onhand_check_wizard" name="Logs Ops Qty Check" action="action_product_qty_onhand_check_wizard" parent="stock.menu_warehouse_report"/>
+
+</odoo>

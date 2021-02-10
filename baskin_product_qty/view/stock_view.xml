@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="view_stock_product_qty_tree" model="ir.ui.view">
+            <field name="name">stock.product.qty.tree</field>
+            <field name="model">stock.product.qty</field>
+            <field name="arch" type="xml">
+                <tree string="Product Qty on Hand Check" editable="top" create="0">
+                    <field name="product_id" readonly="1"/>
+                    <field name="uom_id" domain="[('id', 'in', uom_ids and uom_ids[0] and uom_ids[0][2] or False)]" options="{'no_create': True}"/>
+                    <field name="qty_on_hand" readonly="1"/>
+                    <field name="available_qty" readonly="1"/>
+                    <field name="partial_available_qty" readonly="1"/>
+                    <field name="processed_qty" readonly="1"/>
+                    <field name="transit_qty" readonly="1"/>
+                    <field name="total_reverse" readonly="1"/>
+                    <field name="free_reserve" readonly="1"/>
+                    <field name="draft_qty" readonly="1"/>
+                    <field name="waiting_another_move" readonly="1"/>
+                    <field name="waiting_availablity" readonly="1"/>
+                    <field name="force_availability_qty" readonly="1"/>
+                    <field name="shortage_qty" readonly="1"/>
+                    <field name="qty_needed" readonly="1"/>
+                    <field name="no_action" readonly="1"/>
+                    <button name="show_picking" string="Show" type="object"/>
+                    <field name="uom_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="distribution_uom_id" invisible="1"/>
+
+                    <field name="back_available_qty" invisible="1"/>
+                    <field name="back_processed_qty" invisible="1"/>
+                    <field name="back_transit_qty" invisible="1"/>
+                    <field name="back_partial_available_qty" invisible="1"/>
+                    <field name="back_total_reverse" invisible="1"/>
+                    <field name="back_draft_qty" invisible="1"/>
+                    <field name="back_waiting_another_move" invisible="1"/>
+                    <field name="back_waiting_availablity" invisible="1"/>
+                    <field name="back_force_availability_qty" invisible="1"/>
+                    <field name="back_shortage_qty" invisible="1"/>
+                    <field name="back_qty_needed" invisible="1"/>
+                    <field name="back_no_action" invisible="1"/>
+                    <field name="back_free_reserve" invisible="1"/>
+                    <field name="back_qty_on_hand" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_stock_product_qty_form" model="ir.ui.view">
+            <field name="name">stock.inventory.form</field>
+            <field name="model">stock.product.qty</field>
+            <field name="arch" type="xml">
+                <form string="Product Qty on Hand Check">
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="uom_id"/>
+                            <field name="available_qty"/>
+                            <field name="transit_qty"/>
+                            <field name="free_reserve"/>
+                            <field name="draft_qty"/>
+                            <field name="waiting_availablity"/>
+                            <field name="partial_available_qty"/>
+                            <field name="force_availability_qty"/>
+                        </group>
+                        <group>
+                            <field name="processed_qty"/>
+                            <field name="total_reverse"/>
+                            <field name="qty_on_hand"/>
+                            <field name="shortage_qty"/>
+                            <field name="waiting_another_move"/>
+                            <field name="no_action"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_view_stock_product_qty_tree" model="ir.actions.act_window">
+            <field name="name">Product Qty on Hand Check</field>
+            <field name="res_model">stock.product.qty</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree, form</field>
+            <field name="view_id" ref="view_stock_product_qty_tree"/>
+        </record>
+
+        <record id="auto_unlink_log_ops_record" model="ir.cron">
+            <field name="name">Clear Log Ops Record</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=1) - timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="doall" eval="False"/>
+            <field name="model" eval="'stock.product.qty'"/>
+            <field name="function" eval="'auto_unlink'"/>
+            <field eval="'()'" name="args"/>
+        </record>
+
+    </data>
+</openerp>

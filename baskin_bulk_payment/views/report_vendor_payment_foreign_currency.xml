@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="report_baskin_payment_foreign">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                                <br/><br/>
+                                <h2 class="text-center" t-if="doc.partner_type =='supplier'">
+                                    Vendor Payment Voucher
+                                </h2>
+                                <h2 class="text-center" t-if="doc.partner_type =='customer'">
+                                    Customer Payment Voucher
+                                </h2>
+                            <table class="table table-condensed">
+                                <style>
+                                    table.bold td {
+                                      font-weight: bold;
+                                    }
+                                    td span {
+                                      font-weight: normal;
+                                    }
+                                </style>
+                                <tr>
+                                    <td style="border-top: 1px solid black;">
+                                        <table class="table table-condensed bold">
+                                            <tr>
+                                                <td style="border-left: 0px solid white; border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                    Partner Name: <br/> <span t-field="doc.partner_id" t-field-options='{"widget": "contact", "fields": ["name"], "no_marker": true}'/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white; border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                    Address: <br/> <span t-field="doc.partner_id" t-field-options='{"widget": "contact", "fields": ["address"], "no_marker": true}'/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Payment Method: <span t-field="doc.journal_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Creator Remarks: <span t-field="doc.creator_remarks"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Authorizer Remarks: <span t-field="doc.authorizer_remarks"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="border-top: 1px solid black;">
+                                        <table class="table table-condensed bold">
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                    Payment Ref: <span t-field="doc.name"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                    Payment Date:  <span t-field="doc.payment_date"/>
+                                                </td>
+                                            </tr>
+                                            <!-- <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                    Transfer Date: <span t-field="doc.company_id.name"/>
+                                                </td>
+                                            </tr> -->
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Inv No / Ref: <span t-field="doc.communication"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Memo: <span t-field="doc.memo"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Payment Mode: <span t-field="doc.payment_mode"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                                   Cheque No / Ref: <span t-field="doc.cheque_no"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th width="5%" class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;"
+                                        > No
+                                        </th>
+                                        <th t-if="doc.partner_type =='customer'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Customer Invoice No</th>
+                                        <th style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">System Bill No</th>
+                                        <th t-if="doc.partner_type =='supplier'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Inv No / Ref</th>
+                                        <th t-if="doc.partner_type =='supplier'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Bill Posting Date</th>
+                                        <th t-if="doc.partner_type =='customer'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Invoice Due Date</th>
+                                        <th class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Inv Amt(<span t-field="doc.other_currency_id.symbol"/>)</th>
+                                        <th class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Paid Amt(<span t-field="doc.other_currency_id.symbol"/>)</th>
+                                        <th class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Paid Amount(<span t-field="doc.currency_id.symbol"/>)</th>
+<!--                                        <th t-if="doc.partner_type =='customer'" class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;background-color:#F0E68C;">Outstanding Amount(<span t-field="doc.other_currency_id.symbol"/>)</th>-->
+                                    </tr>
+                               </thead>
+                               <tbody>
+                                    <t t-set="i" t-value="1" /> 
+                                    <tr t-foreach="doc.line_ids.filtered(lambda l: l.amount > 0.0)" t-as="l">
+                                        <td class="text-center" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-esc="i"/>
+                                            <t t-set="i" t-value="i+1"/>
+                                        </td>
+                                        <td t-if="doc.partner_type =='customer'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.move_line_id"/>
+                                        </td>
+                                        <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.move_line_id.name"/>
+                                        </td>
+                                        <td t-if="doc.partner_type =='supplier'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span  t-field="l.reference"/>
+                                        </td>
+                                        <td t-if="doc.partner_type =='supplier'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-esc="get_posting_date(l)"/>
+                                        </td>
+                                        <td t-if="doc.partner_type =='customer'" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.date_due"/>
+                                        </td>
+                                        <td class="text-right" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.foreign_amount"/>
+                                        </td>
+                                        <td class="text-right" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.amount_foregin"/>
+                                        </td>
+                                        <td class="text-right" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">
+                                            <span t-field="l.amount"/>
+                                        </td>
+<!--                                        <td t-if="doc.partner_type =='customer'" class="text-right" style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px solid white;border-bottom:0px solid white;">-->
+<!--                                            <span t-field="l.foreign_unreconciled"/>-->
+<!--                                        </td>-->
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+
+                            <div class="row">
+                                <div class="col-xs-4 pull-left" t-if="doc.partner_type =='customer'">
+                                    <table class="table table-condensed">
+                                        <tr>
+                                            <td style="border-left: 0px solid white;border-top: 0px solid white;border-right: 0px so/lid white;border-bottom:0px solid white;">
+                                                <strong>Signature</strong>
+                                                _____________________________
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-xs-4 pull-right">
+                                    <table class="table table-condensed">
+                                        <tr>
+                                        </tr>
+                                        <tr class="border-black">
+                                        </tr>
+                                        <tr class="border-black" style="border-bottom: 1px solid black;">
+                                            <td><strong>Total Paid Amount(<span t-field="doc.currency_id.symbol"/>)</strong></td>
+                                            <td class="text-right">
+                                                 <span t-field="doc.amount"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-if="doc.partner_type =='customer'" class="border-black" style="border-bottom: 1px solid black;">
+                                            <td><strong>Total Paid Amount(<span t-field="doc.other_currency_id.symbol"/>)</strong></td>
+                                            <td class="text-right">
+                                                 <span t-field="doc.other_currency_paid_amount"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="container" style="margin-top: 10px; margin-bottom: 10px;" t-if="doc.partner_type =='supplier'">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <div>
+                                            Prepared by:
+                                        </div>
+                                        <div style="margin-top: 70px;">
+                                            ___________________________
+                                        </div>
+                                        <div style="margin-top: 20px;">
+                                            Date:
+                                        </div>
+                                        <div>
+                                            Name:
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div>
+                                            Checked by:
+                                        </div>
+                                        <div style="margin-top: 70px;">
+                                            ___________________________
+                                        </div>
+                                        <div style="margin-top: 20px;">
+                                            Date:
+                                        </div>
+                                        <div>
+                                            Name:
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div>
+                                            Approved by:
+                                        </div>
+                                        <div style="margin-top: 70px;">
+                                            ___________________________
+                                        </div>
+                                        <div style="margin-top: 20px;">
+                                            Date:
+                                        </div>
+                                        <div>
+                                            Name:
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="oe_structure"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_baskin_vendor_payment_foreign">
+            <t t-call="baskin_bulk_payment.report_baskin_payment_foreign"/>
+        </template>
+
+        <template id="report_baskin_cust_payment_foreign">
+            <t t-call="baskin_bulk_payment.report_baskin_payment_foreign"/>
+        </template>
+
+        <report
+            id="baskin_vendor_payment_foreign"
+            model="account.payment"
+            string="Vendor Payment (Foreign Inv with Base Currency Payment)"
+            report_type="qweb-pdf"
+            name="baskin_bulk_payment.report_baskin_vendor_payment_foreign"
+            file="baskin_bulk_payment.report_baskin_vendor_payment_foreign"
+        />
+
+        <report
+            id="baskin_customer_payment_foreign"
+            model="account.payment"
+            string="Customer Payment (Foreign Inv with Base Currency Payment)"
+            report_type="qweb-pdf"
+            name="baskin_bulk_payment.report_baskin_cust_payment_foreign"
+            file="baskin_bulk_payment.report_baskin_cust_payment_foreign"
+        />
+
+    </data>
+</openerp>

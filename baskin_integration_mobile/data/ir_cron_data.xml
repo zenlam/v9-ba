@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Cronjob: Deactivate Suspended Promotion -->
+        <record id="ir_cron_deactivate_suspend_promotion" model="ir.cron">
+            <field name="name">Deactivate Suspended Promotion</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute = 0,second=0) + timedelta(days=1) - timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="model">br.bundle.promotion</field>
+            <field name="function">deactivate_suspend_promotion</field>
+            <field name="args">()</field>
+        </record>
+
+    </data>
+</openerp>

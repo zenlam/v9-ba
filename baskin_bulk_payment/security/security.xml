@@ -1,0 +1,10 @@
+<openerp>
+	<data>
+		<record id="group_edit_asset_category_invoice" model="res.groups">
+	        <field name="name">Allow Edit Asset Category</field>
+	        <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+	        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+	        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+	    </record>
+	</data>
+</openerp>

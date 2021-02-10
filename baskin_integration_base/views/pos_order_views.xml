@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- POS Order Form View: Third Party -->
+        <record id="view_pos_pos_form_inherit_third_party_member" model="ir.ui.view">
+            <field name="name">view.pos.pos.form.inherit.third.party.member</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="member_code" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                    <field name="member_id" readonly="1"/>
+                    <field name="third_party" readonly="1"/>
+                    <field name="sync_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

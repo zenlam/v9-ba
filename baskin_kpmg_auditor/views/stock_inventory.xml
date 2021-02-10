@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_stock_view_inventory_form_extend_kpmg" model="ir.ui.view">
+            <field name="name">br.stock.view.inventory.form.extend.kpmg</field>
+            <field name="model">stock.inventory</field>
+            <field name="groups_id" eval="[(6, 0, [ref('base.kpmg_auditor')])]"/>
+            <field name="inherit_id" ref="br_stock.br_stock_view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='theoretical_qty']" position="attributes">
+                    <attribute name="groups">base.kpmg_auditor</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="br_view_inventory_form_extend_kpmg" model="ir.ui.view">
+            <field name="name">br.view.inventory.form.extend.kpmg</field>
+            <field name="model">stock.inventory</field>
+            <field name="groups_id" eval="[(6, 0, [ref('base.kpmg_auditor')])]"/>
+            <field name="inherit_id" ref="br_inventory_adjustment.br_view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_unofficial_ids']/tree/field[@name='theoretical_qty']" position="attributes">
+                    <attribute name="groups">base.kpmg_auditor</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

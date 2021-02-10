@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="br_view_sale_form_inherit" model="ir.ui.view">
+            <field name="name">br.view.sale.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="priority">2</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+                    <attribute name="context">{'product_id':product_id, 'supplier_id': parent.partner_id}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

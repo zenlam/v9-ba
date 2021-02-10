@@ -1,0 +1,131 @@
+<openerp>
+	<data>
+		<!-- Pending Damaged warehouse-->
+		<record id="action_pending_damage_warehouse" model="ir.actions.act_window">
+            <field name="name">Warehouse</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            	('to_damage_location','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_src_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_damage_warehouse" 
+			name="Warehouse" sequence="10" 
+			action="action_pending_damage_warehouse"
+			parent="menu_pending_damaged"/>
+			
+			
+		<!-- Pending Damaged production-->
+		<record id="action_pending_damage_production" model="ir.actions.act_window">
+            <field name="name">Production</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_production','=',True),
+            	('to_damage_location','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_src_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_damage_production" 
+			name="Production" sequence="20" 
+			action="action_pending_damage_production"
+			parent="menu_pending_damaged"/>
+		
+
+		<!-- Pending Damaged outlet-->
+		<record id="action_pending_damage_outlet" model="ir.actions.act_window">
+            <field name="name">Outlet</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_is_outlet','=',True),
+            	('to_damage_location','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_src_location_area_manager':1,
+            		'search_default_group_src_location':1,
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_damage_outlet" 
+			name="Outlet" sequence="30" 
+			action="action_pending_damage_outlet"
+			parent="menu_pending_damaged"/>
+		
+
+		<!-- Pending Damaged Other Location-->
+		<record id="action_pending_damage_other_location" model="ir.actions.act_window">
+            <field name="name">Other Location</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('src_location_maping_name','not in',['iglo','batu_caves','harus_saujana','hypercold_logistic','wlna']),
+            	('src_location_is_outlet','=',False),
+            	('src_location_is_production','=',False),
+            	('to_damage_location','=',True)]</field>
+            <field name="context">{
+                    'contact_display': 'partner_address',
+            		'search_default_not_done_not_cancel': 1,
+            		'search_default_group_src_location':1,
+            		
+            }
+            </field>
+            <field name="search_view_id" ref="baskin_view_picking_internal_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create a new transfer.
+              </p><p>
+                You can either do it immediatly or mark it as Todo for future processing. Use your scanner to validate the transferred quantity quicker.
+              </p>
+            </field>
+        </record>
+		
+		<menuitem id="menu_pending_damage_other_location" 
+			name="Other Location" sequence="40" 
+			action="action_pending_damage_other_location"
+			parent="menu_pending_damaged"/>				
+				
+	</data>
+</openerp>

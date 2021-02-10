@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="baskin_external_layout_header">
+            <div class="header">
+                <table class="oe_baskin_table_header">
+                    <tr>
+                        <td width="50%">
+                             <strong class="oe_baskin_header"><t t-esc="doc.company_id.name"/></strong>
+                        </td>
+                        <td width="50%" class="oe_baskin_name">
+                            <t t-if="doc.state in ('draft', 'sent')">Quotation</t>
+                            <t t-if="doc.state not in ('draft', 'sent')">Sale Order</t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <t t-if="doc.company_id.company_registry">
+                                <t t-esc="doc.company_id.company_registry"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.street">
+                                <t t-esc="doc.company_id.street"/>,
+                            </t>
+                            <t t-if="doc.company_id.street2">
+                                <t t-esc="doc.company_id.street2"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.city">
+                                <t t-esc="doc.company_id.city"/>,
+                            </t>
+                            <t t-if="doc.company_id.state_id">
+                                <t t-esc="doc.company_id.state_id.name"/>
+                            </t>
+                            <t t-if="doc.company_id.zip">
+                                <t t-esc="doc.company_id.zip"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.phone">
+                                Tel : <t t-esc="doc.company_id.phone"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.fax">
+                                Fax : <t t-esc="doc.company_id.fax"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.vat and doc.company_id.id == 1">
+                                SST Reg. No. : <t t-esc="doc.company_id.vat"/>
+                                <br/>
+                            </t>
+                            <t t-if="doc.company_id.vat and doc.company_id.id == 3">
+                                GST Reg. No. : <t t-esc="doc.company_id.vat"/>
+                                <br/>
+                            </t>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+
+        <template id="baskin_external_layout_footer">
+        </template>
+
+        <template id="baskin_external_layout">
+            <t t-call="br_report_template.baskin_external_layout_header"/>
+            <t t-raw="0"/>
+            <t t-call="br_report_template.baskin_external_layout_footer"/>
+        </template>
+
+        <template id="baskin_report_saleorder_document">
+            <t t-call="br_report_template.baskin_external_layout">
+                <div class="page baskin_page">
+                    <table class="oe_top_table">
+                        <tr>
+                            <td width="8%"></td>
+                            <td width="42%"></td>
+                            <td width="5%"></td>
+                            <td width="15%">
+                                <strong>
+                                    <t t-if="doc.state in ('draft', 'sent')">Quotation</t>
+                                    <t t-if="doc.state not in ('draft', 'sent')">SO No.</t>
+                                </strong>
+                            </td>
+                            <td>
+                                :<t t-esc="doc.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td>
+                                <strong>S/O Date</strong>
+                            </td>
+                            <td>
+                                :
+                                <t t-esc="doc.date_order"/>
+                            </td>
+                        </tr>
+                        <td>
+                            <td colspan="4" style="padding-bottom: 2em"></td>
+                        </td>
+                        <tr>
+                            <td style="vertical-align: text-top"><strong>To:</strong></td>
+                            <td>
+                                <t t-if="doc.partner_id.name">
+                                    <t t-esc="doc.partner_id.name"/>
+                                    <br/>
+                                </t>
+                                <t t-if="doc.partner_id.street">
+                                    <t t-esc="doc.partner_id.street"/>,
+                                </t>
+                                <t t-if="doc.partner_id.street2">
+                                    <t t-esc="doc.partner_id.street2"/>
+                                    <br/>
+                                </t>
+                                <t t-if="doc.partner_id.city">
+                                    <t t-esc="doc.partner_id.city"/>,
+                                </t>
+                                <t t-if="doc.partner_id.state_id.id">
+                                    <t t-esc="doc.partner_id.state_id.name"/>,
+                                </t>
+                                <t t-if="doc.partner_id.zip">
+                                    <t t-esc="doc.partner_id.zip"/>
+                                </t>
+                                <br/>
+                                <t t-if="doc.partner_id.phone">
+                                    Phone
+                                    <t t-esc="doc.partner_id.phone"/>
+                                    <br/>
+                                </t>
+                            </td>
+                            <td/>
+                            <td style="vertical-align: text-top"><strong>Deliver to:</strong></td>
+                            <td style="vertical-align: text-top">
+                                <t t-if="doc.partner_shipping_id.name">
+                                    <t t-esc="doc.partner_shipping_id.name"/>
+                                    <br/>
+                                </t>
+                                <t t-if="doc.partner_shipping_id.street">
+                                    <t t-esc="doc.partner_shipping_id.street"/>,
+                                </t>
+                                <t t-if="doc.partner_shipping_id.street2">
+                                    <t t-esc="doc.partner_shipping_id.street2"/>,
+                                    <br/>
+                                </t>
+                                <t t-if="doc.partner_shipping_id.city">
+                                    <t t-esc="doc.partner_shipping_id.city"/>,
+                                </t>
+                                <t t-if="doc.partner_shipping_id.state_id.id">
+                                    <t t-esc="doc.partner_shipping_id.state_id.name"/>,
+                                </t>
+                                <t t-if="doc.partner_shipping_id.zip">
+                                    <t t-esc="doc.partner_shipping_id.zip"/>
+                                </t>
+                                <br/>
+                                <t t-if="doc.partner_shipping_id.phone">
+                                    Phone:
+                                    <t t-esc="doc.partner_shipping_id.phone"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15%" style="vertical-align: text-top"><strong>Attn:</strong></td>
+                            <td width="50%">
+                                <t t-if="doc.attn_to.name">
+                                    <t t-esc="doc.attn_to.name"/>
+                                    <br/>
+                                </t>
+                                <t t-if="doc.attn_to.phone">
+                                    Phone:
+                                    <t t-esc="doc.attn_to.phone"/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                    <p class="oe_baskin_space"></p>
+                    <table class="oe_baskin_main_table">
+                        <thead>
+                            <tr>
+                                <th>Salesperson</th>
+                                <th>PO No.</th>
+                                <th>Delivery Date</th>
+                                <th>Terms</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <t t-esc="doc.user_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.po_no"/>
+
+                                </td>
+                                <td>
+                                    <t t-esc="doc.delivery_date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.payment_term_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.validity_date"/>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <p class="oe_baskin_space"></p>
+                    <table class="oe_baskin_main_table">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">No.</th>
+                                <th width="45%">Description</th>
+                                <th width="10%" class="text-right">Qty</th>
+                                <th width="10%" class="text-center">UOM</th>
+                                <th width="15%" class="text-right">Unit Price (<t t-esc="doc.company_id.currency_id.symbol"/>)</th>
+                                <th width="15%" class="text-right">Net Price (<t t-esc="doc.company_id.currency_id.symbol"/>)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="count" t-value="1"/>
+                            <tr t-foreach="doc.order_line" t-as="l">
+                                <td style="text-align: center">
+                                    <t t-esc="count"/>
+                                    <t t-set="count" t-value="count + 1"/>
+                                </td>
+                                <td>
+                                    <t t-esc="l.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="l.product_uom_qty"/>
+                                </td>
+                                <td style="text-align: center">
+                                    <t t-esc="l.product_uom.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'{0:,.2f}'.format(l.price_unit)"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="'{0:,.2f}'.format(l.price_subtotal)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="oe_baskin_border_white" width="70%"></td>
+                                <td class="text-right oe_baskin_border_right_black" width="15%">Sub Total</td>
+                                <td class="text-right" width="15%">
+                                    <t t-esc="'{0:,.2f}'.format(doc.amount_untaxed + doc.get_discount())"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="oe_baskin_border_white">Malaysian Ringgit</td>
+                                <td class="text-right oe_baskin_border_right_black">Discount</td>
+                                <td class="text-right">
+                                    <t t-esc="'{0:,.2f}'.format(doc.get_discount())"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="oe_baskin_border_white" style="text-align: left">
+                                    <t t-esc="doc.get_net_total_in_word(doc.company_id.currency_id.name)"/>
+                                </td>
+                                <td class="text-right oe_baskin_border_right_black">Gross Total</td>
+                                <td class="text-right">
+                                    <t t-esc="'{0:,.2f}'.format(doc.amount_untaxed)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="oe_baskin_border_white">Remark</td>
+                                <td class="text-right oe_baskin_border_right_black">
+                                    <t t-if="doc.company_id.id == 1">
+                                        SST Amount
+                                    </t>
+                                    <t t-if="doc.company_id.id == 3">
+                                        GST Amount
+                                    </t>
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc ="'{0:,.2f}'.format(doc.amount_tax)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="oe_baskin_border_white" style="white-space: pre-wrap;"><t t-esc="doc.remark"/></td>
+                                <td class="text-right oe_baskin_border_right_black">Net Total</td>
+                                <td class="text-right">
+                                    <t t-esc="'{0:,.2f}'.format(doc.amount_total)"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                </div>
+            </t>
+        </template>
+
+        <template id="sale.report_saleorder">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <!--<t t-raw="translate_doc(doc.id, doc._name, 'partner_id.lang', 'br_report_template.baskin_report_saleorder_document')"/>-->
+                    <t t-call="br_report_template.baskin_report_saleorder_document" t-lang="doc.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="assets_common" inherit_id="report.assets_common" name="Baskin Report Assets Common">
+            <xpath expr="." position="inside">
+                <link href="/br_report_template/static/src/css/baskin_report_style.css" rel="stylesheet"
+                      type="text/css"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>

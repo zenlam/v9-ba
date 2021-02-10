@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="sale_report_product_conso_form" model="ir.ui.view">
+            <field name="name">sale.report.product.conso.form</field>
+            <field name="model">sales.report.product.conso</field>
+            <field name="arch" type="xml">
+                <form string="Sales Report Product Consolidation">
+                    <group>
+                        <group>
+                            <field name="only_invoice"/>
+							<field name="start_date"/>
+	                    	<field name="end_date"/>
+	                    	<field name="product_categ_ids" widget="many2many_tags"/>
+	                    	<field name="product_ids" widget="many2many_tags"/>
+	                    </group>
+                        <group attrs="{'invisible':[('only_invoice', '=', False)]}">
+	                    	<field name="team_ids" widget="many2many_tags"/>
+	                    	<field name="region_ids" widget="many2many_tags"/>
+	                    	<field name="state_ids" widget="many2many_tags"/>
+	                    	<field name="area_ids" widget="many2many_tags"/>
+	                    	<field name="partner_ids" widget="many2many_tags" domain="[('is_mega_scoop','!=', True)]"/>
+	                    </group>
+                    </group>
+                    <footer>
+                        <button string="Print" name="action_print" type="object" icon="gtk-ok"/>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sale_report_product_conso" model="ir.actions.act_window">
+            <field name="name">Sales Report Product Conso</field>
+            <field name="res_model">sales.report.product.conso</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_report_product_conso_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+            id="sale_report_product_conso_menu"
+            name="Trade Sales Team Report"
+            action="action_sale_report_product_conso"
+            parent="base.menu_sale_report"/>
+
+        <report id="sales_report_product_conso_xls"
+                model="sales.report.product.conso"
+                string="Sales Report by Product Consolidation"
+                report_type="xlsx"
+                name="br_sales_report_product_conso.sales_report_product_conso"
+                file="br_sales_report_product_conso.sales_report_product_conso"/>
+    </data>
+</openerp>
+

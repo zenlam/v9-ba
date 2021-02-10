@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_backend" name="Backend Assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/baskin_bulk_payment/static/src/css/bulk_payment.css"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

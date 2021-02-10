@@ -1,0 +1,2 @@
+import product_category
+import stock_location

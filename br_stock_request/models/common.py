@@ -1,0 +1,1 @@
+UOM_TYPE = [('standard', 'Standard'), ('purchase', 'Purchase'), ('storage', 'Storage'), ('distribution', 'Distribution')]

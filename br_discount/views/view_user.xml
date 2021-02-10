@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <!--Discount group-->
+        <record id="view_br_discount_group_form" model="ir.ui.view">
+            <field name="name">view.br.discount.group.form</field>
+            <field name="model">br.discount.group</field>
+            <field name="arch" type="xml">
+                <form string="Discount group">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                             <field name="user_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_br_discount_group_tree" model="ir.ui.view">
+            <field name="name">view.br.discount.group.tree</field>
+            <field name="model">br.discount.group</field>
+            <field name="arch" type="xml">
+                <tree string="Discount group">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_br_discount_group" model="ir.actions.act_window">
+            <field name="name">Employee Group</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">br.discount.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create and edit Discount Group
+            </field>
+        </record>
+
+        <menuitem action="action_br_discount_group" id="br_menu_discount_group"
+                  parent="br_product.br_menu_config_menu_names" sequence="5"/>
+
+        <record model="ir.ui.view" id="br_user_form_view">
+            <field name="name">br_user_form_view</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="point_of_sale.res_users_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pos_security_pin']" position="after">
+                    <field name="discount_group_ids" widget="many2many_tags" string="Employee Group"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

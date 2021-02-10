@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="inventory_adjustment_review_form">
+			<field name="name">stock.inventory.adjustment.review.form</field>
+			<field name="model">stock.inventory.adjustment.review</field>
+			<field name="arch" type="xml">
+				<form string="Review">
+					<separator string="Select a case"/>
+					<field name="inventory_case" class="oe_inline" required="1"/>
+					<footer>
+						<button name="set_case" type="object" string="Confirm" class="btn-primary"/>
+						<button string="Cancel" class="btn-default" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_br_ftp_gto_summary,access_ftp_gto_summary,model_ftp_gto_summary,point_of_sale.group_pos_manager,1,1,1,1
+access_br_log_gto_report,access_log.gto.report,model_log_gto_report,point_of_sale.group_pos_manager,1,1,1,1
+access_br_mall_template_summary_config,access_mall_template_summary_config,model_mall_template_summary_config,point_of_sale.group_pos_manager,1,1,1,1
+access_br_gto_summary_report,access_gto_summary_report,model_gto_summary_report,point_of_sale.group_pos_manager,1,1,1,1

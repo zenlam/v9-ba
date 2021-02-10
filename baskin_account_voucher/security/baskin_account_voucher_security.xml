@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	    
+    	<record id="base.payment_voucher_validation_group" model="res.groups">
+	        <field name="name">General Payment Validation</field>
+	        <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+	    </record>
+
+	    <record id="base.general_receipt_validation_group" model="res.groups">
+	        <field name="name">General Receipt Validation</field>
+	        <field name="category_id" ref="base.module_category_accounting_and_finance"/>
+	    </record>
+	    
+    </data>
+</openerp>

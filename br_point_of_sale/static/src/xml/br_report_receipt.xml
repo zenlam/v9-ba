@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vim:fdl=1:
+-->
+<templates id="template" xml:space="preserve">
+    <t t-name="PosTicket">
+        <div class="pos-sale-ticket">
+            <div class="pos-center-align">
+                <t t-if="widget.pos.company_logo_base64">
+                    <div class="company_logo"><img t-att-src="widget.pos.company_logo_base64" width="170%" /></div>
+                </t>
+                <div>
+                    <t t-set="company" t-value="widget.pos.company" />
+                    <t t-set="currency" t-value="widget.pos.currency" />
+                    <br/>
+                    <t t-esc="widget.pos.outlet.name"/>
+                    <br/>
+                    <t t-esc="company.name"/>
+                    <t t-if="company.company_registry">
+                        (<t t-esc="company.company_registry"/>)
+                    </t>
+                    <br/>
+                    <t t-esc="company.street ? company.street + ' ' : ''"/>
+                    <t t-esc="company.street2 ? company.street2 + ' ' : ''"/>
+                    <t t-esc="company.city ? company.city + ' ' : ''"/>
+                    <br/>
+                    <t t-esc="company.country and company.country.name ? company.country.name + ' ' : ''"/>
+                    <t t-esc="company.zip ? company.zip + ' ' : ''"/>
+                    <br/>
+                    <t t-if="company.vat and company.country and widget.pos.convert_to_lowercase(company.country.name) == 'singapore'">
+                        GST Reg. No.: <t t-esc="company.vat"/>
+                    </t>
+                    <t t-if="company.vat and company.country and widget.pos.convert_to_lowercase(company.country.name) == 'malaysia'">
+                        Service Tax Reg. No.: <t t-esc="company.vat"/>
+                    </t>
+                    <br/>
+                    <t t-if="widget.pos.outlet.outlet_phone">
+                        Outlet Tel: <t t-esc="widget.pos.outlet.outlet_phone"/>
+                    </t>
+                </div>
+            </div>
+            <table style="margin-top: 10px">
+                <colgroup>
+                    <col width='35%' />
+                    <col width='65%' />
+                </colgroup>
+                <tr>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'singapore'" colspan="2" class="pos-center-align text-bold"><span>Tax Invoice</span></td>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'malaysia'" colspan="2" class="pos-center-align text-bold"><span>Invoice</span></td>
+                </tr>
+                <tr>
+                    <td width="30%">Invoice No</td>
+                    <td colspan="2">: <t t-esc="order.invoice_no.replace('-' + (order.invoice_no).split('-')[(order.invoice_no).split('-').length -1], '')"/></td>
+                </tr>
+                <tr >
+                    <td width="30%">Ref No</td>
+                    <td colspan="2">: <t t-esc="(order.invoice_no).split('-')[(order.invoice_no).split('-').length -1]"/></td>
+                </tr>
+                <tr>
+                    <td>POS No</td>
+                    <td>: <t t-esc="widget.pos.config.name"/></td>
+                </tr>
+                <tr>
+                    <td>Cashier</td>
+                    <td>: <t t-esc="widget.pos.cashier ? widget.pos.cashier.name : widget.pos.user.name"/><br /></td>
+                </tr>
+                <tr>
+                    <td>Date &amp; time</td>
+                    <td>: <t t-esc="moment(order.creation_date).format('DD/MM/YYYY HH:mm:ss')"/> </td>
+                </tr>
+            </table>
+            <br/>
+            <table>
+                <colgroup>
+                    <col width='35%' />
+                    <col width='8%' />
+                    <col width='23%' />
+                    <col width='20%' />
+                    <col width='10%' />
+                </colgroup>
+                <tr>
+                    <td class="text-bold">Description</td>
+                    <td class="pos-right-align text-bold">Qty</td>
+                    <td class="pos-right-align text-bold">U.Price</td>
+                    <td class="pos-right-align text-bold" colspan="2">
+                        Total(<t t-esc="currency.symbol or currency.name"/>)
+                    </td>
+                </tr>
+                <tr class="tr-height"></tr>
+                <tr t-foreach="orderlines" t-as="orderline" t-attf-class="tr-height"
+                    t-if="(!orderline.parent_line and orderline.display_qty) or ([widget.pos.config.discount_product_id[0],widget.pos.config.discount_promotion_bundle_id[0],widget.pos.config.discount_promotion_product_id[0]].indexOf(orderline.product.id) >= 0)">
+                    <td>
+                        <t t-esc="orderline.get_display_name()"/>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="orderline.display_qty"/>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="round_di(orderline.price, 2).toFixed(2)"/>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="round_di(orderline.price * orderline.display_qty, 2).toFixed(2)"/>
+                    </td>
+                    <td class="pos-right-align">
+                        <t t-esc="orderline.get_taxes_code()"/>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <table>
+                <tr>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'singapore'" colspan="2" class="text-bold">Total (Excl. GST)</td>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'malaysia'" colspan="2" class="text-bold">Total (Excl. Service Tax)</td>
+                    <td class="pos-right-align">
+                        <t t-esc="order.get_total_without_tax().toFixed(2)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'singapore'" colspan="2">GST</td>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'malaysia'" colspan="2">Service Tax</td>
+                    <td class="pos-right-align">
+                        <t t-esc="order.br_get_total_tax().toFixed(2)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Rounding adj.</td>
+                    <td class="pos-right-align">
+                        <t t-esc="-1 * order.br_get_rounding_payment(order.get_total_with_tax())"/>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'singapore'" colspan="2" class="text-bold">Total (Incl. GST)</td>
+                    <td t-if="company.country and widget.pos.convert_to_lowercase(company.country.name) == 'malaysia'" colspan="2" class="text-bold">Total (Incl. Service Tax)</td>
+                    <td colspan="2" class="pos-right-align">
+                        <t t-esc="(order.get_total_with_tax() - order.br_get_rounding_payment(order.get_total_with_tax())).toFixed(2)"/>
+                    </td>
+                </tr>
+                <t t-set="is_cash" t-value="false" />
+                <tr t-foreach="paymentlines" t-as="line" t-if="!line.cashregister.journal.is_rounding_method || line.is_payment_rounding">
+                    <t t-if="line.cashregister.journal.type == 'cash'" >
+                        <t t-set="is_cash" t-value="true"/>
+                    </t>
+                    <td colspan="2">
+                        <t t-esc="line.name"/>
+                    </td>
+                    <td colspan="2" class="pos-right-align">
+                        <t t-esc="line.get_amount().toFixed(2)"/>
+                    </td>
+                    <tr t-if="line.card_type">
+                        <td colspan="2">Card Type:</td>
+                        <td colspan="2" class="pos-right-align">
+                            <t t-esc="line.card_type"/>
+                        </td>
+                    </tr>
+                    <tr t-if="line.card_number">
+                        <td colspan="2">Card Number:</td>
+                        <td colspan="2" class="pos-right-align">
+                            <t t-esc="line.get_masked_card_number()"/>
+                        </td>
+                    </tr>
+                    <tr t-if="line.approval_no">
+                        <td colspan="2">Approval Code:</td>
+                        <td colspan="2" class="pos-right-align">
+                            <t t-esc="line.approval_no"/>
+                        </td>
+                    </tr>
+                </tr>
+                <tr t-if="is_cash">
+                    <td colspan="2">Cash Change:</td>
+                    <td colspan="2" class="pos-right-align">
+                        <t t-esc="order.get_change().toFixed(2)"/>
+                    </td>
+                </tr>
+            </table>
+            <span>------------------------------------------------------------------</span>
+            <br/>
+            <br/>
+            <table>
+                 <colgroup>
+                    <col width="25%"/>
+                     <col width="25%"/>
+                     <col width="25%"/>
+                     <col width="25%"/>
+                </colgroup>
+                <tr>
+                    <td class="pos-center-align" style="font-weight: bold;">Tax Summary</td>
+                    <td class="pos-right-align" style="font-weight: bold;">Tax Rate</td>
+                    <td class="pos-right-align" style="font-weight: bold;">Sale (<t t-esc="currency.symbol or currency.name"/>)</td>
+                    <td class="pos-right-align" style="font-weight: bold;">Tax (<t t-esc="currency.symbol or currency.name"/>)</td>
+                </tr>
+                <t t-set="taxes" t-value="order.br_get_all_taxes()"/>
+                <tr t-foreach="taxes" t-as="tax">
+                    <t t-set="tax_amount" t-value="order.br_get_tax_amount(tax)"/>
+                    <td class="pos-center-align"><t t-if="tax.tax_code" t-esc="tax.tax_code" /></td>
+                    <td class="pos-right-align"><t t-esc="tax.amount.toFixed(1)"/>%</td>
+                    <td class="pos-right-align"><t t-esc="order.br_get_total_with_tax(tax).toFixed(2)"/></td>
+                    <td class="pos-right-align"><t t-esc="tax_amount.toFixed(2)"/></td>
+                </tr>
+            </table>
+
+            <table>
+                <t t-if="receipt.footer">
+                    <br />
+                    <div style='text-align:center'>
+                        <t t-esc="receipt.footer" />
+                    </div>
+                </t>
+                <tr>
+                    <td><br/><div id="barcode"></div></td>
+                </tr>
+            </table>
+        </div>
+    </t>
+
+</templates>

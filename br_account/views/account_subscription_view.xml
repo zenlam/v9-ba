@@ -1,0 +1,12 @@
+<openerp>
+    <data>
+
+        <menuitem id="menu_kpmg_auditor" name="KPMG Auditor" parent="account.menu_finance" sequence="6" groups="br_account.group_recurring_invoice_accessible" />
+
+        <menuitem action="subscription.action_subscription_form" id="subscription.menu_action_subscription_form" sequence="30" parent="menu_kpmg_auditor"/>
+
+        <menuitem id="subscription.menu_action_document_form" action="subscription.action_document_form" sequence="31" parent="menu_kpmg_auditor"/>
+
+
+    </data>
+</openerp>

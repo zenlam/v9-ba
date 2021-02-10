@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="br_view_sale_config_settings_form_pos_inherit_v1">
+            <field name="">br_view_sale_config_settings_form_pos_inherit_v1</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="br_point_of_sale.br_view_sale_config_settings_form_pos"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='rounding_product_id']" position="after">
+                    <field name="sales_gst_adjustment_acc" required="True"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

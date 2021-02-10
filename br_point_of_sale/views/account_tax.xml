@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        <record id="br_view_tax_form" model="ir.ui.view">
+            <field name="name">Br Tax Form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='description']" position="after">
+                    <field name="tax_code"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

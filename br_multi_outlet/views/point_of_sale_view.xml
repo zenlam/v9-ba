@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_br_pos_order_form" model="ir.ui.view">
+            <field name="name">view.br.pos.order.form</field>
+            <field name="model">pos.order</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="before">
+                    <field name="outlet_id" required="1" options="{'no_create': True}" domain="[('user_ids', 'in', [uid])]" />
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_br_pos_config_form" model="ir.ui.view">
+            <field name="name">view.br.pos.config.form</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
+            <field name="arch" type="xml">
+                <field name="picking_type_id" position="before">
+                    <field name="outlet_id" required="1" options="{'no_create': True}"/>
+                </field>
+                <xpath expr="//field[@name='picking_type_id']" position="attributes">
+                    <attribute name="widget"></attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- New session Point Of Sale -->
+        <record id="inherit_view_new_session" model="ir.ui.view">
+            <field name="name">pos.session</field>
+            <field name="model">pos.session</field>
+            <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="outlet_id" required="1" options="{'no_create': True}" domain="[('user_ids', 'in', [uid]), ('status', 'not in', ('tempclosed', 'permanent_close'))]" />
+                </xpath>
+             <!--    <xpath expr="//field[@name='config_id']" position="replace">
+                    <field name="config_id" required="1" options="{'no_create': True}" context="{'filter_config': 1}" />
+                </xpath>-->
+            </field>
+        </record>
+
+        <!--Add condition filter by outlet-->
+        <record model="ir.actions.act_window" id="point_of_sale.action_pos_config_kanban">
+            <field name="name">Point of Sale</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'br_outlet': uid}</field>
+            <field name="search_view_id" ref="point_of_sale.view_pos_config_search" />
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new PoS config.
+              </p><p>
+                Configure at least one Point of Sale to be able to sell through the PoS interface.
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="point_of_sale.action_pos_session">
+            <field name="name">Sessions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.session</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'br_outlet': uid}</field>
+            <field name="search_view_id" ref="point_of_sale.view_pos_session_search" />
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new session.
+              </p><p>
+                A session is a period of time, usually one day, during which
+                you sell through the point of sale. The user has to check the
+                currencies in your cash registers at the beginning and the end
+                of each session.
+              </p><p>
+                Note that you may use the menu <i>Your Session</i>
+                to quickly open a new session.
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="point_of_sale.action_pos_pos_form">
+            <field name="name">Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pos.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[]</field>
+            <field name="context">{'br_outlet': uid}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new order.
+              </p><p>
+                Use this menu to browse previous orders. To record new
+                orders, you may use the menu <i>Your Session</i> for
+                the touchscreen interface.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</openerp>
